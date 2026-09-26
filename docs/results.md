@@ -124,6 +124,7 @@ Produced by `scripts/release_model.sh runs/p4_c1_commercial_mnv3_full/… data/p
 | ONNX == PyTorch | ✅ 100% agreement, max logit diff 0.0 |
 | Core ML fp16 | ✅ 8.2 MB (converted; not executed — needs macOS) |
 | Host CPU latency (ONNX, 1 thread) | 4.8 ms p50 (not a phone number) |
+| Abstention threshold | produce_min_prob raised from the tuned 0.30 to the product floor 0.70 (never show a "low confidence" answer): test shown 63.0% → 61.3%, accuracy when shown 93.0% → 94.3% |
 | Acceptance gates on test | ❌ 8 per-class recall failures (see above) → **internal dev build only; NOT releasable to users** |
 | Synced into app | ✅ `app/assets/model/bundle.json`, credits, `ProduceScanner.mlpackage`; app typecheck, 604 tests and iOS bundle pass |
 | End-to-end via self-hosted server (real photos) | ✅ avocado/tomato identified; banana at 0.52 → "unsure"; asparagus → "not produce"; dark photo → "retake"; satsuma → "orange" at 1.00 (known citrus confusion) |

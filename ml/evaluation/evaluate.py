@@ -31,6 +31,9 @@ from ml.training import augment, dataset
 from ml.training.train import _produce_condition
 
 
+UX_MIN_SHOWN_CONFIDENCE = 0.70
+
+
 class Stress:
     """Deterministic (seeded per image) degradations approximating phone failure modes."""
     def __init__(self, kind: str):
@@ -181,6 +184,9 @@ def main() -> None:
             m = conf >= t
             if m.sum() >= 30 and corr[m].mean() >= args.target_accuracy:
                 chosen = float(round(t, 2)); break
+        # Product floor (docs/ux-principles.md #4-5): never show an answer the UI would call
+        # "low confidence" (< 0.70), even if validation accuracy would allow a lower threshold.
+        chosen = max(chosen, UX_MIN_SHOWN_CONFIDENCE)
         tuned = {"produce_min_prob": chosen, "ood_min_energy": float(np.quantile(energy[ind], 0.05)),
                  "tuned_on": {"processed": str(args.processed), "splits": args.splits, "target_accuracy": args.target_accuracy,
                               "coverage_at_threshold": float((conf >= chosen).mean()),

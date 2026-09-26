@@ -28,6 +28,7 @@ Photograph a fruit or vegetable → our own on-device computer-vision model esti
 | [mobile](docs/mobile.md) | Export/quantisation measurements, Core ML fp16 decision, on-device plan |
 | [competitor-ux-research](docs/competitor-ux-research.md) | 7 scanner apps × 20 UX dimensions, patterns to adopt/avoid |
 | [ux-principles](docs/ux-principles.md) | Our UX principles + final v1 UI architecture |
+| [ux-review](docs/ux-review.md) | Rendered screens of every state + problems found and fixed |
 | [beta-and-production](docs/beta-and-production.md) | Beta entry/exit criteria, release checklist, monitoring, retraining |
 
 ## Layout

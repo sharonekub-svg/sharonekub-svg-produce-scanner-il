@@ -42,7 +42,7 @@
       "supportsRTL": true,
       "inference": {
         "mode": "native",
-        "serverUrl": ""
+        "serverUrl": "https://sharonekub-svg-produce-scanner-il.vercel.app"
       },
       "feedback": {
         "url": "https://ucaahtdudyicliqwpvcu.supabase.co",

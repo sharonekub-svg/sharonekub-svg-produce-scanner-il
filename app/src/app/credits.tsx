@@ -21,6 +21,6 @@ export default function CreditsScreen() {
 
 const styles = StyleSheet.create({
   pad: { padding: 16, gap: 12 },
-  body: { fontSize: 16, textAlign: 'left' },
-  item: { fontSize: 14, color: '#333', textAlign: 'left' },
+  body: { fontSize: 16 },
+  item: { fontSize: 14, color: '#333' },
 });

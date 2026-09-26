@@ -65,7 +65,7 @@
     "produce": 0.5910517206782391
   },
   "thresholds": {
-    "produce_min_prob": 0.3,
+    "produce_min_prob": 0.7,
     "produce_min_margin": 0.15,
     "ood_min_energy": 3.9843502044677734,
     "head_min_prob": 0.55,

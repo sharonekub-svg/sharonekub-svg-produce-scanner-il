@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "main": "expo-router/entry",
   "dependencies": {
+    "@expo/metro-runtime": "~57.0.16",
     "expo": "~57.0.25",
     "expo-camera": "~57.0.5",
     "expo-constants": "~57.0.19",
@@ -11,16 +12,17 @@
     "expo-router": "~57.0.23",
     "expo-status-bar": "~57.0.1",
     "react": "19.2.3",
+    "react-dom": "19.2.3",
     "react-native": "0.86.3",
     "react-native-safe-area-context": "~5.7.0",
-    "react-native-screens": "~4.26.0"
+    "react-native-screens": "~4.26.0",
+    "react-native-web": "~0.21.0"
   },
   "devDependencies": {
     "@react-native/jest-preset": "^0.86.3",
     "@types/jest": "^30.0.0",
     "@types/react": "~19.2.2",
     "jest-expo": "~57.0.5",
-    "react-dom": "19.2.3",
     "react-test-renderer": "19.2.3",
     "typescript": "~6.0.3"
   },
