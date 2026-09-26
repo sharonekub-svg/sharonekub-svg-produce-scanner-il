@@ -1,0 +1,56 @@
+{
+  "expo": {
+    "name": "סורק פירות",
+    "slug": "produce-scanner",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "automatic",
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "com.example.producescanner",
+      "infoPlist": {
+        "CFBundleDevelopmentRegion": "he"
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#E6F4FE",
+        "foregroundImage": "./assets/android-icon-foreground.png",
+        "backgroundImage": "./assets/android-icon-background.png",
+        "monochromeImage": "./assets/android-icon-monochrome.png"
+      },
+      "predictiveBackGestureEnabled": false,
+      "package": "com.example.producescanner"
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      "expo-router",
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "האפליקציה משתמשת במצלמה כדי לצלם את הפרי לצורך הערכה חזותית. התמונות מעובדות במכשיר.",
+          "microphonePermission": false,
+          "recordAudioAndroid": false
+        }
+      ]
+    ],
+    "scheme": "producescanner",
+    "extra": {
+      "supportsRTL": true,
+      "inference": {
+        "mode": "native",
+        "serverUrl": ""
+      },
+      "feedback": {
+        "url": "",
+        "anonKey": ""
+      }
+    },
+    "experiments": {
+      "typedRoutes": false
+    }
+  }
+}

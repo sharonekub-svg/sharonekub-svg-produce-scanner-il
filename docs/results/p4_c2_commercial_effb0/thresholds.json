@@ -1,0 +1,13 @@
+{
+ "produce_min_prob": 0.3,
+ "ood_min_energy": 3.367138385772705,
+ "tuned_on": {
+  "processed": "data/processed_commercial",
+  "splits": [
+   "val"
+  ],
+  "target_accuracy": 0.95,
+  "coverage_at_threshold": 1.0,
+  "accuracy_at_threshold": 0.9545454545454546
+ }
+}

@@ -1,0 +1,54 @@
+augment:
+  blur_p: 0.2
+  brightness: 0.35
+  contrast: 0.3
+  crop_scale:
+  - 0.35
+  - 1.0
+  hue: 0.01
+  jpeg_p: 0.5
+  noise_p: 0.3
+  rotation_deg: 30
+  saturation: 0.15
+  shadow_p: 0.3
+data:
+  datasets: null
+  image_size: 224
+  processed_dir: data/processed_commercial
+deterministic: true
+experiment: p4_c1_commercial_mnv3_full
+gates:
+  produce:
+    max_ece: 0.05
+    min_class_recall:
+      apple: 0.9
+      avocado: 0.9
+      banana: 0.9
+      cucumber: 0.9
+      default: 0.8
+      tomato: 0.9
+    min_macro_f1: 0.85
+model:
+  backbone: mobilenetv3_large_100
+  dropout: 0.2
+  freeze_blocks: 0
+  pretrained: true
+  pretrained_file: weights/mobilenetv3_large_100_ra-f55367f5.pth
+  ripeness_mode: shared
+seed: 1337
+threads: 4
+train:
+  backbone_lr_mult: 0.3
+  balance_alpha: 0.5
+  batch_size: 32
+  epochs: 20
+  head_weights:
+    freshness: 1.0
+    produce: 1.0
+    ripeness: 1.0
+    visual_spoilage: 0.5
+  label_smoothing: 0.1
+  lr: 0.002
+  num_workers: 3
+  warmup_frac: 0.1
+  weight_decay: 0.05

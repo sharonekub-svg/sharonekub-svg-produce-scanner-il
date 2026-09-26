@@ -1,0 +1,16 @@
+{
+  "passed": false,
+  "failures": [
+    "produce: macro_f1 0.765 < 0.85",
+    "produce/apple: recall 0.859 < 0.9 (n=192)",
+    "produce/orange: recall 0.683 < 0.8 (n=246)",
+    "produce/tomato: recall 0.783 < 0.9 (n=281)",
+    "produce/cucumber: recall 0.745 < 0.9 (n=137)",
+    "produce/mango: recall 0.727 < 0.8 (n=44)",
+    "produce/peach: recall 0.776 < 0.8 (n=85)",
+    "produce/grape: recall 0.438 < 0.8 (n=73)",
+    "produce/pear: recall 0.770 < 0.8 (n=87)",
+    "produce/lemon: recall 0.794 < 0.8 (n=141)",
+    "produce/other: recall 0.675 < 0.8 (n=1051)"
+  ]
+}

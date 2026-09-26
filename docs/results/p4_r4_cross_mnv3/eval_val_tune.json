@@ -1,0 +1,200 @@
+{
+ "ckpt": "/home/user/TRADING-ANALIZER/runs/p4_r4_cross_mnv3/20260926-152808/best.pt",
+ "processed": "data/processed_research",
+ "splits": [
+  "val"
+ ],
+ "datasets": [
+  "open_images_v7",
+  "fruits360_original"
+ ],
+ "stress": null,
+ "n_rows": 2647,
+ "n_ood": 0,
+ "temperatures": {
+  "produce": 0.8252528817630721
+ },
+ "heads": {
+  "produce": {
+   "n": 2647,
+   "top1": 0.741972043823196,
+   "top5": 0.9671326029467322,
+   "macro_f1": 0.7061713515107867,
+   "balanced_accuracy": 0.7624475693267786,
+   "worst_class_recall": 0.3835616438356164,
+   "ece": 0.03501346160161255,
+   "brier": 0.37403449611166373,
+   "nll": 0.8536720275878906,
+   "aurc": 0.10529044146336314,
+   "per_class": {
+    "banana": {
+     "precision": 0.6206896551724138,
+     "recall": 0.9113924050632911,
+     "f1": 0.7384615384615385,
+     "support": 79.0
+    },
+    "apple": {
+     "precision": 0.7906976744186046,
+     "recall": 0.7445255474452555,
+     "f1": 0.7669172932330827,
+     "support": 137.0
+    },
+    "orange": {
+     "precision": 0.5865724381625441,
+     "recall": 0.7094017094017094,
+     "f1": 0.642166344294004,
+     "support": 234.0
+    },
+    "mandarin": {
+     "precision": null,
+     "recall": null,
+     "f1": null,
+     "support": 0.0
+    },
+    "avocado": {
+     "precision": null,
+     "recall": null,
+     "f1": null,
+     "support": 0.0
+    },
+    "tomato": {
+     "precision": 0.8594377510040161,
+     "recall": 0.8294573643410853,
+     "f1": 0.8441814595660749,
+     "support": 258.0
+    },
+    "cucumber": {
+     "precision": 0.6542056074766355,
+     "recall": 0.5426356589147286,
+     "f1": 0.5932203389830508,
+     "support": 129.0
+    },
+    "mango": {
+     "precision": 0.36619718309859156,
+     "recall": 0.7027027027027027,
+     "f1": 0.4814814814814815,
+     "support": 37.0
+    },
+    "peach": {
+     "precision": 0.7397260273972602,
+     "recall": 0.7105263157894737,
+     "f1": 0.7248322147651005,
+     "support": 76.0
+    },
+    "nectarine": {
+     "precision": null,
+     "recall": null,
+     "f1": null,
+     "support": 0.0
+    },
+    "watermelon": {
+     "precision": 0.7752808988764045,
+     "recall": 0.8313253012048193,
+     "f1": 0.8023255813953489,
+     "support": 83.0
+    },
+    "melon": {
+     "precision": 0.3584905660377358,
+     "recall": 0.7037037037037037,
+     "f1": 0.47500000000000003,
+     "support": 27.0
+    },
+    "grape": {
+     "precision": 0.7368421052631579,
+     "recall": 0.3835616438356164,
+     "f1": 0.5045045045045046,
+     "support": 73.0
+    },
+    "strawberry": {
+     "precision": 0.8589743589743589,
+     "recall": 0.95260663507109,
+     "f1": 0.903370786516854,
+     "support": 211.0
+    },
+    "pomegranate": {
+     "precision": 0.671875,
+     "recall": 0.9555555555555556,
+     "f1": 0.7889908256880733,
+     "support": 45.0
+    },
+    "pear": {
+     "precision": 0.6385542168674698,
+     "recall": 0.7794117647058824,
+     "f1": 0.7019867549668874,
+     "support": 68.0
+    },
+    "kiwi": {
+     "precision": null,
+     "recall": null,
+     "f1": null,
+     "support": 0.0
+    },
+    "plum": {
+     "precision": 0.0,
+     "recall": null,
+     "f1": null,
+     "support": 0.0
+    },
+    "persimmon": {
+     "precision": null,
+     "recall": null,
+     "f1": null,
+     "support": 0.0
+    },
+    "lemon": {
+     "precision": 0.6132596685082873,
+     "recall": 0.8473282442748091,
+     "f1": 0.7115384615384615,
+     "support": 131.0
+    },
+    "guava": {
+     "precision": null,
+     "recall": null,
+     "f1": null,
+     "support": 0.0
+    },
+    "pepper": {
+     "precision": 0.8278688524590164,
+     "recall": 0.926605504587156,
+     "f1": 0.8744588744588746,
+     "support": 109.0
+    },
+    "other": {
+     "precision": 0.8421750663129973,
+     "recall": 0.6684210526315789,
+     "f1": 0.7453051643192489,
+     "support": 950.0
+    }
+   }
+  }
+ },
+ "decision": {
+  "thresholds": {
+   "produce_min_prob": 0.7,
+   "produce_min_margin": 0.15,
+   "ood_min_energy": null,
+   "head_min_prob": 0.55,
+   "spoiled_alert_prob": 0.4
+  },
+  "in_dist_coverage_ok": 0.45825462788061955,
+  "in_dist_accuracy_when_ok": 0.8268755152514426,
+  "status_counts_in_dist": {
+   "unsure": 680,
+   "ok": 1213,
+   "not_produce": 754
+  }
+ },
+ "tuned_thresholds": {
+  "produce_min_prob": 0.95,
+  "ood_min_energy": 3.9059181213378906,
+  "tuned_on": {
+   "processed": "data/processed_research",
+   "splits": [
+    "val"
+   ],
+   "target_accuracy": 0.95,
+   "coverage_at_threshold": 0.26331696259916887,
+   "accuracy_at_threshold": 0.9526542324246772
+  }
+ }
+}

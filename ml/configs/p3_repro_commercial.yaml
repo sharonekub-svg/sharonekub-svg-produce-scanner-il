@@ -1,0 +1,50 @@
+# Phase 3 baseline: commercially-cleared data only (Grocery Store). Produce head is the only
+# head with labels; ripeness/freshness/spoilage get no gradient (no exact labels) and stay
+# unsupported in the bundle (supported_heads.json is empty for them).
+experiment: p3_repro_commercial_mnv3
+seed: 1337
+deterministic: true
+threads: 4
+
+data:
+  processed_dir: data/processed_commercial
+  datasets: null
+  image_size: 224
+
+model:
+  backbone: mobilenetv3_large_100
+  pretrained: true
+  pretrained_file: weights/mobilenetv3_large_100_ra-f55367f5.pth   # ImageNet-1k; see docs/licensing.md
+  freeze_blocks: 4
+  ripeness_mode: shared
+  dropout: 0.2
+
+train:
+  epochs: 20
+  batch_size: 32
+  lr: 2.0e-3
+  backbone_lr_mult: 0.3
+  weight_decay: 0.05
+  warmup_frac: 0.1
+  label_smoothing: 0.1
+  balance_alpha: 0.5
+  num_workers: 3
+  head_weights: {produce: 1.0, ripeness: 1.0, freshness: 1.0, visual_spoilage: 0.5}
+
+augment:
+  crop_scale: [0.35, 1.0]
+  rotation_deg: 30
+  brightness: 0.35
+  contrast: 0.30
+  saturation: 0.15
+  hue: 0.01
+  shadow_p: 0.3
+  blur_p: 0.2
+  noise_p: 0.3
+  jpeg_p: 0.5
+
+gates:
+  produce:
+    min_macro_f1: 0.85
+    min_class_recall: {default: 0.80, banana: 0.90, apple: 0.90, tomato: 0.90, avocado: 0.90, cucumber: 0.90}
+    max_ece: 0.05

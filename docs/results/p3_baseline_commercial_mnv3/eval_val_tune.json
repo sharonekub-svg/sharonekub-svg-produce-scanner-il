@@ -1,0 +1,197 @@
+{
+ "ckpt": "/home/user/TRADING-ANALIZER/runs/p3_baseline_commercial_mnv3/20260926-143447/best.pt",
+ "processed": "data/processed_commercial",
+ "splits": [
+  "val"
+ ],
+ "datasets": null,
+ "stress": null,
+ "n_rows": 462,
+ "n_ood": 0,
+ "temperatures": {
+  "produce": 0.6281784123402325
+ },
+ "heads": {
+  "produce": {
+   "n": 462,
+   "top1": 0.9523809523809523,
+   "top5": 0.9978354978354979,
+   "macro_f1": 0.9443279270310164,
+   "balanced_accuracy": 0.9235636822383425,
+   "worst_class_recall": 0.6666666666666666,
+   "ece": 0.016849842938509895,
+   "brier": 0.078960589242796,
+   "nll": 0.19530770182609558,
+   "aurc": 0.006813665336448993,
+   "per_class": {
+    "banana": {
+     "precision": 1.0,
+     "recall": 1.0,
+     "f1": 1.0,
+     "support": 13.0
+    },
+    "apple": {
+     "precision": 0.9264705882352942,
+     "recall": 0.984375,
+     "f1": 0.9545454545454545,
+     "support": 64.0
+    },
+    "orange": {
+     "precision": 1.0,
+     "recall": 1.0,
+     "f1": 1.0,
+     "support": 14.0
+    },
+    "mandarin": {
+     "precision": 1.0,
+     "recall": 0.6666666666666666,
+     "f1": 0.8,
+     "support": 15.0
+    },
+    "avocado": {
+     "precision": 1.0,
+     "recall": 0.9090909090909091,
+     "f1": 0.9523809523809523,
+     "support": 11.0
+    },
+    "tomato": {
+     "precision": 1.0,
+     "recall": 1.0,
+     "f1": 1.0,
+     "support": 27.0
+    },
+    "cucumber": {
+     "precision": 1.0,
+     "recall": 1.0,
+     "f1": 1.0,
+     "support": 9.0
+    },
+    "mango": {
+     "precision": 1.0,
+     "recall": 0.875,
+     "f1": 0.9333333333333333,
+     "support": 8.0
+    },
+    "peach": {
+     "precision": 1.0,
+     "recall": 0.9090909090909091,
+     "f1": 0.9523809523809523,
+     "support": 11.0
+    },
+    "nectarine": {
+     "precision": 0.8333333333333334,
+     "recall": 1.0,
+     "f1": 0.9090909090909091,
+     "support": 5.0
+    },
+    "watermelon": {
+     "precision": 0.8461538461538461,
+     "recall": 0.9166666666666666,
+     "f1": 0.8799999999999999,
+     "support": 12.0
+    },
+    "melon": {
+     "precision": 1.0,
+     "recall": 0.7741935483870968,
+     "f1": 0.8727272727272727,
+     "support": 31.0
+    },
+    "grape": {
+     "precision": null,
+     "recall": null,
+     "f1": null,
+     "support": 0.0
+    },
+    "strawberry": {
+     "precision": null,
+     "recall": null,
+     "f1": null,
+     "support": 0.0
+    },
+    "pomegranate": {
+     "precision": 1.0,
+     "recall": 0.7777777777777778,
+     "f1": 0.8750000000000001,
+     "support": 9.0
+    },
+    "pear": {
+     "precision": 1.0,
+     "recall": 1.0,
+     "f1": 1.0,
+     "support": 22.0
+    },
+    "kiwi": {
+     "precision": 1.0,
+     "recall": 0.9166666666666666,
+     "f1": 0.9565217391304348,
+     "support": 12.0
+    },
+    "plum": {
+     "precision": 1.0,
+     "recall": 1.0,
+     "f1": 1.0,
+     "support": 3.0
+    },
+    "persimmon": {
+     "precision": null,
+     "recall": null,
+     "f1": null,
+     "support": 0.0
+    },
+    "lemon": {
+     "precision": 1.0,
+     "recall": 0.8181818181818182,
+     "f1": 0.9,
+     "support": 11.0
+    },
+    "guava": {
+     "precision": null,
+     "recall": null,
+     "f1": null,
+     "support": 0.0
+    },
+    "pepper": {
+     "precision": 1.0,
+     "recall": 1.0,
+     "f1": 1.0,
+     "support": 32.0
+    },
+    "other": {
+     "precision": 0.9161676646706587,
+     "recall": 1.0,
+     "f1": 0.95625,
+     "support": 153.0
+    }
+   }
+  }
+ },
+ "decision": {
+  "thresholds": {
+   "produce_min_prob": 0.7,
+   "produce_min_margin": 0.15,
+   "ood_min_energy": null,
+   "head_min_prob": 0.55,
+   "spoiled_alert_prob": 0.4
+  },
+  "in_dist_coverage_ok": 0.6038961038961039,
+  "in_dist_accuracy_when_ok": 0.985663082437276,
+  "status_counts_in_dist": {
+   "not_produce": 167,
+   "unsure": 16,
+   "ok": 279
+  }
+ },
+ "tuned_thresholds": {
+  "produce_min_prob": 0.3,
+  "ood_min_energy": 3.9359424114227295,
+  "tuned_on": {
+   "processed": "data/processed_commercial",
+   "splits": [
+    "val"
+   ],
+   "target_accuracy": 0.95,
+   "coverage_at_threshold": 1.0,
+   "accuracy_at_threshold": 0.9523809523809523
+  }
+ }
+}

@@ -1,0 +1,8 @@
+{
+  "passed": false,
+  "failures": [
+    "produce/mandarin: recall 0.667 < 0.8 (n=15)",
+    "produce/melon: recall 0.774 < 0.8 (n=31)",
+    "produce/pomegranate: recall 0.778 < 0.8 (n=9)"
+  ]
+}

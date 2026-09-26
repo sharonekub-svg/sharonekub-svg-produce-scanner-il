@@ -1,0 +1,201 @@
+{
+ "ckpt": "/home/user/TRADING-ANALIZER/runs/p4_r1_all_mnv3/20260926-144940/best.pt",
+ "processed": "data/processed_research",
+ "splits": [
+  "test"
+ ],
+ "datasets": [
+  "grocery_store_klasson"
+ ],
+ "stress": null,
+ "n_rows": 1704,
+ "n_ood": 118,
+ "temperatures": {
+  "produce": 0.7938793972700044
+ },
+ "heads": {
+  "produce": {
+   "n": 1586,
+   "top1": 0.8133669609079445,
+   "top5": 0.987389659520807,
+   "macro_f1": 0.7903608172393664,
+   "balanced_accuracy": 0.8038545548515366,
+   "worst_class_recall": 0.44,
+   "ece": 0.03794556799782783,
+   "brier": 0.2817253450877058,
+   "nll": 0.6214314699172974,
+   "aurc": 0.06384155193731544,
+   "per_class": {
+    "banana": {
+     "precision": 0.8461538461538461,
+     "recall": 1.0,
+     "f1": 0.9166666666666666,
+     "support": 44.0
+    },
+    "apple": {
+     "precision": 0.7534246575342466,
+     "recall": 0.9963768115942029,
+     "f1": 0.8580343213728548,
+     "support": 276.0
+    },
+    "orange": {
+     "precision": 0.525,
+     "recall": 0.75,
+     "f1": 0.6176470588235295,
+     "support": 56.0
+    },
+    "mandarin": {
+     "precision": 0.5128205128205128,
+     "recall": 0.5882352941176471,
+     "f1": 0.547945205479452,
+     "support": 68.0
+    },
+    "avocado": {
+     "precision": 1.0,
+     "recall": 0.8,
+     "f1": 0.888888888888889,
+     "support": 40.0
+    },
+    "tomato": {
+     "precision": 0.9519230769230769,
+     "recall": 0.99,
+     "f1": 0.9705882352941176,
+     "support": 100.0
+    },
+    "cucumber": {
+     "precision": 0.5111111111111111,
+     "recall": 0.8518518518518519,
+     "f1": 0.6388888888888888,
+     "support": 27.0
+    },
+    "mango": {
+     "precision": 0.45,
+     "recall": 0.5806451612903226,
+     "f1": 0.5070422535211268,
+     "support": 31.0
+    },
+    "peach": {
+     "precision": 0.9166666666666666,
+     "recall": 0.9166666666666666,
+     "f1": 0.9166666666666666,
+     "support": 36.0
+    },
+    "nectarine": {
+     "precision": 1.0,
+     "recall": 0.7714285714285715,
+     "f1": 0.870967741935484,
+     "support": 35.0
+    },
+    "watermelon": {
+     "precision": 0.9555555555555556,
+     "recall": 0.9347826086956522,
+     "f1": 0.945054945054945,
+     "support": 46.0
+    },
+    "melon": {
+     "precision": 0.9,
+     "recall": 0.9252336448598131,
+     "f1": 0.9124423963133641,
+     "support": 107.0
+    },
+    "grape": {
+     "precision": 0.0,
+     "recall": null,
+     "f1": null,
+     "support": 0.0
+    },
+    "strawberry": {
+     "precision": null,
+     "recall": null,
+     "f1": null,
+     "support": 0.0
+    },
+    "pomegranate": {
+     "precision": 0.8461538461538461,
+     "recall": 0.44,
+     "f1": 0.5789473684210525,
+     "support": 25.0
+    },
+    "pear": {
+     "precision": 0.9222222222222223,
+     "recall": 0.7685185185185185,
+     "f1": 0.8383838383838385,
+     "support": 108.0
+    },
+    "kiwi": {
+     "precision": 0.76,
+     "recall": 0.8444444444444444,
+     "f1": 0.8,
+     "support": 45.0
+    },
+    "plum": {
+     "precision": 0.7407407407407407,
+     "recall": 0.9090909090909091,
+     "f1": 0.8163265306122449,
+     "support": 22.0
+    },
+    "persimmon": {
+     "precision": null,
+     "recall": null,
+     "f1": null,
+     "support": 0.0
+    },
+    "lemon": {
+     "precision": 0.8,
+     "recall": 0.5853658536585366,
+     "f1": 0.676056338028169,
+     "support": 41.0
+    },
+    "guava": {
+     "precision": null,
+     "recall": null,
+     "f1": null,
+     "support": 0.0
+    },
+    "pepper": {
+     "precision": 0.9401709401709402,
+     "recall": 1.0,
+     "f1": 0.9691629955947136,
+     "support": 110.0
+    },
+    "other": {
+     "precision": 0.9385245901639344,
+     "recall": 0.6205962059620597,
+     "f1": 0.7471451876019577,
+     "support": 369.0
+    }
+   }
+  }
+ },
+ "decision": {
+  "thresholds": {
+   "produce_min_prob": 0.9,
+   "produce_min_margin": 0.15,
+   "ood_min_energy": 3.9873807430267334,
+   "head_min_prob": 0.55,
+   "spoiled_alert_prob": 0.4
+  },
+  "in_dist_coverage_ok": 0.45334174022698615,
+  "in_dist_accuracy_when_ok": 0.9471488178025035,
+  "status_counts_in_dist": {
+   "unsure": 654,
+   "ok": 719,
+   "not_produce": 213
+  }
+ },
+ "ood": {
+  "n_in": 1586,
+  "n_ood": 118,
+  "auroc": {
+   "msp": 0.6665045846068353,
+   "energy": 0.6442441276422938,
+   "neg_entropy": 0.6574796417808365
+  },
+  "fpr_at_95tpr": {
+   "msp": 0.8728813559322034,
+   "energy": 0.8813559322033898
+  },
+  "ood_abstention_rate": 0.8898305084745762,
+  "ood_predicted_other_rate": 0.3644067796610169
+ }
+}

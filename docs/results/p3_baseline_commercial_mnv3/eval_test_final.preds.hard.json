@@ -1,0 +1,1004 @@
+{
+ "n_rows": 1704,
+ "n_errors": 257,
+ "errors_shown_to_user": 101,
+ "top_confusions": [
+  {
+   "true": "mandarin",
+   "pred": "orange",
+   "n": 38
+  },
+  {
+   "true": "nectarine",
+   "pred": "apple",
+   "n": 21
+  },
+  {
+   "true": "lemon",
+   "pred": "other",
+   "n": 21
+  },
+  {
+   "true": "kiwi",
+   "pred": "other",
+   "n": 15
+  },
+  {
+   "true": "avocado",
+   "pred": "other",
+   "n": 14
+  },
+  {
+   "true": "other",
+   "pred": "pear",
+   "n": 13
+  },
+  {
+   "true": "other",
+   "pred": "orange",
+   "n": 10
+  },
+  {
+   "true": "cucumber",
+   "pred": "other",
+   "n": 9
+  },
+  {
+   "true": "orange",
+   "pred": "other",
+   "n": 9
+  },
+  {
+   "true": "melon",
+   "pred": "other",
+   "n": 8
+  },
+  {
+   "true": "mango",
+   "pred": "other",
+   "n": 8
+  },
+  {
+   "true": "mango",
+   "pred": "pear",
+   "n": 7
+  },
+  {
+   "true": "pear",
+   "pred": "apple",
+   "n": 7
+  },
+  {
+   "true": "other",
+   "pred": "kiwi",
+   "n": 7
+  },
+  {
+   "true": "pomegranate",
+   "pred": "apple",
+   "n": 6
+  }
+ ],
+ "confident_errors": [
+  {
+   "image": "images/grocery_store_klasson/13/13bc255ca0040d14b639f7f0ea6c3cb4581e21d29b0dfcce13d958cc8f20d0e3.jpg",
+   "source_path": "dataset/test/Fruit/Kiwi/Kiwi_042.jpg",
+   "label": "kiwi",
+   "pred": "other",
+   "conf": 0.999,
+   "top3": [
+    [
+     "other",
+     0.999
+    ],
+    [
+     "kiwi",
+     0.0002
+    ],
+    [
+     "plum",
+     0.0001
+    ]
+   ],
+   "status": "not_produce",
+   "ood": false
+  },
+  {
+   "image": "images/grocery_store_klasson/ea/ead1d75d1aea64196fe97487432c99ccd7c398b7ca6fb3469decc30ee86771f5.jpg",
+   "source_path": "dataset/test/Fruit/Avocado/Avocado_017.jpg",
+   "label": "avocado",
+   "pred": "other",
+   "conf": 0.997,
+   "top3": [
+    [
+     "other",
+     0.997
+    ],
+    [
+     "avocado",
+     0.0017
+    ],
+    [
+     "banana",
+     0.0003
+    ]
+   ],
+   "status": "not_produce",
+   "ood": false
+  },
+  {
+   "image": "images/grocery_store_klasson/c8/c81c269fbc54c0603e1c76aae715c87ed8e5620c2955dd1040e07da1510866ad.jpg",
+   "source_path": "dataset/test/Fruit/Satsumas/Satsumas_056.jpg",
+   "label": "mandarin",
+   "pred": "orange",
+   "conf": 0.9964,
+   "top3": [
+    [
+     "orange",
+     0.9964
+    ],
+    [
+     "mandarin",
+     0.0018
+    ],
+    [
+     "other",
+     0.0006
+    ]
+   ],
+   "status": "ok",
+   "ood": false
+  },
+  {
+   "image": "images/grocery_store_klasson/b4/b4eafa18582e6f89523ad1e3ee5da059fffd206364db7809749f208374f6c0cd.jpg",
+   "source_path": "dataset/test/Fruit/Satsumas/Satsumas_027.jpg",
+   "label": "mandarin",
+   "pred": "orange",
+   "conf": 0.9962,
+   "top3": [
+    [
+     "orange",
+     0.9962
+    ],
+    [
+     "mandarin",
+     0.0011
+    ],
+    [
+     "other",
+     0.0008
+    ]
+   ],
+   "status": "ok",
+   "ood": false
+  },
+  {
+   "image": "images/grocery_store_klasson/23/23cdbbc266d7119699170fc8855e49d4340b6d5c5c3aa420ace4b4c802093734.jpg",
+   "source_path": "dataset/test/Fruit/Kiwi/Kiwi_014.jpg",
+   "label": "kiwi",
+   "pred": "other",
+   "conf": 0.9961,
+   "top3": [
+    [
+     "other",
+     0.9961
+    ],
+    [
+     "kiwi",
+     0.0009
+    ],
+    [
+     "nectarine",
+     0.0005
+    ]
+   ],
+   "status": "not_produce",
+   "ood": false
+  },
+  {
+   "image": "images/grocery_store_klasson/8f/8f7e0771bdcfc65b1246f85c1bd6e3940ec0239297c6ee6a36b2f66172998128.jpg",
+   "source_path": "dataset/test/Fruit/Nectarine/Nectarine_014.jpg",
+   "label": "nectarine",
+   "pred": "apple",
+   "conf": 0.9956,
+   "top3": [
+    [
+     "apple",
+     0.9956
+    ],
+    [
+     "peach",
+     0.0015
+    ],
+    [
+     "nectarine",
+     0.0005
+    ]
+   ],
+   "status": "ok",
+   "ood": false
+  },
+  {
+   "image": "images/grocery_store_klasson/df/df7ada3a21b93d88d8fa5e9da8b279a67a1d366bbc7dbaa07a5e1994b763431b.jpg",
+   "source_path": "dataset/test/Fruit/Satsumas/Satsumas_063.jpg",
+   "label": "mandarin",
+   "pred": "orange",
+   "conf": 0.995,
+   "top3": [
+    [
+     "orange",
+     0.995
+    ],
+    [
+     "other",
+     0.0038
+    ],
+    [
+     "strawberry",
+     0.0001
+    ]
+   ],
+   "status": "ok",
+   "ood": false
+  },
+  {
+   "image": "images/grocery_store_klasson/02/028f60de91bd471070da7d70163f02fcf5998db9221d7225129a4bef144b3e41.jpg",
+   "source_path": "dataset/test/Fruit/Satsumas/Satsumas_052.jpg",
+   "label": "mandarin",
+   "pred": "orange",
+   "conf": 0.9948,
+   "top3": [
+    [
+     "orange",
+     0.9948
+    ],
+    [
+     "other",
+     0.0029
+    ],
+    [
+     "mandarin",
+     0.0009
+    ]
+   ],
+   "status": "ok",
+   "ood": false
+  },
+  {
+   "image": "images/grocery_store_klasson/7a/7a2f045df2ece87c8e7cb3f918fb7b78752623a6a2dec297a2b9f17851f5a10b.jpg",
+   "source_path": "dataset/test/Fruit/Kiwi/Kiwi_038.jpg",
+   "label": "kiwi",
+   "pred": "other",
+   "conf": 0.9934,
+   "top3": [
+    [
+     "other",
+     0.9934
+    ],
+    [
+     "kiwi",
+     0.0037
+    ],
+    [
+     "guava",
+     0.0006
+    ]
+   ],
+   "status": "not_produce",
+   "ood": false
+  },
+  {
+   "image": "images/grocery_store_klasson/9b/9b635a86bb75b932d5c07b373f63f5206052fded304c35485837d2d60f1f6b1b.jpg",
+   "source_path": "dataset/test/Fruit/Satsumas/Satsumas_010.jpg",
+   "label": "mandarin",
+   "pred": "orange",
+   "conf": 0.9934,
+   "top3": [
+    [
+     "orange",
+     0.9934
+    ],
+    [
+     "mandarin",
+     0.0025
+    ],
+    [
+     "other",
+     0.0018
+    ]
+   ],
+   "status": "ok",
+   "ood": false
+  },
+  {
+   "image": "images/grocery_store_klasson/50/5001f6b08bd2d2ffcf7280f45018a75d07d7bdad7b92e3d58814668947f3a672.jpg",
+   "source_path": "dataset/test/Fruit/Avocado/Avocado_033.jpg",
+   "label": "avocado",
+   "pred": "other",
+   "conf": 0.9933,
+   "top3": [
+    [
+     "other",
+     0.9933
+    ],
+    [
+     "avocado",
+     0.0055
+    ],
+    [
+     "apple",
+     0.0002
+    ]
+   ],
+   "status": "not_produce",
+   "ood": false
+  },
+  {
+   "image": "images/grocery_store_klasson/51/51e09259c851ac24cbe8797cbf038a2736a107fb351ab0b0dd9d7cb7f24d0083.jpg",
+   "source_path": "dataset/test/Fruit/Kiwi/Kiwi_015.jpg",
+   "label": "kiwi",
+   "pred": "other",
+   "conf": 0.9932,
+   "top3": [
+    [
+     "other",
+     0.9932
+    ],
+    [
+     "kiwi",
+     0.0035
+    ],
+    [
+     "tomato",
+     0.0009
+    ]
+   ],
+   "status": "not_produce",
+   "ood": false
+  },
+  {
+   "image": "images/grocery_store_klasson/91/91442f680c8bea490def836503d6dd5da02b8ded103e24b996f59cc4c287666f.jpg",
+   "source_path": "dataset/test/Fruit/Satsumas/Satsumas_032.jpg",
+   "label": "mandarin",
+   "pred": "orange",
+   "conf": 0.9924,
+   "top3": [
+    [
+     "orange",
+     0.9924
+    ],
+    [
+     "mandarin",
+     0.0041
+    ],
+    [
+     "other",
+     0.0008
+    ]
+   ],
+   "status": "ok",
+   "ood": false
+  },
+  {
+   "image": "images/grocery_store_klasson/5d/5d4898a8119a2c5304bfd357f824c90733d53e99879a28e3dbc2fadf55e2d928.jpg",
+   "source_path": "dataset/test/Fruit/Lemon/Lemon_015.jpg",
+   "label": "lemon",
+   "pred": "other",
+   "conf": 0.9922,
+   "top3": [
+    [
+     "other",
+     0.9922
+    ],
+    [
+     "lemon",
+     0.0024
+    ],
+    [
+     "tomato",
+     0.0011
+    ]
+   ],
+   "status": "not_produce",
+   "ood": false
+  },
+  {
+   "image": "images/grocery_store_klasson/c0/c074fce2664de04f646ed9effd9e4e83b04c44fe15338ae557e774cf28d18bf6.jpg",
+   "source_path": "dataset/test/Fruit/Nectarine/Nectarine_027.jpg",
+   "label": "nectarine",
+   "pred": "apple",
+   "conf": 0.9896,
+   "top3": [
+    [
+     "apple",
+     0.9896
+    ],
+    [
+     "nectarine",
+     0.0032
+    ],
+    [
+     "other",
+     0.0015
+    ]
+   ],
+   "status": "ok",
+   "ood": false
+  },
+  {
+   "image": "images/grocery_store_klasson/d2/d2b68b7c984e532c923c94c13b0bfac76e1cd4099ea939d109eaba5d1dca22ac.jpg",
+   "source_path": "dataset/test/Fruit/Nectarine/Nectarine_002.jpg",
+   "label": "nectarine",
+   "pred": "apple",
+   "conf": 0.9868,
+   "top3": [
+    [
+     "apple",
+     0.9868
+    ],
+    [
+     "peach",
+     0.0065
+    ],
+    [
+     "nectarine",
+     0.0014
+    ]
+   ],
+   "status": "ok",
+   "ood": false
+  },
+  {
+   "image": "images/grocery_store_klasson/57/57e9dc8b1abdce422052c7e96b657f482d2fbab2490e86a2243a41745fde06a2.jpg",
+   "source_path": "dataset/test/Fruit/Satsumas/Satsumas_036.jpg",
+   "label": "mandarin",
+   "pred": "orange",
+   "conf": 0.9856,
+   "top3": [
+    [
+     "orange",
+     0.9856
+    ],
+    [
+     "mandarin",
+     0.009
+    ],
+    [
+     "other",
+     0.0014
+    ]
+   ],
+   "status": "ok",
+   "ood": false
+  },
+  {
+   "image": "images/grocery_store_klasson/05/058d07490c678ceb32caf22e09cf7c81b3bde92a7dcb03f022380c9ca4ab357c.jpg",
+   "source_path": "dataset/test/Fruit/Satsumas/Satsumas_001.jpg",
+   "label": "mandarin",
+   "pred": "orange",
+   "conf": 0.9855,
+   "top3": [
+    [
+     "orange",
+     0.9855
+    ],
+    [
+     "other",
+     0.012
+    ],
+    [
+     "apple",
+     0.0005
+    ]
+   ],
+   "status": "ok",
+   "ood": false
+  },
+  {
+   "image": "images/grocery_store_klasson/39/39328f3c065f855ef219e98315aff1ac08f883e84775d5f331959b4901adba56.jpg",
+   "source_path": "dataset/test/Vegetables/Cucumber/Cucumber_009.jpg",
+   "label": "cucumber",
+   "pred": "tomato",
+   "conf": 0.9855,
+   "top3": [
+    [
+     "tomato",
+     0.9855
+    ],
+    [
+     "cucumber",
+     0.0043
+    ],
+    [
+     "other",
+     0.0022
+    ]
+   ],
+   "status": "ok",
+   "ood": false
+  },
+  {
+   "image": "images/grocery_store_klasson/ce/ceed4ba08b27f8d8ce052b0cb309afda2c0f791d0a0c454312bbdbf826f6783d.jpg",
+   "source_path": "dataset/test/Fruit/Lemon/Lemon_009.jpg",
+   "label": "lemon",
+   "pred": "other",
+   "conf": 0.9842,
+   "top3": [
+    [
+     "other",
+     0.9842
+    ],
+    [
+     "lemon",
+     0.0083
+    ],
+    [
+     "grape",
+     0.001
+    ]
+   ],
+   "status": "not_produce",
+   "ood": false
+  },
+  {
+   "image": "images/grocery_store_klasson/b7/b746202899d3088de92d04b9ae7382e422a82bbaa21fec20c8454030e0c4788d.jpg",
+   "source_path": "dataset/test/Vegetables/Cucumber/Cucumber_008.jpg",
+   "label": "cucumber",
+   "pred": "other",
+   "conf": 0.9832,
+   "top3": [
+    [
+     "other",
+     0.9832
+    ],
+    [
+     "tomato",
+     0.0043
+    ],
+    [
+     "cucumber",
+     0.0018
+    ]
+   ],
+   "status": "not_produce",
+   "ood": false
+  },
+  {
+   "image": "images/grocery_store_klasson/4e/4ea98b95298495795f4efd6504d3da5d158a75859f947586ddeb6ac213125f15.jpg",
+   "source_path": "dataset/test/Vegetables/Cucumber/Cucumber_022.jpg",
+   "label": "cucumber",
+   "pred": "other",
+   "conf": 0.9831,
+   "top3": [
+    [
+     "other",
+     0.9831
+    ],
+    [
+     "kiwi",
+     0.003
+    ],
+    [
+     "pepper",
+     0.0019
+    ]
+   ],
+   "status": "not_produce",
+   "ood": false
+  },
+  {
+   "image": "images/grocery_store_klasson/d8/d8dcd249d888b7cf14d2033a01aa0910d4c6f7e4a3b93996e6bcd8fd47c7b311.jpg",
+   "source_path": "dataset/test/Fruit/Mango/Mango_030.jpg",
+   "label": "mango",
+   "pred": "pear",
+   "conf": 0.9827,
+   "top3": [
+    [
+     "pear",
+     0.9827
+    ],
+    [
+     "apple",
+     0.0049
+    ],
+    [
+     "mango",
+     0.0031
+    ]
+   ],
+   "status": "ok",
+   "ood": false
+  },
+  {
+   "image": "images/grocery_store_klasson/04/0455f1c6f1d9c606814fce5e421db57eec4b42d1c07fa66ee17d42d5aa9e0abc.jpg",
+   "source_path": "dataset/test/Fruit/Nectarine/Nectarine_010.jpg",
+   "label": "nectarine",
+   "pred": "apple",
+   "conf": 0.9817,
+   "top3": [
+    [
+     "apple",
+     0.9817
+    ],
+    [
+     "nectarine",
+     0.0065
+    ],
+    [
+     "pear",
+     0.0018
+    ]
+   ],
+   "status": "ok",
+   "ood": false
+  },
+  {
+   "image": "images/grocery_store_klasson/74/747a60c1f2d0c90cf5508ad363ec35d0c877712dbe65579ef112a6e119bb1e4a.jpg",
+   "source_path": "dataset/test/Fruit/Satsumas/Satsumas_007.jpg",
+   "label": "mandarin",
+   "pred": "orange",
+   "conf": 0.9817,
+   "top3": [
+    [
+     "orange",
+     0.9817
+    ],
+    [
+     "other",
+     0.0106
+    ],
+    [
+     "lemon",
+     0.0015
+    ]
+   ],
+   "status": "ok",
+   "ood": false
+  },
+  {
+   "image": "images/grocery_store_klasson/0e/0e2594be5ba07181e1f843c21ffcfe15c6b1693eb3df1e1f2dcdf31b87067760.jpg",
+   "source_path": "dataset/test/Fruit/Satsumas/Satsumas_024.jpg",
+   "label": "mandarin",
+   "pred": "orange",
+   "conf": 0.9814,
+   "top3": [
+    [
+     "orange",
+     0.9814
+    ],
+    [
+     "other",
+     0.0068
+    ],
+    [
+     "mandarin",
+     0.0067
+    ]
+   ],
+   "status": "ok",
+   "ood": false
+  },
+  {
+   "image": "images/grocery_store_klasson/12/1210859441d5b580f5e1f9b58cf95a449ab0026b51ca626dfebb8da0442444e1.jpg",
+   "source_path": "dataset/test/Fruit/Satsumas/Satsumas_065.jpg",
+   "label": "mandarin",
+   "pred": "orange",
+   "conf": 0.9813,
+   "top3": [
+    [
+     "orange",
+     0.9813
+    ],
+    [
+     "other",
+     0.0061
+    ],
+    [
+     "tomato",
+     0.0047
+    ]
+   ],
+   "status": "ok",
+   "ood": false
+  },
+  {
+   "image": "images/grocery_store_klasson/d3/d349d8d6e29e6fcc2aa0518631bd85613b00e51fcd72963a99157f4eb0f03e25.jpg",
+   "source_path": "dataset/test/Fruit/Lemon/Lemon_028.jpg",
+   "label": "lemon",
+   "pred": "other",
+   "conf": 0.981,
+   "top3": [
+    [
+     "other",
+     0.981
+    ],
+    [
+     "lemon",
+     0.0125
+    ],
+    [
+     "tomato",
+     0.0009
+    ]
+   ],
+   "status": "not_produce",
+   "ood": false
+  },
+  {
+   "image": "images/grocery_store_klasson/e6/e64bf233ac900b7061484824c19bd4983af729c83d9fca56a52fe9a129b603ad.jpg",
+   "source_path": "dataset/test/Fruit/Lemon/Lemon_001.jpg",
+   "label": "lemon",
+   "pred": "other",
+   "conf": 0.9807,
+   "top3": [
+    [
+     "other",
+     0.9807
+    ],
+    [
+     "orange",
+     0.0127
+    ],
+    [
+     "lemon",
+     0.0019
+    ]
+   ],
+   "status": "not_produce",
+   "ood": false
+  },
+  {
+   "image": "images/grocery_store_klasson/7d/7ddb7e53d2c78e20f5b33cdb2c104a38034145f3e51d4f49fb61e8e122fbe81a.jpg",
+   "source_path": "dataset/test/Fruit/Nectarine/Nectarine_030.jpg",
+   "label": "nectarine",
+   "pred": "apple",
+   "conf": 0.9804,
+   "top3": [
+    [
+     "apple",
+     0.9804
+    ],
+    [
+     "nectarine",
+     0.006
+    ],
+    [
+     "peach",
+     0.0042
+    ]
+   ],
+   "status": "ok",
+   "ood": false
+  },
+  {
+   "image": "images/grocery_store_klasson/4c/4c7bd75f38ef3a230692a7582b8196a92742ecf5726e3b8dabc8cafef862249a.jpg",
+   "source_path": "dataset/test/Fruit/Avocado/Avocado_032.jpg",
+   "label": "avocado",
+   "pred": "other",
+   "conf": 0.9799,
+   "top3": [
+    [
+     "other",
+     0.9799
+    ],
+    [
+     "avocado",
+     0.0142
+    ],
+    [
+     "kiwi",
+     0.0014
+    ]
+   ],
+   "status": "not_produce",
+   "ood": false
+  },
+  {
+   "image": "images/grocery_store_klasson/58/589b1458acdc49c7cb95b0e7ba907086f87a859f12e6dd7e8e55f12366e0041e.jpg",
+   "source_path": "dataset/test/Fruit/Avocado/Avocado_039.jpg",
+   "label": "avocado",
+   "pred": "other",
+   "conf": 0.9778,
+   "top3": [
+    [
+     "other",
+     0.9778
+    ],
+    [
+     "avocado",
+     0.0099
+    ],
+    [
+     "mango",
+     0.0038
+    ]
+   ],
+   "status": "not_produce",
+   "ood": false
+  },
+  {
+   "image": "images/grocery_store_klasson/47/47ceb1c08be48b767b4d5666d5a449103c5df516c9307baabed57361fd7e2034.jpg",
+   "source_path": "dataset/test/Fruit/Satsumas/Satsumas_048.jpg",
+   "label": "mandarin",
+   "pred": "orange",
+   "conf": 0.9778,
+   "top3": [
+    [
+     "orange",
+     0.9778
+    ],
+    [
+     "mandarin",
+     0.007
+    ],
+    [
+     "other",
+     0.0069
+    ]
+   ],
+   "status": "ok",
+   "ood": false
+  },
+  {
+   "image": "images/grocery_store_klasson/1a/1a07fad7bec4e97cfe26f03322bbbb57d466f592f09ed64c4bda4777e452a077.jpg",
+   "source_path": "dataset/test/Fruit/Mango/Mango_021.jpg",
+   "label": "mango",
+   "pred": "pear",
+   "conf": 0.9771,
+   "top3": [
+    [
+     "pear",
+     0.9771
+    ],
+    [
+     "watermelon",
+     0.0096
+    ],
+    [
+     "nectarine",
+     0.0021
+    ]
+   ],
+   "status": "ok",
+   "ood": false
+  },
+  {
+   "image": "images/grocery_store_klasson/f2/f27d96c413de64a96b6fbf67c09b278aa8538a83cc58eb84ddfc75d6e9dcfbcf.jpg",
+   "source_path": "dataset/test/Fruit/Kiwi/Kiwi_023.jpg",
+   "label": "kiwi",
+   "pred": "other",
+   "conf": 0.9768,
+   "top3": [
+    [
+     "other",
+     0.9768
+    ],
+    [
+     "melon",
+     0.01
+    ],
+    [
+     "plum",
+     0.0029
+    ]
+   ],
+   "status": "not_produce",
+   "ood": false
+  },
+  {
+   "image": "images/grocery_store_klasson/b7/b71903b7515aea92f5246bd525aa7c6d2575df80f483578d3d6e51ad7730cd2a.jpg",
+   "source_path": "dataset/test/Fruit/Plum/Plum_015.jpg",
+   "label": "plum",
+   "pred": "other",
+   "conf": 0.9761,
+   "top3": [
+    [
+     "other",
+     0.9761
+    ],
+    [
+     "plum",
+     0.0149
+    ],
+    [
+     "kiwi",
+     0.0026
+    ]
+   ],
+   "status": "not_produce",
+   "ood": false
+  },
+  {
+   "image": "images/grocery_store_klasson/69/69a4f2a2b68bbff88f0836599d54075cdaa5c7c409694ef7c901dc2c13a43548.jpg",
+   "source_path": "dataset/test/Fruit/Pear/Conference/Conference_007.jpg",
+   "label": "pear",
+   "pred": "other",
+   "conf": 0.9758,
+   "top3": [
+    [
+     "other",
+     0.9758
+    ],
+    [
+     "mango",
+     0.0071
+    ],
+    [
+     "pear",
+     0.0032
+    ]
+   ],
+   "status": "not_produce",
+   "ood": false
+  },
+  {
+   "image": "images/grocery_store_klasson/9f/9fa0c8a14d3273c32e2623d42e2ba6ef61bab37e88b7ea74fa8d6057582db540.jpg",
+   "source_path": "dataset/test/Fruit/Pear/Anjou/Anjou_021.jpg",
+   "label": "pear",
+   "pred": "apple",
+   "conf": 0.9756,
+   "top3": [
+    [
+     "apple",
+     0.9756
+    ],
+    [
+     "pear",
+     0.0159
+    ],
+    [
+     "mandarin",
+     0.0014
+    ]
+   ],
+   "status": "ok",
+   "ood": false
+  },
+  {
+   "image": "images/grocery_store_klasson/23/236591b81bf5eafd2b9d8fef00b6d70459b970736a59fe020637a3c14bdab664.jpg",
+   "source_path": "dataset/test/Fruit/Satsumas/Satsumas_039.jpg",
+   "label": "mandarin",
+   "pred": "orange",
+   "conf": 0.9738,
+   "top3": [
+    [
+     "orange",
+     0.9738
+    ],
+    [
+     "other",
+     0.0124
+    ],
+    [
+     "pear",
+     0.0058
+    ]
+   ],
+   "status": "ok",
+   "ood": false
+  },
+  {
+   "image": "images/grocery_store_klasson/83/83b3b2ba712dbda2e0f942f97dc2558aaab6b944ce2f2889c686176d5f0d0386.jpg",
+   "source_path": "dataset/test/Fruit/Nectarine/Nectarine_023.jpg",
+   "label": "nectarine",
+   "pred": "apple",
+   "conf": 0.9723,
+   "top3": [
+    [
+     "apple",
+     0.9723
+    ],
+    [
+     "nectarine",
+     0.0169
+    ],
+    [
+     "peach",
+     0.0035
+    ]
+   ],
+   "status": "ok",
+   "ood": false
+  }
+ ]
+}

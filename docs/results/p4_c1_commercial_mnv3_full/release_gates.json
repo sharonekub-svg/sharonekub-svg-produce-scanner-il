@@ -1,0 +1,13 @@
+{
+  "passed": false,
+  "failures": [
+    "produce/orange: recall 0.696 < 0.8 (n=56)",
+    "produce/mandarin: recall 0.529 < 0.8 (n=68)",
+    "produce/avocado: recall 0.850 < 0.9 (n=40)",
+    "produce/cucumber: recall 0.667 < 0.9 (n=27)",
+    "produce/mango: recall 0.581 < 0.8 (n=31)",
+    "produce/nectarine: recall 0.771 < 0.8 (n=35)",
+    "produce/kiwi: recall 0.778 < 0.8 (n=45)",
+    "produce/lemon: recall 0.439 < 0.8 (n=41)"
+  ]
+}

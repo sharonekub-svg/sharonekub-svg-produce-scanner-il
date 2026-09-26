@@ -1,0 +1,197 @@
+{
+ "ckpt": "/home/user/TRADING-ANALIZER/runs/p4_c2_commercial_effb0/20260926-173924/best.pt",
+ "processed": "data/processed_commercial",
+ "splits": [
+  "val"
+ ],
+ "datasets": null,
+ "stress": null,
+ "n_rows": 462,
+ "n_ood": 0,
+ "temperatures": {
+  "produce": 0.5649577349665537
+ },
+ "heads": {
+  "produce": {
+   "n": 462,
+   "top1": 0.9545454545454546,
+   "top5": 1.0,
+   "macro_f1": 0.9452437357170933,
+   "balanced_accuracy": 0.9279465847536731,
+   "worst_class_recall": 0.6363636363636364,
+   "ece": 0.022142420018906234,
+   "brier": 0.06777766203048771,
+   "nll": 0.11899223923683167,
+   "aurc": 0.002715974717311685,
+   "per_class": {
+    "banana": {
+     "precision": 1.0,
+     "recall": 1.0,
+     "f1": 1.0,
+     "support": 13.0
+    },
+    "apple": {
+     "precision": 0.9130434782608695,
+     "recall": 0.984375,
+     "f1": 0.9473684210526315,
+     "support": 64.0
+    },
+    "orange": {
+     "precision": 1.0,
+     "recall": 0.8571428571428571,
+     "f1": 0.923076923076923,
+     "support": 14.0
+    },
+    "mandarin": {
+     "precision": 0.7692307692307693,
+     "recall": 0.6666666666666666,
+     "f1": 0.7142857142857142,
+     "support": 15.0
+    },
+    "avocado": {
+     "precision": 1.0,
+     "recall": 1.0,
+     "f1": 1.0,
+     "support": 11.0
+    },
+    "tomato": {
+     "precision": 1.0,
+     "recall": 1.0,
+     "f1": 1.0,
+     "support": 27.0
+    },
+    "cucumber": {
+     "precision": 1.0,
+     "recall": 1.0,
+     "f1": 1.0,
+     "support": 9.0
+    },
+    "mango": {
+     "precision": 1.0,
+     "recall": 0.875,
+     "f1": 0.9333333333333333,
+     "support": 8.0
+    },
+    "peach": {
+     "precision": 1.0,
+     "recall": 0.8181818181818182,
+     "f1": 0.9,
+     "support": 11.0
+    },
+    "nectarine": {
+     "precision": 1.0,
+     "recall": 1.0,
+     "f1": 1.0,
+     "support": 5.0
+    },
+    "watermelon": {
+     "precision": 1.0,
+     "recall": 1.0,
+     "f1": 1.0,
+     "support": 12.0
+    },
+    "melon": {
+     "precision": 0.9629629629629629,
+     "recall": 0.8387096774193549,
+     "f1": 0.896551724137931,
+     "support": 31.0
+    },
+    "grape": {
+     "precision": null,
+     "recall": null,
+     "f1": null,
+     "support": 0.0
+    },
+    "strawberry": {
+     "precision": null,
+     "recall": null,
+     "f1": null,
+     "support": 0.0
+    },
+    "pomegranate": {
+     "precision": 1.0,
+     "recall": 1.0,
+     "f1": 1.0,
+     "support": 9.0
+    },
+    "pear": {
+     "precision": 1.0,
+     "recall": 0.9545454545454546,
+     "f1": 0.9767441860465117,
+     "support": 22.0
+    },
+    "kiwi": {
+     "precision": 0.9230769230769231,
+     "recall": 1.0,
+     "f1": 0.9600000000000001,
+     "support": 12.0
+    },
+    "plum": {
+     "precision": 1.0,
+     "recall": 1.0,
+     "f1": 1.0,
+     "support": 3.0
+    },
+    "persimmon": {
+     "precision": null,
+     "recall": null,
+     "f1": null,
+     "support": 0.0
+    },
+    "lemon": {
+     "precision": 0.875,
+     "recall": 0.6363636363636364,
+     "f1": 0.7368421052631579,
+     "support": 11.0
+    },
+    "guava": {
+     "precision": null,
+     "recall": null,
+     "f1": null,
+     "support": 0.0
+    },
+    "pepper": {
+     "precision": 1.0,
+     "recall": 1.0,
+     "f1": 1.0,
+     "support": 32.0
+    },
+    "other": {
+     "precision": 0.9444444444444444,
+     "recall": 1.0,
+     "f1": 0.9714285714285714,
+     "support": 153.0
+    }
+   }
+  }
+ },
+ "decision": {
+  "thresholds": {
+   "produce_min_prob": 0.7,
+   "produce_min_margin": 0.15,
+   "ood_min_energy": null,
+   "head_min_prob": 0.55,
+   "spoiled_alert_prob": 0.4
+  },
+  "in_dist_coverage_ok": 0.6017316017316018,
+  "in_dist_accuracy_when_ok": 0.9820143884892086,
+  "status_counts_in_dist": {
+   "unsure": 22,
+   "ok": 278,
+   "not_produce": 162
+  }
+ },
+ "tuned_thresholds": {
+  "produce_min_prob": 0.3,
+  "ood_min_energy": 3.367138385772705,
+  "tuned_on": {
+   "processed": "data/processed_commercial",
+   "splits": [
+    "val"
+   ],
+   "target_accuracy": 0.95,
+   "coverage_at_threshold": 1.0,
+   "accuracy_at_threshold": 0.9545454545454546
+  }
+ }
+}

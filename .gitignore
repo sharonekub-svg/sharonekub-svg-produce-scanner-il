@@ -1,0 +1,10 @@
+node_modules/
+__pycache__/
+*.pyc
+.pytest_cache/
+data/raw/
+data/processed*/
+runs/
+exports/
+/weights/
+runs_*.log

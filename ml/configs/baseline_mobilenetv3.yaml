@@ -1,0 +1,47 @@
+# Phase 3 baseline. Option A (shared ripeness head).
+# Swap model.backbone / ripeness_mode to run the benchmark matrix in docs/model-strategy.md.
+experiment: baseline_mnv3_shared
+seed: 1337
+deterministic: true
+
+data:
+  processed_dir: data/processed_commercial   # or data/processed_research (research-only datasets)
+  datasets: null          # null = every dataset in the manifest (already licence-gated at build time)
+  image_size: 224
+
+model:
+  backbone: mobilenetv3_large_100   # candidates: efficientnet_b0, mobilenetv4_conv_medium, convnext_nano, fastvit_t8, efficientvit_b1
+  pretrained: true                  # see docs/licensing.md: pretrained-weights licence risk
+  ripeness_mode: shared             # shared (A) | per_produce (C)
+  dropout: 0.2
+
+train:
+  epochs: 30
+  batch_size: 64
+  lr: 1.0e-3
+  weight_decay: 0.05
+  warmup_frac: 0.1
+  label_smoothing: 0.05
+  num_workers: 4
+  head_weights: {produce: 1.0, ripeness: 1.0, freshness: 1.0, visual_spoilage: 0.5}
+
+augment:
+  crop_scale: [0.35, 1.0]
+  rotation_deg: 30
+  brightness: 0.35
+  contrast: 0.30
+  saturation: 0.15   # bounded: saturation/hue carry ripeness information
+  hue: 0.01
+  shadow_p: 0.3
+  blur_p: 0.2
+  noise_p: 0.3
+  jpeg_p: 0.5
+
+gates:   # evaluated on val; the same gates are re-run on real-world test before release
+  produce:
+    min_macro_f1: 0.85
+    min_class_recall: {default: 0.80, banana: 0.90, apple: 0.90, tomato: 0.90, avocado: 0.90, cucumber: 0.90}
+    max_ece: 0.05
+  freshness:
+    min_class_recall: {default: 0.75, spoiled: 0.90}
+    max_ece: 0.08

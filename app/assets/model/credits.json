@@ -1,0 +1,12 @@
+{
+  "model_id": "p4_c1_commercial_mnv3_full@13d796f04dca",
+  "datasets": [
+    {
+      "dataset_id": "grocery_store_klasson",
+      "name": "Grocery Store Dataset (Klasson et al. WACV 2019)",
+      "license": "MIT",
+      "url": "https://github.com/marcusklasson/GroceryStoreDataset",
+      "attribution": "Klasson, Zhang, Kjellström. A Hierarchical Grocery Store Image Dataset with Visual and Semantic Labels. WACV 2019. MIT License."
+    }
+  ]
+}

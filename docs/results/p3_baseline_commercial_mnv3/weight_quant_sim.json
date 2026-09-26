@@ -1,0 +1,32 @@
+{
+ "fp32": {
+  "top1": 0.8492,
+  "macro_f1": 0.7879,
+  "worst_class_recall": 0.3235,
+  "agreement_with_fp32": 1.0
+ },
+ "fp16": {
+  "top1": 0.8498,
+  "macro_f1": 0.788,
+  "worst_class_recall": 0.3235,
+  "agreement_with_fp32": 0.9988
+ },
+ "palettize_8": {
+  "top1": 0.821,
+  "macro_f1": 0.7391,
+  "worst_class_recall": 0.0735,
+  "agreement_with_fp32": 0.9413
+ },
+ "palettize_6": {
+  "top1": 0.7025,
+  "macro_f1": 0.568,
+  "worst_class_recall": 0.0,
+  "agreement_with_fp32": 0.7805
+ },
+ "palettize_4": {
+  "top1": 0.284,
+  "macro_f1": 0.0349,
+  "worst_class_recall": 0.0,
+  "agreement_with_fp32": 0.3298
+ }
+}

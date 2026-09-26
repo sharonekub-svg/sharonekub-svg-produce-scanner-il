@@ -1,0 +1,26 @@
+{
+  "n": 1704,
+  "splits": [
+    "test"
+  ],
+  "variants": {
+    "model.onnx": {
+      "size_mb": 16.52,
+      "top1": 0.892,
+      "macro_f1": 0.8512,
+      "worst_class_recall": 0.439,
+      "ece": 0.0391,
+      "top1_agreement_with_torch": 1.0,
+      "max_abs_logit_diff": 0.0,
+      "host_cpu_latency": {
+        "ms_p50": 4.79,
+        "ms_p90": 4.92,
+        "threads": "1 thread(s)"
+      }
+    }
+  },
+  "torch_reference_top1": 0.892,
+  "ProduceScanner.mlpackage": {
+    "size_mb": 8.2
+  }
+}

@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Produce Labeler</title>
+<style>
+  :root { --bg:#fafaf7; --fg:#1d1d1b; --muted:#6b6b66; --line:#dcdcd5; --accent:#2f7d4f; --sel:#e3f1e8; }
+  @media (prefers-color-scheme: dark) { :root { --bg:#161615; --fg:#ececea; --muted:#9a9a94; --line:#33332f; --accent:#6cc592; --sel:#1f3527; } }
+  * { box-sizing: border-box; }
+  body { margin:0; font:15px/1.4 system-ui, sans-serif; background:var(--bg); color:var(--fg); }
+  header { display:flex; gap:12px; align-items:center; padding:10px 16px; border-bottom:1px solid var(--line); flex-wrap:wrap; }
+  main { display:grid; grid-template-columns: minmax(0,1fr) 360px; gap:16px; padding:16px; }
+  @media (max-width: 800px) { main { grid-template-columns: 1fr; } }
+  #img { width:100%; max-height:75vh; object-fit:contain; background:#000; border-radius:8px; }
+  fieldset { border:1px solid var(--line); border-radius:8px; margin:0 0 10px; padding:8px 10px; }
+  legend { color:var(--muted); font-size:13px; }
+  .opts { display:flex; flex-wrap:wrap; gap:6px; }
+  .opts button { border:1px solid var(--line); background:transparent; color:inherit; padding:6px 10px; border-radius:6px; cursor:pointer; }
+  .opts button.on { background:var(--sel); border-color:var(--accent); }
+  input, select { font:inherit; padding:5px 6px; border:1px solid var(--line); border-radius:6px; background:transparent; color:inherit; width:100%; }
+  .row { display:grid; grid-template-columns: 110px 1fr; gap:6px; align-items:center; margin-bottom:6px; }
+  .muted { color:var(--muted); font-size:13px; }
+  .primary { background:var(--accent); color:#fff; border:0; padding:8px 14px; border-radius:6px; cursor:pointer; }
+  kbd { border:1px solid var(--line); border-radius:3px; padding:0 4px; font-size:12px; }
+</style>
+</head>
+<body>
+<header>
+  <strong>תיוג פירות וירקות</strong>
+  <label>תיקיית תמונות <input id="dir" type="file" webkitdirectory multiple style="width:auto"></label>
+  <span id="progress" class="muted"></span>
+  <span style="flex:1"></span>
+  <button class="primary" id="export">ייצוא annotations.csv</button>
+</header>
+<main>
+  <section>
+    <img id="img" alt="">
+    <div class="muted" id="path"></div>
+    <div class="muted">מקשים: <kbd>←</kbd> הבא, <kbd>→</kbd> הקודם, <kbd>1</kbd>–<kbd>4</kbd> בשילות, <kbd>q</kbd>/<kbd>w</kbd>/<kbd>e</kbd> טריות, <kbd>0</kbd> לא ידוע. דרגו לפי מגע וטבלאות ההשוואה, לא לפי התמונה בלבד.</div>
+  </section>
+  <section>
+    <div class="row"><label>מתייג</label><input id="annotator" placeholder="שם"></div>
+    <div class="row"><label>מזהה פרי</label><input id="fruit"></div>
+    <div class="row"><label>סוג</label><select id="produce"></select></div>
+    <div class="row"><label>זן</label><input id="variety" placeholder="Hass, Ettinger, Cavendish..."></div>
+    <div class="row"><label>תאריך / יום</label><div style="display:flex;gap:6px"><input id="date" type="date"><input id="day" type="number" min="0" style="width:70px"></div></div>
+    <div class="row"><label>מכשיר</label><input id="device"></div>
+    <div class="row"><label>תאורה</label><select id="lighting"><option value="daylight">אור יום</option><option value="kitchen_led">LED מטבח</option><option value="dim">עמום</option></select></div>
+    <div class="row"><label>רקע</label><select id="background"><option>counter</option><option>in_hand</option><option>fruit_bowl</option><option>plastic_bag</option><option>plate</option><option>market_stall</option><option>supermarket_shelf</option><option>other</option></select></div>
+    <div class="row"><label>מרחק (ס"מ)</label><input id="distance" type="number" value="40"></div>
+    <div class="row"><label>אחסון</label><input id="storage" placeholder="counter / fridge"></div>
+    <fieldset><legend>בשילות</legend><div class="opts" id="ripeness"></div></fieldset>
+    <fieldset><legend>טריות</legend><div class="opts" id="freshness"></div></fieldset>
+    <fieldset><legend>סימני קלקול</legend><div class="opts" id="visual_spoilage"></div></fieldset>
+    <div class="row"><label>בדיקת חיתוך</label><select id="cut"><option value="n/a">לא נחתך</option><option>ok</option><option>internal_browning</option><option>mould</option><option>rot</option></select></div>
+    <div class="row"><label>הערות</label><input id="notes"></div>
+  </section>
+</main>
+<script>
+const PRODUCE = ["banana","apple","orange","mandarin","avocado","tomato","cucumber","mango","peach","nectarine","watermelon","melon","grape","strawberry","pomegranate","pear","kiwi","plum","persimmon","lemon","guava","pepper"];
+const HEADS = {
+  ripeness: [["unripe","לא בשל"],["partially_ripe","כמעט בשל"],["ripe","בשל"],["overripe","בשל מדי"],["","לא ידוע"]],
+  freshness: [["fresh","טרי"],["declining","פחות טרי"],["spoiled","מקולקל"],["","לא ידוע"]],
+  visual_spoilage: [["none","אין"],["mild","קל (<10%)"],["severe","משמעותי / עובש"],["","לא ידוע"]],
+};
+const COLS = ["path","fruit_instance_id","produce","variety","capture_date","day","device","lighting","background","distance_cm","ripeness","freshness","visual_spoilage","storage","cut_check","annotator","notes"];
+const $ = id => document.getElementById(id);
+let files = [], i = 0, labels = {};
+PRODUCE.forEach(p => $("produce").add(new Option(p, p)));
+for (const [h, opts] of Object.entries(HEADS)) {
+  for (const [v, t] of opts) {
+    const b = document.createElement("button"); b.textContent = t; b.dataset.v = v;
+    b.onclick = () => { cur()[h] = v; render(); }; $(h).appendChild(b);
+  }
+}
+// Select the collection's `images` folder: paths are exported as images/<fruit_id>/<file>, matching labels.csv.
+function relPath(f) { return f.webkitRelativePath; }
+function dayFrom(prev, fid, date) {
+  if (prev.fruit_instance_id !== fid || prev.day === "" || !prev.capture_date || !date) return "";
+  return String(+prev.day + Math.round((Date.parse(date) - Date.parse(prev.capture_date)) / 86400000));
+}
+function cur() {
+  const p = relPath(files[i]);
+  if (!labels[p]) {
+    // images/<fruit_instance_id>/<YYYYMMDD>_<shot>.jpg
+    const parts = p.split("/"), fid = parts.length >= 2 ? parts[parts.length - 2] : "";
+    const m = parts[parts.length - 1].match(/^(\d{4})(\d{2})(\d{2})_/);
+    const prev = labels[relPath(files[Math.max(0, i - 1)])] || {};
+    const date = m ? `${m[1]}-${m[2]}-${m[3]}` : "";
+    labels[p] = { path: p, fruit_instance_id: fid, produce: fid.split("-")[0] || prev.produce || "banana",
+      variety: prev.fruit_instance_id === fid ? prev.variety : "", capture_date: date,
+      day: dayFrom(prev, fid, date), device: prev.device || "", lighting: prev.lighting || "daylight",
+      background: prev.background || "counter", distance_cm: prev.distance_cm || "40", storage: prev.storage || "",
+      ripeness: "", freshness: "", visual_spoilage: "", cut_check: "n/a", notes: "" };
+  }
+  return labels[p];
+}
+const FIELDS = {fruit:"fruit_instance_id",produce:"produce",variety:"variety",date:"capture_date",day:"day",device:"device",
+  lighting:"lighting",background:"background",distance:"distance_cm",storage:"storage",cut:"cut_check",notes:"notes"};
+for (const [id, k] of Object.entries(FIELDS)) $(id).oninput = e => { cur()[k] = e.target.value; };
+function render() {
+  if (!files.length) return;
+  const l = cur();
+  $("img").src = URL.createObjectURL(files[i]);
+  $("path").textContent = l.path;
+  $("progress").textContent = `${i + 1} / ${files.length} · תויגו ${Object.values(labels).filter(x => x.freshness || x.ripeness).length}`;
+  for (const [id, k] of Object.entries(FIELDS)) $(id).value = l[k];
+  for (const h of Object.keys(HEADS)) for (const b of $(h).children) b.classList.toggle("on", b.dataset.v === l[h]);
+}
+$("dir").onchange = e => {
+  files = [...e.target.files].filter(f => /\.(jpe?g|png|heic)$/i.test(f.name)).sort((a, b) => a.webkitRelativePath.localeCompare(b.webkitRelativePath));
+  i = 0; render();
+};
+document.addEventListener("keydown", e => {
+  if (e.target.tagName === "INPUT" || !files.length) return;
+  const l = cur();
+  if (e.key === "ArrowLeft") { i = Math.min(files.length - 1, i + 1); }
+  else if (e.key === "ArrowRight") { i = Math.max(0, i - 1); }
+  else if ("1234".includes(e.key)) l.ripeness = HEADS.ripeness[+e.key - 1][0];
+  else if (e.key === "q") l.freshness = "fresh"; else if (e.key === "w") l.freshness = "declining"; else if (e.key === "e") l.freshness = "spoiled";
+  else if (e.key === "0") { l.ripeness = ""; }
+  else return;
+  render();
+});
+$("export").onclick = () => {
+  const who = $("annotator").value.trim();
+  if (!who) { alert("נא למלא שם מתייג"); return; }
+  const esc = v => /[",\n]/.test(v) ? `"${String(v).replace(/"/g, '""')}"` : v;
+  const rows = Object.values(labels).map(l => COLS.map(c => esc(c === "annotator" ? who : (l[c] ?? ""))).join(","));
+  const blob = new Blob(["﻿" + COLS.join(",") + "\n" + rows.join("\n") + "\n"], {type: "text/csv"});
+  const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = `annotations_${who}.csv`; a.click();
+};
+</script>
+</body>
+</html>
