@@ -13,7 +13,7 @@ Everything here is implemented as code or config in the repo. Anything that need
 | Item | Where | Status |
 |---|---|---|
 | iOS build profile | `app/eas.json` (`development`, `preview` = TestFlight, `production`) | ✅ in repo |
-| Feedback ("was this right?") | `app/src/feedback.ts` → `scan_feedback` table; migration `server/supabase/migrations/001_feedback.sql` (insert-only RLS, no photos, no identifiers) | ✅ code. **Human:** create the Supabase project, apply the migration, put URL and anon key in `app.json → extra.feedback` |
+| Feedback ("was this right?") | `app/src/feedback.ts` → `scan_feedback` table; migration `server/supabase/migrations/001_feedback.sql` (insert-only RLS, no photos, no identifiers) | ✅ Live: project `produce-scanner-il` (Frankfurt), migration applied, advisors clean, publishable key wired in `app.json` ([server/supabase/README.md](../server/supabase/README.md)) |
 | Beta dashboard | `feedback_daily` view (accuracy by model × produce per day), readable with the service role only | ✅ SQL |
 | Photo donation for the real-world set | Not in the app. Collected only through the contributor process in `data-collection-protocol.md` | by design |
 | **Human actions** | Apple developer account; `eas build --profile preview`; recruit testers; publish privacy policy (Hebrew) | — |

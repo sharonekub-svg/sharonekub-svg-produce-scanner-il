@@ -52,9 +52,8 @@ app/                         mobile app (Phase 7 — not started by design)
 
 ```bash
 python3 -m venv .venv && . .venv/bin/activate
-pip install -r requirements.txt           # torch/timm needed for training + model tests
-pip install onnx onnxruntime onnxscript   # export tests (optional)
-python -m pytest -q                       # 49 tests: registry/licence rules, mapping, dedup, splits,
+pip install -r requirements-dev.txt       # everything (requirements.txt = deployed API runtime only)
+python -m pytest -q                       # tests: registry/licence rules, mapping, dedup, splits,
                                           # metrics, calibration, decision, model, e2e smoke
 
 # 1. See what may be used for what

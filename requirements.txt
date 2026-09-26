@@ -1,9 +1,8 @@
+# Runtime dependencies of the deployed inference API (server/app.py). Kept minimal on purpose:
+# this file is what Vercel installs. Training/dev dependencies: requirements-dev.txt.
+fastapi>=0.110
+python-multipart>=0.0.9
+onnxruntime>=1.17
 numpy>=1.26
 pillow>=10
 pyyaml>=6
-pytest>=8
-jsonschema>=4
-# training / export (optional; see README)
-torch>=2.2
-torchvision>=0.17
-timm>=1.0

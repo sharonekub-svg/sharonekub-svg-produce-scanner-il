@@ -1,0 +1,20 @@
+# Only the inference API is deployed. Keep the function bundle small.
+app/
+docs/
+tests/
+tools/
+scripts/
+ml/training/
+ml/export/
+ml/preprocessing/
+ml/configs/
+ml/evaluation/evaluate.py
+ml/evaluation/metrics.py
+ml/evaluation/gates.py
+ml/evaluation/agreement.py
+data/dataset_registry.csv
+data/license_signoffs.json
+server/Dockerfile
+server/supabase/
+requirements-dev.txt
+.github/

@@ -19,7 +19,13 @@ export async function sendFeedback(f: Feedback): Promise<boolean> {
   try {
     const res = await fetch(`${url.replace(/\/$/, '')}/rest/v1/scan_feedback`, {
       method: 'POST',
-      headers: { apikey: key, Authorization: `Bearer ${key}`, 'Content-Type': 'application/json', Prefer: 'return=minimal' },
+      // Publishable keys (sb_publishable_…) go in `apikey` only; legacy JWT anon keys also as Bearer.
+      headers: {
+        apikey: key,
+        ...(key.startsWith('eyJ') ? { Authorization: `Bearer ${key}` } : {}),
+        'Content-Type': 'application/json',
+        Prefer: 'return=minimal',
+      },
       body: JSON.stringify({ ...f, app_version: Constants.expoConfig?.version ?? null }),
     });
     return res.ok;

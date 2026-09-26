@@ -1,0 +1,11 @@
+# Everything needed to run the full test suite, train, evaluate and export.
+-r requirements.txt
+pytest>=8
+jsonschema>=4
+httpx>=0.27
+uvicorn>=0.29
+torch>=2.2
+torchvision>=0.17
+timm>=1.0
+onnx>=1.15
+onnxscript>=0.1

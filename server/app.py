@@ -3,7 +3,9 @@
 Runs OUR exported ONNX model (no third-party AI API). Stateless: the uploaded photo is
 processed in memory and never written to disk or logged.
 
-  PRODUCE_BUNDLE=exports/v1 uvicorn server.app:app --host 0.0.0.0 --port 8080
+  uvicorn server.app:app --host 0.0.0.0 --port 8080          # uses server/model/ (shipped model)
+  PRODUCE_BUNDLE=exports/v1 uvicorn server.app:app ...       # or any exported bundle
+  Deployed on Vercel via pyproject.toml [tool.vercel] entrypoint.
 
 Endpoints
   GET  /healthz           -> {"ok": true, "model_id": ...}
@@ -65,7 +67,8 @@ class Engine:
 
 @lru_cache(maxsize=1)
 def engine() -> Engine:
-    return Engine(Path(os.environ.get("PRODUCE_BUNDLE", "exports/latest")))
+    default = Path(__file__).resolve().parent / "model"
+    return Engine(Path(os.environ.get("PRODUCE_BUNDLE", default)))
 
 
 async def _read_image(file: UploadFile) -> Image.Image:
@@ -79,6 +82,12 @@ async def _read_image(file: UploadFile) -> Image.Image:
         return ImageOps.exif_transpose(img).convert("RGB")
     except (UnidentifiedImageError, OSError):
         raise HTTPException(400, "not a decodable image")
+
+
+@app.get("/")
+def root():
+    return {"service": "produce-scanner inference API", "endpoints": ["/healthz", "/v1/bundle", "POST /v1/analyze", "POST /v1/scan"],
+            "note": "Visual assessment only; not a food-safety guarantee."}
 
 
 @app.get("/healthz")
