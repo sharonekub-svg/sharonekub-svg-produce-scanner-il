@@ -24,8 +24,12 @@ class QualityResult:
 
 
 def _luma(img: Image.Image, size: int) -> np.ndarray:
+    """ITU-R 601 luma, longest side downscaled to `size` with antialiased BILINEAR.
+    Deliberately explicit (not Image.thumbnail) so the Swift port (ProduceCore.swift) can match it."""
     im = img.convert("L")
-    im.thumbnail((size, size))
+    scale = size / max(im.size)
+    if scale < 1:
+        im = im.resize((max(1, round(im.width * scale)), max(1, round(im.height * scale))), Image.Resampling.BILINEAR)
     return np.asarray(im, dtype=np.float64)
 
 

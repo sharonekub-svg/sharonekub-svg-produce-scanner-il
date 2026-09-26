@@ -28,3 +28,17 @@ jobs:
       - run: npm ci
       - run: npm run typecheck
       - run: npm test -- --ci
+
+  swift-core:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.11" }
+      - uses: swift-actions/setup-swift@v2
+        with: { swift-version: "6.0" }
+      - run: pip install numpy pillow pyyaml
+      - name: Swift core == Python server (tensor + quality gate)
+        run: scripts/test_swift_core.sh tests/fixtures/images/*.jpg
+      - name: Type-check iOS module against API stubs
+        run: scripts/typecheck_swift_module.sh
