@@ -1,6 +1,13 @@
 {
-  "model_id": "p5_c8_quality@d3b41f3aff93",
+  "model_id": "p5_c9_quality_all@7cc1686cb150",
   "datasets": [
+    {
+      "dataset_id": "apple_good_bad",
+      "name": "Good and bad classification of apple (Mandal & Sarkar)",
+      "license": "CC BY 4.0",
+      "url": "https://data.mendeley.com/datasets/n2gsjb3vk3/1",
+      "attribution": ""
+    },
     {
       "dataset_id": "bananas_psolymos",
       "name": "Data set of ripening bananas (Solymos 2022)",
@@ -9,11 +16,25 @@
       "attribution": "Peter Solymos (R package bananas 0.1.0)"
     },
     {
+      "dataset_id": "fresh_rotten_mendeley_bd",
+      "name": "Fresh and Rotten Fruits Dataset for Machine-Based Evaluation of Fruit Quality",
+      "license": "CC BY 4.0",
+      "url": "https://data.mendeley.com/datasets/bdd69gyhv8/1",
+      "attribution": "Data in Brief 2022 (Bangladesh)"
+    },
+    {
       "dataset_id": "fruitnet_indian",
       "name": "FruitNet: Indian fruits with quality (Good/Bad/Mixed)",
       "license": "CC BY 4.0",
       "url": "https://data.mendeley.com/datasets/b6fftwbr2v/3",
       "attribution": "Meshram & Patil (Data in Brief 2021)"
+    },
+    {
+      "dataset_id": "grapenet",
+      "name": "GrapeNet: An Image Dataset for Grape Variety and Quality Classification",
+      "license": "CC BY 4.0",
+      "url": "https://data.mendeley.com/datasets/3j3zzsc7wb/1",
+      "attribution": ""
     },
     {
       "dataset_id": "grocery_store_klasson",
@@ -35,6 +56,13 @@
       "license": "MIT",
       "url": "https://github.com/softwaremill/lemon-dataset",
       "attribution": "SoftwareMill (Maciej Adamiak); DOI 10.5281/zenodo.3965568"
+    },
+    {
+      "dataset_id": "mango_banana_ripe",
+      "name": "Mango and Banana Dataset (Ripe Unripe)",
+      "license": "CC BY 4.0",
+      "url": "https://data.mendeley.com/datasets/y3649cmgg6/3",
+      "attribution": ""
     }
   ]
 }

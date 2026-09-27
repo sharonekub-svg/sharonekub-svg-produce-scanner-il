@@ -200,6 +200,40 @@ C9 therefore moves FruitNet to quality-only.
 
 Released as **`v0.3-dev`** (internal; the identification gates still fail). It is the first build where the app shows a 1–10 score, for avocado, apple, orange, pomegranate and guava.
 
+## Round 2: C9 → `v0.4-dev` (27 Sep 2026)
+
+**Data** (9 datasets, all CC BY 4.0 or MIT, verified):
+- Identification and quality: Grocery Store, plus expert-graded fresh/rotten photos of 7 fruits.
+- Quality only, with a fixed epoch share: FruitNet (moved here after the C8 orange regression), Hass avocado, psolymos bananas, lemons, apple good/bad, GrapeNet, mango/banana ripeness.
+- 12 epochs; validation on a fixed 4,000-photo subsample.
+
+| Fruit | Head | Held-out test | Gate |
+|---|---|---|---|
+| Apple | freshness (full: expert "rotten" = spoiled) | 238 / 230, balanced accuracy 0.983, AUROC 1.00 | ✅ |
+| Banana | ripeness | 266 photos, 100% (grouped by capture session; same-dataset test) | ✅ new |
+| Grape | freshness | 1,417 / 1,171, 0.868, AUROC 0.981 | ✅ new |
+| Orange | freshness | 0.967, AUROC 0.993 | ✅ |
+| Pomegranate | freshness | 0.987 | ✅ |
+| Guava | freshness | 0.980 | ✅ |
+| Avocado (Hass) | ripeness | 1,470, 69.9% exact (bar 70%), 99.9% within one stage | ❌ (C8 passed at 71%) |
+| Strawberry | freshness | 17 / 20 photos: too few to count as evidence | ❌ |
+| Banana | freshness | 21 bad photos: too few | ❌ |
+| Lemon | defects | 0.831 | ❌ |
+
+**Identification** on Grocery (same rows):
+- top-1 0.871, macro-F1 0.826, accuracy when shown 95.3%, shown 52.5%;
+- avocado recall 0.85 → 0.93, pomegranate 0.40 → 0.72;
+- orange 0.38 and mandarin 0.50 are still weak.
+
+The lower "shown" rate means more "not sure" answers. That is the next thing to fix: the confidence floor and the class balance.
+
+Released as **`v0.4-dev`** (internal). Scores are live for **apple, banana (ripeness), grapes, orange, pomegranate and guava**. Avocado drops out until it clears the ripeness bar again. The bar is not lowered after seeing results.
+
+Smoke test through the server:
+- rotten apple → 1/10, "discard" (with the Ministry of Health mould rule);
+- banana → 8/10, "ripe";
+- orange → 10/10.
+
 ## Phase 5 — validation (stress proxies on the P3 model, Grocery official test, n = 1,704)
 
 The Israeli real-world set does not exist yet. These are **synthetic proxies** (`ml/evaluation/evaluate.py --stress`), not a substitute for it.

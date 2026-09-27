@@ -95,6 +95,10 @@ def main() -> None:
     data_root = REPO_ROOT / cfg["data"]["processed_dir"]
     tr_rows = dataset.select_rows(cfg, {"train"}, data_root)
     va_rows = dataset.select_rows(cfg, {"val"}, data_root)
+    if cfg["data"].get("val_max_rows") and len(va_rows) > cfg["data"]["val_max_rows"]:
+        # Deterministic subsample (by content hash) to bound per-epoch validation cost on CPU.
+        k = cfg["data"]["val_max_rows"]
+        va_rows = sorted(va_rows, key=lambda r: r["sha256"])[:: max(1, len(va_rows) // k)][:k]
     (run_dir / "supported_heads.json").write_text(json.dumps(supported_heads_from_manifest(
         tr_rows, ripeness_visual={k: m.get("ripeness_visual", "not_applicable") for k, m in tax.produce_meta.items()}), indent=2))
     # Quality-only auxiliary datasets: {dataset_id: share of every epoch}. Produce loss masked, and a fixed
