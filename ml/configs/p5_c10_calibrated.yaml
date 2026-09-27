@@ -1,0 +1,68 @@
+# C10 = C9 + fixes: produce calibration/epoch selection on identification datasets only (aux produce labels
+# masked in val), more identification share (aux 0.52 -> 0.46), 16 epochs, more Hass share for avocado ripeness.
+# Quality-only aux: Hass avocado, psolymos bananas, lemons, apple good/bad, GrapeNet, mango/banana ripeness. Manifest v5.
+experiment: p5_c10_calibrated
+seed: 1337
+deterministic: true
+threads: 4
+data:
+  processed_dir: data/processed_commercial_v5
+  val_max_rows: 4000
+  datasets: null
+  image_size: 224
+model:
+  backbone: mobilenetv3_large_100
+  pretrained: true
+  pretrained_file: weights/mobilenetv3_large_100_ra-f55367f5.pth
+  freeze_blocks: 0
+  ripeness_mode: shared
+  dropout: 0.2
+train:
+  epochs: 16
+  batch_size: 32
+  lr: 0.002
+  backbone_lr_mult: 0.3
+  weight_decay: 0.05
+  warmup_frac: 0.1
+  label_smoothing: 0.1
+  balance_alpha: 0.5
+  samples_per_epoch: 6000
+  # quality-only studio sets (produce loss masked, fixed share of each epoch)
+  aux_datasets:
+    fruitnet_indian: 0.14
+    hass_avocado_ripening: 0.14
+    bananas_psolymos: 0.02
+    lemon_softwaremill: 0.03
+    apple_good_bad: 0.03
+    grapenet: 0.05
+    mango_banana_ripe: 0.05
+  num_workers: 3
+  head_weights:
+    produce: 1.0
+    ripeness: 1.0
+    freshness: 1.0
+    visual_spoilage: 0.5
+augment:
+  crop_scale:
+  - 0.35
+  - 1.0
+  rotation_deg: 30
+  brightness: 0.35
+  contrast: 0.3
+  saturation: 0.15
+  hue: 0.01
+  shadow_p: 0.3
+  blur_p: 0.2
+  noise_p: 0.3
+  jpeg_p: 0.5
+gates:
+  produce:
+    min_macro_f1: 0.85
+    min_class_recall:
+      default: 0.8
+      banana: 0.9
+      apple: 0.9
+      tomato: 0.9
+      avocado: 0.9
+      cucumber: 0.9
+    max_ece: 0.05

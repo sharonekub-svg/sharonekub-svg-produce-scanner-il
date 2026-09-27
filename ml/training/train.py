@@ -93,19 +93,26 @@ def main() -> None:
     if cfg.get("threads"):
         torch.set_num_threads(cfg["threads"])
     data_root = REPO_ROOT / cfg["data"]["processed_dir"]
+    aux = cfg["train"].get("aux_datasets") or {}
     tr_rows = dataset.select_rows(cfg, {"train"}, data_root)
     va_rows = dataset.select_rows(cfg, {"val"}, data_root)
     if cfg["data"].get("val_max_rows") and len(va_rows) > cfg["data"]["val_max_rows"]:
-        # Deterministic subsample (by content hash) to bound per-epoch validation cost on CPU.
+        # Bound per-epoch validation cost on CPU: keep every primary (identification) row - they drive
+        # calibration and epoch selection - and subsample aux rows deterministically (by content hash).
         k = cfg["data"]["val_max_rows"]
-        va_rows = sorted(va_rows, key=lambda r: r["sha256"])[:: max(1, len(va_rows) // k)][:k]
+        prim = [r for r in va_rows if r.get("dataset_id") not in aux]
+        rest = sorted((r for r in va_rows if r.get("dataset_id") in aux), key=lambda r: r["sha256"])
+        room = max(0, k - len(prim))
+        va_rows = prim + (rest[:: max(1, len(rest) // room)][:room] if room else [])
     (run_dir / "supported_heads.json").write_text(json.dumps(supported_heads_from_manifest(
         tr_rows, ripeness_visual={k: m.get("ripeness_visual", "not_applicable") for k, m in tax.produce_meta.items()}), indent=2))
     # Quality-only auxiliary datasets: {dataset_id: share of every epoch}. Produce loss masked, and a fixed
     # sampling share so a large lab set (e.g. 14k Hass avocado photos) cannot dominate the epoch.
-    aux = cfg["train"].get("aux_datasets") or {}
     tr = dataset.ManifestDataset(tr_rows, data_root, tax, augment.build_train_transform(cfg), no_produce_loss=set(aux))
-    va = dataset.ManifestDataset(va_rows, data_root, tax, augment.build_eval_transform(cfg))
+    # Validation hides produce labels of aux datasets too: identification was not trained on them, so
+    # counting them would inflate the produce temperature (C9: T 0.53 -> 0.94, fewer answers shown) and
+    # skew best-epoch selection.
+    va = dataset.ManifestDataset(va_rows, data_root, tax, augment.build_eval_transform(cfg), no_produce_loss=set(aux))
     g = torch.Generator().manual_seed(cfg["seed"])
     bs, nw = cfg["train"]["batch_size"], cfg["train"].get("num_workers", 4)
     # Class-balanced sampling on produce: weight ~ count^-alpha (alpha=0 -> uniform, 1 -> fully balanced).
