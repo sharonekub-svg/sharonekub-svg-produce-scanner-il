@@ -178,10 +178,45 @@ ul.why { margin:0; padding-inline-start:18px; color:var(--ink-2); }
 .pills { display:flex; flex-wrap:wrap; gap:6px; margin-top:6px; }
 .pill { background:var(--ok-bg); color:#12603A; border-radius:14px; padding:4px 10px; font-size:14px; font-weight:700; }
 .small { color:var(--muted); font-size:13px; }
+.ico { width:22px; height:22px; fill:none; stroke:currentColor; stroke-width:1.9; stroke-linecap:round; stroke-linejoin:round; }
+.side .ico { width:24px; height:24px; }
+.tbtns { display:flex; gap:8px; }
+.iconbtn { position:relative; }
+.hdot { position:absolute; top:9px; inset-inline-end:9px; width:8px; height:8px; border-radius:50%; background:var(--brand-2); box-shadow:0 0 0 2px rgba(0,0,0,.35); }
+.welcome .rated { margin-top:18px; display:inline-flex; align-items:center; gap:8px; padding:7px 12px; border-radius:18px;
+  background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.12); color:rgba(255,255,255,.85); font-size:13px; }
+.welcome .rated #ratedList { font-size:18px; letter-spacing:2px; }
+.welcome img { animation:float 5s ease-in-out infinite; }
+@keyframes float { 50% { transform:translateY(-5px); } }
+.share { margin-inline-start:auto; width:40px; height:40px; border-radius:20px; display:grid; place-items:center; color:var(--brand); background:var(--ok-bg); flex:none; }
+.share .ico { width:20px; height:20px; }
+.hist { list-style:none; margin:10px 0 0; padding:0; display:grid; gap:8px; }
+.hist li { display:flex; align-items:center; gap:12px; background:var(--card); border:1px solid var(--line); border-radius:var(--r-md); padding:8px 10px; }
+.hist img { width:48px; height:48px; border-radius:12px; object-fit:cover; background:#ddd; flex:none; }
+.hist .t { flex:1; min-width:0; }
+.hist .t b { display:block; font-size:16px; }
+.hist .t span { color:var(--muted); font-size:13px; }
+.hist .sc { width:44px; height:44px; border-radius:50%; display:grid; place-items:center; font-weight:900; font-size:18px; color:#fff; flex:none; }
+.hist .sc.none { background:#E9ECE6; color:var(--muted); font-size:15px; }
+.empty { text-align:center; color:var(--muted); padding:26px 8px; }
+.empty .big { font-size:42px; }
+.toast { position:fixed; left:50%; bottom:calc(24px + var(--safe-b)); transform:translate(-50%, 20px); opacity:0; z-index:50; background:#111; color:#fff;
+  padding:10px 16px; border-radius:20px; font-size:14px; white-space:nowrap; transition:.25s; pointer-events:none; }
+.toast.on { opacity:1; transform:translate(-50%, 0); }
+@media (prefers-reduced-motion: reduce) { .welcome img { animation:none; } }
 @media (prefers-reduced-motion: reduce) { .sheet, .scrim, .scan, .guide { transition:none; } .analyzing .scanline { animation:none; top:50%; } .flash.on { animation:none; } }
 </style>
 </head>
 <body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v5"/><circle cx="12" cy="7.8" r=".6" fill="currentColor"/></symbol>
+    <symbol id="i-hist" viewBox="0 0 24 24"><path d="M3.5 12a8.5 8.5 0 1 0 2.5-6"/><path d="M3 4v4h4"/><path d="M12 8v4.2l3 1.8"/></symbol>
+    <symbol id="i-img" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="3"/><circle cx="9" cy="10" r="1.8"/><path d="m4 18 5.5-5.5 4 4L16 14l4 4"/></symbol>
+    <symbol id="i-spark" viewBox="0 0 24 24"><path d="M12 3.5 13.8 9l5.7 1.9-5.7 1.9L12 18.5l-1.8-5.7L4.5 10.9 10.2 9z"/><path d="M19 3v3M17.5 4.5h3"/></symbol>
+    <symbol id="i-share" viewBox="0 0 24 24"><path d="M12 15V3.5"/><path d="m7.5 8 4.5-4.5L16.5 8"/><path d="M5 12.5V18a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-5.5"/></symbol>
+  </defs>
+</svg>
 <div id="stage">
   <video id="video" playsinline muted autoplay></video>
   <img id="still" alt="">
@@ -189,7 +224,8 @@ ul.why { margin:0; padding-inline-start:18px; color:var(--ink-2); }
 
   <div class="top">
     <div class="brand"><img src="/web/icon-192.png" alt="">סורק פירות</div>
-    <button class="iconbtn" id="infoBtn" aria-label="איך זה עובד">i</button>
+    <div class="tbtns"><button class="iconbtn" id="histBtn" aria-label="הסריקות שלי"><svg class="ico"><use href="#i-hist"/></svg><span class="hdot" id="hdot" hidden></span></button>
+    <button class="iconbtn" id="infoBtn" aria-label="איך זה עובד"><svg class="ico"><use href="#i-info"/></svg></button></div>
   </div>
 
   <div class="guide" id="guide" hidden><span class="dot"></span><span id="guideText">כוונו אל פרי אחד</span></div>
@@ -199,6 +235,7 @@ ul.why { margin:0; padding-inline-start:18px; color:var(--ink-2); }
     <h1>מה מצב הפרי?</h1>
     <p>צלמו פרי או ירק – וקבלו זיהוי, ציון איכות <span class="nw">מ-1 עד 10</span> והמלצה מה לעשות איתו.</p>
     <div class="facts"><span>⚡ תוך שניות</span><span>🔒 בלי הרשמה</span><span>🇮🇱 בעברית</span></div>
+    <div class="rated" id="rated" hidden><span class="lbl">ציון איכות זמין ל:</span><span id="ratedList"></span></div>
   </div>
 
   <div class="viewfinder" id="vf" hidden>
@@ -209,11 +246,11 @@ ul.why { margin:0; padding-inline-start:18px; color:var(--ink-2); }
 
   <div class="bottom">
     <div class="controls">
-      <div class="side"><button class="iconbtn" id="galBtn" aria-label="בחירת תמונה מהגלריה">🖼️</button><span>גלריה</span></div>
+      <div class="side"><button class="iconbtn" id="galBtn" aria-label="בחירת תמונה מהגלריה"><svg class="ico"><use href="#i-img"/></svg></button><span>גלריה</span></div>
       <button class="scan" id="scan"><span class="ring" aria-hidden="true"></span>סרוק פרי</button>
-      <div class="side"><button class="iconbtn" id="sampleBtn" aria-label="תמונות לדוגמה">🍌</button><span>דוגמה</span></div>
+      <div class="side"><button class="iconbtn" id="sampleBtn" aria-label="תמונות לדוגמה"><svg class="ico"><use href="#i-spark"/></svg></button><span>דוגמה</span></div>
     </div>
-    <div class="trust">הערכה חזותית בלבד · בלי הרשמה · בלי פרסומות · התמונה לא נשמרת</div>
+    <div class="trust">הערכה חזותית בלבד · התמונה לא נשמרת בשרת</div>
   </div>
   <input id="gal" type="file" accept="image/*">
   <input id="cam" type="file" accept="image/*" capture="environment">
@@ -347,7 +384,7 @@ function gauge(score) {
   const [, col] = verdict(score), off = c * (1 - score / 10);
   return `<div class="gauge" role="img" aria-label="ציון ${score} מתוך 10"><svg viewBox="0 0 92 92"><circle cx="46" cy="46" r="${r}" fill="none" stroke="#E9ECE6" stroke-width="9"/>
     <circle class="arc" cx="46" cy="46" r="${r}" fill="none" stroke="${col}" stroke-width="9" stroke-linecap="round" stroke-dasharray="${c}" stroke-dashoffset="${reduceMotion ? off : c}" data-off="${off}" style="transition:stroke-dashoffset .9s cubic-bezier(.2,.8,.2,1)"/></svg>
-    <div class="num"><div><b style="color:${col}">${score}</b><small>מתוך 10</small></div></div></div>`;
+    <div class="num"><div><b style="color:${col}" data-to="${score}">${reduceMotion ? score : 0}</b><small>מתוך 10</small></div></div></div>`;
 }
 
 function scale(key, head) {
@@ -370,7 +407,8 @@ function renderResult(r) {
   last = r;
   const assessed = r.recommendation && r.recommendation !== 'inspect';
   let h = `<div class="head"><img class="thumb" src="${photoUrl}" alt=""><div><div class="name" id="sheetTitle">${esc(r.emoji)} ${esc(r.produce_he)}</div>
-           <div class="conf">${confText(r.produce_confidence)}</div></div></div>`;
+           <div class="conf">${confText(r.produce_confidence)}</div></div>
+           <button class="share" id="share" aria-label="שיתוף התוצאה"><svg class="ico"><use href="#i-share"/></svg></button></div>`;
   // 1. Score + verdict (Yuka): the number, a word, and one line of why.
   if (r.score != null) {
     const [word, col] = verdict(r.score);
@@ -402,6 +440,9 @@ function renderResult(r) {
         <div class="fb" id="fb"><span>הזיהוי נכון?</span><button aria-label="כן" data-v="1">👍</button><button aria-label="לא" data-v="0">👎</button></div></div>`;
   openSheet(h, r.produce_he);
   requestAnimationFrame(() => requestAnimationFrame(() => document.querySelectorAll('.arc').forEach(a => a.style.strokeDashoffset = a.dataset.off)));
+  document.querySelectorAll('.num b[data-to]').forEach(countUp);
+  $('share').onclick = () => shareResult(r);
+  addHistory(r);
   $('again').onclick = () => { firstAngle = null; reset(); };
   document.querySelectorAll('#fb button').forEach(b => b.onclick = () => sendFeedback(b.dataset.v === '1'));
 }
@@ -461,15 +502,70 @@ async function showInfo() {
   $('close').onclick = () => closeSheet();
 }
 
+/* ---------- delight: count-up, share, history (on this device only) ---------- */
+function countUp(el) {
+  const to = +el.dataset.to; if (reduceMotion) { el.textContent = to; return; }
+  const t0 = performance.now(), d = 850;
+  const step = t => { const k = Math.min(1, (t - t0) / d); el.textContent = Math.round(to * (1 - Math.pow(1 - k, 3))); if (k < 1) requestAnimationFrame(step); };
+  requestAnimationFrame(step);
+}
+function toast(msg) {
+  let t = document.querySelector('.toast'); if (!t) { t = document.createElement('div'); t.className = 'toast'; t.setAttribute('role', 'status'); document.body.appendChild(t); }
+  t.textContent = msg; t.classList.add('on'); clearTimeout(t._h); t._h = setTimeout(() => t.classList.remove('on'), 2200);
+}
+async function shareResult(r) {
+  const sc = r.score != null ? ` – ציון ${r.score}/10 (${verdict(r.score)[0]})` : '';
+  const text = `${r.emoji || ''} ${r.produce_he}${sc}. ${r.recommendation_he || ''}\nהערכה חזותית בלבד.`;
+  const data = { title: 'סורק פירות', text, url: location.origin };
+  try {
+    if (navigator.share) { await navigator.share(data); return; }
+    await navigator.clipboard.writeText(`${text}\n${location.origin}`); toast('הועתק – אפשר להדביק ולשתף');
+  } catch {}
+}
+const HKEY = 'hist', HMAX = 20;
+const loadHist = () => { try { return JSON.parse(store.get(HKEY) || '[]'); } catch { return []; } };
+async function thumbOf(url) {
+  try {
+    const im = new Image(); im.src = url; await im.decode();
+    const c = document.createElement('canvas'), n = 96, s = Math.min(im.naturalWidth, im.naturalHeight);
+    c.width = c.height = n; c.getContext('2d').drawImage(im, (im.naturalWidth - s) / 2, (im.naturalHeight - s) / 2, s, s, 0, 0, n, n);
+    return c.toDataURL('image/jpeg', 0.7);
+  } catch { return ''; }
+}
+async function addHistory(r) {
+  const h = loadHist();
+  h.unshift({ t: Date.now(), he: r.produce_he, emoji: r.emoji, score: r.score ?? null, rec: r.recommendation_he || '', img: await thumbOf(photoUrl) });
+  store.set(HKEY, JSON.stringify(h.slice(0, HMAX))); $('hdot').hidden = false;
+}
+const ago = t => { const m = Math.round((Date.now() - t) / 60000);
+  return m < 1 ? 'עכשיו' : m < 60 ? `לפני ${m} דק׳` : m < 1440 ? `לפני ${Math.round(m / 60)} שע׳` : new Date(t).toLocaleDateString('he-IL', { day: 'numeric', month: 'short' }); };
+function showHistory() {
+  if (busy) return; $('hdot').hidden = true;
+  const h = loadHist();
+  const list = h.length ? `<ul class="hist">${h.map(e => `<li><img src="${e.img || '/web/icon-192.png'}" alt="">
+      <div class="t"><b>${esc(e.emoji)} ${esc(e.he)}</b><span>${esc(ago(e.t))}${e.rec ? ' · ' + esc(e.rec) : ''}</span></div>
+      ${e.score != null ? `<span class="sc" style="background:${verdict(e.score)[1]}">${e.score}</span>` : '<span class="sc none">—</span>'}</li>`).join('')}</ul>
+      <p class="small" style="margin-top:10px">נשמר רק במכשיר הזה.</p>`
+    : `<div class="empty"><div class="big">🧺</div>עוד לא סרקתם כלום.<br>הסריקות האחרונות יופיעו כאן.</div>`;
+  openSheet(`<div class="info"><h2 id="sheetTitle">הסריקות שלי</h2>${list}
+    <div class="actions">${h.length ? '<button class="secondary" id="clearH">ניקוי ההיסטוריה</button>' : ''}<button class="primary" id="close">חזרה למצלמה</button></div></div>`, 'הסריקות שלי');
+  $('close').onclick = () => closeSheet();
+  if ($('clearH')) $('clearH').onclick = () => { store.set(HKEY, '[]'); showHistory(); };
+}
+function showRated(b) {
+  const em = Object.keys(b.supported_heads || {}).map(p => b.produce_meta?.[p]?.emoji).filter(Boolean);
+  if (em.length) { $('ratedList').textContent = em.join(''); $('rated').hidden = false; }
+}
+
 /* ---------- wiring ---------- */
 function fromFile(e) { const f = e.target.files[0]; e.target.value = ''; if (f) analyze(f); }
 $('scan').onclick = onScan;
 $('galBtn').onclick = () => $('gal').click();
 $('gal').onchange = fromFile; $('cam').onchange = fromFile;
-$('sampleBtn').onclick = showSamples; $('infoBtn').onclick = showInfo;
+$('sampleBtn').onclick = showSamples; $('infoBtn').onclick = showInfo; $('histBtn').onclick = showHistory;
 $('scrim').onclick = () => { if (!$('stage').classList.contains('analyzing')) reset(); };
 document.addEventListener('keydown', e => { if (e.key === 'Escape') reset(); });
-fetch('/v1/bundle').then(r => r.json()).then(b => bundle = b).catch(() => {});
+fetch('/v1/bundle').then(r => r.json()).then(b => { bundle = b; showRated(b); }).catch(() => {});
 // Returning users who allowed the camera go straight to the live viewfinder (principle 1); others see the welcome.
 if (store.get('cam') === 'ok') startCamera();
 if ('serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js').catch(() => {});

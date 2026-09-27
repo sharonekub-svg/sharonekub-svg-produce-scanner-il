@@ -36,7 +36,7 @@ train:
     apple_good_bad: 0.03
     grapenet: 0.05
     mango_banana_ripe: 0.05
-  num_workers: 3
+  num_workers: 2
   head_weights:
     produce: 1.0
     ripeness: 1.0

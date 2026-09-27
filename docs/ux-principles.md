@@ -84,15 +84,18 @@ Until the iOS build exists, the API root serves `server/web/index.html`: the sam
 - **Result sheet (Yuka + Vivino):** photo + name + confidence in words. Then the **score ring 1–10** with a verdict word (מצוין / טוב / סביר / חלש / לא מומלץ) and one-line reason. Then the action, toned green/amber/red, then "מה בדקנו בתמונה" scales (ripeness, freshness, defects) and the general storage tip. "למה?" and "מה עוד זה יכול להיות?" (top 3) are collapsed. The disclaimer is always present. A sticky "סרוק פרי נוסף" sits beside 👍/👎 (Supabase feedback).
 - **Unsure / retake / not produce / offline:** the user's photo with a status badge, one sentence, and one button. Unsure offers "צלמו מזווית נוספת"; the server combines both photos (`image2`).
 - **Samples (Google Lens "try it"):** three licensed photos let someone see the full result without fruit at hand.
+- **History ("הסריקות שלי", Yuka/PictureThis):** the last 20 results as thumbnail + name + score dot, stored only on this device (localStorage), clearable.
+- **Share (Vivino):** one button on the result: the Web Share sheet, or copy to clipboard with a toast. It shares name, score, verdict and the "visual only" line.
+- **Motion:** the score ring fills and the number counts up. The welcome icon floats gently. All motion is off under reduced-motion. Icons are line SVGs, not emoji.
 - **"איך זה עובד":** the three steps, which fruits have a validated score (live from `/v1/bundle`), what a photo cannot know, privacy, and dataset credits.
 
 | Welcome | Live camera | Analysing | Result | Spoiled |
 |---|---|---|---|---|
 | ![](img/ux/web_welcome.jpg) | ![](img/ux/web_camera.jpg) | ![](img/ux/web_analysing.jpg) | ![](img/ux/web_banana.jpg) | ![](img/ux/web_rotten.jpg) |
 
-| Unsure | Samples | How it works |
-|---|---|---|
-| ![](img/ux/web_unsure.jpg) | ![](img/ux/web_samples.jpg) | ![](img/ux/web_info.jpg) |
+| Unsure | Samples | History | How it works |
+|---|---|---|---|
+| ![](img/ux/web_unsure.jpg) | ![](img/ux/web_samples.jpg) | ![](img/ux/web_history.jpg) | ![](img/ux/web_info.jpg) |
 
 ## What we adopted, and from where
 
