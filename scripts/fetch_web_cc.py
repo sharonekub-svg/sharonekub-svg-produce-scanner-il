@@ -4,6 +4,7 @@ keeping ONLY licences that allow commercial use without share-alike: CC0, Public
 
   python scripts/fetch_web_cc.py openverse --query "overripe banana" --tag banana:overripe --max 300
   python scripts/fetch_web_cc.py commons --category "Rotting tomatoes" --tag tomato:rotting --max 300
+  python scripts/fetch_web_cc.py plan            # every produce type: data/web_cc_queries.json
 
 Needs network access to api.openverse.org / commons.wikimedia.org + upload.wikimedia.org + the
 original image hosts (e.g. live.staticflickr.com) — see docs/research/dataset-search-2026-09.md §E.
@@ -139,12 +140,30 @@ def save(items, tag: str, out: Path = OUT) -> int:
 
 def main() -> int:
     ap = argparse.ArgumentParser()
-    ap.add_argument("provider", choices=["openverse", "commons"])
+    ap.add_argument("provider", choices=["openverse", "commons", "plan"])
     ap.add_argument("--query", help="openverse search text")
     ap.add_argument("--category", help="commons category name without 'Category:'")
-    ap.add_argument("--tag", required=True, help="search hint, e.g. banana:overripe (NOT a label)")
+    ap.add_argument("--tag", help="search hint, e.g. banana:overripe (NOT a label)")
+    ap.add_argument("--plan", type=Path, default=ROOT / "data/web_cc_queries.json")
     ap.add_argument("--max", type=int, default=200)
     a = ap.parse_args()
+    if a.provider == "plan":
+        plan = json.loads(a.plan.read_text(encoding="utf-8"))
+        total = 0
+        for q in plan["queries"]:
+            it = (openverse_items(q["query"], plan["per_query_max"]) if q["provider"] == "openverse"
+                  else commons_items(q["category"], plan["per_query_max"]))
+            try:
+                n = save(it, q["tag"])
+            except Exception as e:  # noqa: BLE001 - report and continue with the next query
+                print("query failed", q, e, file=sys.stderr)
+                continue
+            total += n
+            print(f"{q['tag']:<28} {q.get('query') or q.get('category')!r}: {n}")
+        print(total, "images saved to", OUT)
+        return 0
+    if not a.tag:
+        ap.error("--tag is required")
     items = openverse_items(a.query, a.max) if a.provider == "openverse" else commons_items(a.category, a.max)
     print(save(items, a.tag), "images saved to", OUT)
     return 0

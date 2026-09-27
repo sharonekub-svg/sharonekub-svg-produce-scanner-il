@@ -31,6 +31,21 @@ CC BY 4.0 allows commercial use with attribution. Each one still needs its prima
 
 The **"CC BY" printed on a Data in Brief article covers the article, not the images.** The dataset's own page is what counts.
 
+### B2. More candidates, by fruit (all on hosts blocked here; licence to verify on each landing page)
+
+| Produce | Candidate | Content | Note |
+|---|---|---|---|
+| Apple | [Good and bad classification of apple](https://data.mendeley.com/datasets/n2gsjb3vk3/1) | good vs bad (mould, bruise, cut, rot) | Freshness/spoilage. Apple ripeness is not visual. |
+| Apple | Healthy-defective fruits ([paper](https://pmc.ncbi.nlm.nih.gov/articles/PMC10537567/)) | fresh / bruise / rot / scab | Early bruises are invisible in RGB (produce-science.md) |
+| Grapes | [GrapeNet](https://data.mendeley.com/datasets/3j3zzsc7wb/1) | 25,425 photos, 3 varieties, freshness subcategories | Freshness |
+| Pomegranate, grapes and 14 more | [Fresh and rotten fruits for machine-based quality evaluation](https://data.mendeley.com/datasets/bdd69gyhv8/1) | 3,200 photos, 16 fresh/rotten classes | Freshness |
+| Pomegranate | [Pomegranate images](https://data.mendeley.com/datasets/kgwsthf2w6/5) | 5,857, growth stages on the tree | Orchard, off-domain |
+| Peach | [Hairy peach ripeness](https://www.scidb.cn/en/detail?dataSetId=d44f02c0fb6543eba6210f39b36240ff) | 1,245 smartphone photos, 3 stages | Orchard, but smartphone. Peach is `cultivar_dependent`. |
+| Cucumber | Cucumber disease and freshness (Zenodo, DOI 10.5281/zenodo.16816441) | CC BY 4.0 (reported) | Freshness |
+| Several | [Multimodal perishable fruits and vegetables](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC12925515/) | Daily sRGB + thermal, unripe → spoiled | Time series: the right design for freshness |
+| Watermelon / melon | [Qilin watermelon](https://github.com/crf0409/watermelon_eval) | Photos + tapping sound + sugar | CC BY-NC (rejected). It also shows watermelon ripeness is in the sound, not the image. |
+| Pear, plum, kiwi, persimmon, guava, pepper, zucchini | Nothing licence-clean with quality labels found | — | Use the web-CC crawl (§E) + our own collection |
+
 ## C. Rejected (and why)
 
 | Source | Reason |
@@ -72,7 +87,11 @@ For the "strong" produce in [produce-science.md](produce-science.md), official c
 
 This source is **real-world and phone-like**: kitchens, markets, rot and mould, the imagery public datasets lack. It needs grading, but grading about 200 photos per fruit and state takes about an hour each.
 
-First crawl plan (hint → what graders confirm):
+**Crawl plan for every produce type:** `data/web_cc_queries.json` holds 149 queries, run by `python scripts/fetch_web_cc.py plan`.
+- Every type gets identification and rot/mould queries.
+- Unripe/ripe/overripe queries run **only** for types whose ripeness is visible (`ripeness_visual` = strong or cultivar_dependent). Apples, pears, citrus, melons, watermelon, grapes, pomegranate, persimmon, cucumber and pepper get no ripeness hints, because colour carries no ripeness evidence for them (test: `test_plan_covers_every_supported_produce`).
+
+Examples (hint → what graders confirm):
 
 | Query / category | Hint | Graded into |
 |---|---|---|

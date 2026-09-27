@@ -1,0 +1,751 @@
+{
+ "_about": "Openverse/Commons crawl plan for scripts/fetch_web_cc.py plan. Tags are SEARCH HINTS for graders, never labels. Ripeness queries only where produce ripeness_visual is strong/cultivar_dependent (docs/research/produce-science.md); spoilage queries for every type (mould/rot is visible on all produce).",
+ "per_query_max": 150,
+ "queries": [
+  {
+   "provider": "openverse",
+   "query": "banana",
+   "tag": "banana:id"
+  },
+  {
+   "provider": "openverse",
+   "query": "banana market",
+   "tag": "banana:id"
+  },
+  {
+   "provider": "openverse",
+   "query": "banana kitchen",
+   "tag": "banana:id"
+  },
+  {
+   "provider": "openverse",
+   "query": "rotten banana",
+   "tag": "banana:spoiled"
+  },
+  {
+   "provider": "openverse",
+   "query": "moldy banana",
+   "tag": "banana:spoiled"
+  },
+  {
+   "provider": "openverse",
+   "query": "unripe banana",
+   "tag": "banana:unripe"
+  },
+  {
+   "provider": "openverse",
+   "query": "ripe banana",
+   "tag": "banana:ripe"
+  },
+  {
+   "provider": "openverse",
+   "query": "overripe banana",
+   "tag": "banana:overripe"
+  },
+  {
+   "provider": "openverse",
+   "query": "apple",
+   "tag": "apple:id"
+  },
+  {
+   "provider": "openverse",
+   "query": "apple market",
+   "tag": "apple:id"
+  },
+  {
+   "provider": "openverse",
+   "query": "apple kitchen",
+   "tag": "apple:id"
+  },
+  {
+   "provider": "openverse",
+   "query": "rotten apple",
+   "tag": "apple:spoiled"
+  },
+  {
+   "provider": "openverse",
+   "query": "moldy apple",
+   "tag": "apple:spoiled"
+  },
+  {
+   "provider": "openverse",
+   "query": "orange",
+   "tag": "orange:id"
+  },
+  {
+   "provider": "openverse",
+   "query": "orange market",
+   "tag": "orange:id"
+  },
+  {
+   "provider": "openverse",
+   "query": "orange kitchen",
+   "tag": "orange:id"
+  },
+  {
+   "provider": "openverse",
+   "query": "rotten orange",
+   "tag": "orange:spoiled"
+  },
+  {
+   "provider": "openverse",
+   "query": "moldy orange",
+   "tag": "orange:spoiled"
+  },
+  {
+   "provider": "openverse",
+   "query": "clementine mandarin",
+   "tag": "mandarin:id"
+  },
+  {
+   "provider": "openverse",
+   "query": "clementine mandarin market",
+   "tag": "mandarin:id"
+  },
+  {
+   "provider": "openverse",
+   "query": "clementine mandarin kitchen",
+   "tag": "mandarin:id"
+  },
+  {
+   "provider": "openverse",
+   "query": "rotten clementine mandarin",
+   "tag": "mandarin:spoiled"
+  },
+  {
+   "provider": "openverse",
+   "query": "moldy clementine mandarin",
+   "tag": "mandarin:spoiled"
+  },
+  {
+   "provider": "openverse",
+   "query": "avocado",
+   "tag": "avocado:id"
+  },
+  {
+   "provider": "openverse",
+   "query": "avocado market",
+   "tag": "avocado:id"
+  },
+  {
+   "provider": "openverse",
+   "query": "avocado kitchen",
+   "tag": "avocado:id"
+  },
+  {
+   "provider": "openverse",
+   "query": "rotten avocado",
+   "tag": "avocado:spoiled"
+  },
+  {
+   "provider": "openverse",
+   "query": "moldy avocado",
+   "tag": "avocado:spoiled"
+  },
+  {
+   "provider": "openverse",
+   "query": "unripe avocado",
+   "tag": "avocado:unripe"
+  },
+  {
+   "provider": "openverse",
+   "query": "ripe avocado",
+   "tag": "avocado:ripe"
+  },
+  {
+   "provider": "openverse",
+   "query": "overripe avocado",
+   "tag": "avocado:overripe"
+  },
+  {
+   "provider": "openverse",
+   "query": "tomato",
+   "tag": "tomato:id"
+  },
+  {
+   "provider": "openverse",
+   "query": "tomato market",
+   "tag": "tomato:id"
+  },
+  {
+   "provider": "openverse",
+   "query": "tomato kitchen",
+   "tag": "tomato:id"
+  },
+  {
+   "provider": "openverse",
+   "query": "rotten tomato",
+   "tag": "tomato:spoiled"
+  },
+  {
+   "provider": "openverse",
+   "query": "moldy tomato",
+   "tag": "tomato:spoiled"
+  },
+  {
+   "provider": "openverse",
+   "query": "unripe tomato",
+   "tag": "tomato:unripe"
+  },
+  {
+   "provider": "openverse",
+   "query": "ripe tomato",
+   "tag": "tomato:ripe"
+  },
+  {
+   "provider": "openverse",
+   "query": "overripe tomato",
+   "tag": "tomato:overripe"
+  },
+  {
+   "provider": "openverse",
+   "query": "cucumber",
+   "tag": "cucumber:id"
+  },
+  {
+   "provider": "openverse",
+   "query": "cucumber market",
+   "tag": "cucumber:id"
+  },
+  {
+   "provider": "openverse",
+   "query": "cucumber kitchen",
+   "tag": "cucumber:id"
+  },
+  {
+   "provider": "openverse",
+   "query": "rotten cucumber",
+   "tag": "cucumber:spoiled"
+  },
+  {
+   "provider": "openverse",
+   "query": "moldy cucumber",
+   "tag": "cucumber:spoiled"
+  },
+  {
+   "provider": "openverse",
+   "query": "mango",
+   "tag": "mango:id"
+  },
+  {
+   "provider": "openverse",
+   "query": "mango market",
+   "tag": "mango:id"
+  },
+  {
+   "provider": "openverse",
+   "query": "mango kitchen",
+   "tag": "mango:id"
+  },
+  {
+   "provider": "openverse",
+   "query": "rotten mango",
+   "tag": "mango:spoiled"
+  },
+  {
+   "provider": "openverse",
+   "query": "moldy mango",
+   "tag": "mango:spoiled"
+  },
+  {
+   "provider": "openverse",
+   "query": "unripe mango",
+   "tag": "mango:unripe"
+  },
+  {
+   "provider": "openverse",
+   "query": "ripe mango",
+   "tag": "mango:ripe"
+  },
+  {
+   "provider": "openverse",
+   "query": "overripe mango",
+   "tag": "mango:overripe"
+  },
+  {
+   "provider": "openverse",
+   "query": "peach",
+   "tag": "peach:id"
+  },
+  {
+   "provider": "openverse",
+   "query": "peach market",
+   "tag": "peach:id"
+  },
+  {
+   "provider": "openverse",
+   "query": "peach kitchen",
+   "tag": "peach:id"
+  },
+  {
+   "provider": "openverse",
+   "query": "rotten peach",
+   "tag": "peach:spoiled"
+  },
+  {
+   "provider": "openverse",
+   "query": "moldy peach",
+   "tag": "peach:spoiled"
+  },
+  {
+   "provider": "openverse",
+   "query": "unripe peach",
+   "tag": "peach:unripe"
+  },
+  {
+   "provider": "openverse",
+   "query": "ripe peach",
+   "tag": "peach:ripe"
+  },
+  {
+   "provider": "openverse",
+   "query": "overripe peach",
+   "tag": "peach:overripe"
+  },
+  {
+   "provider": "openverse",
+   "query": "nectarine",
+   "tag": "nectarine:id"
+  },
+  {
+   "provider": "openverse",
+   "query": "nectarine market",
+   "tag": "nectarine:id"
+  },
+  {
+   "provider": "openverse",
+   "query": "nectarine kitchen",
+   "tag": "nectarine:id"
+  },
+  {
+   "provider": "openverse",
+   "query": "rotten nectarine",
+   "tag": "nectarine:spoiled"
+  },
+  {
+   "provider": "openverse",
+   "query": "moldy nectarine",
+   "tag": "nectarine:spoiled"
+  },
+  {
+   "provider": "openverse",
+   "query": "unripe nectarine",
+   "tag": "nectarine:unripe"
+  },
+  {
+   "provider": "openverse",
+   "query": "ripe nectarine",
+   "tag": "nectarine:ripe"
+  },
+  {
+   "provider": "openverse",
+   "query": "overripe nectarine",
+   "tag": "nectarine:overripe"
+  },
+  {
+   "provider": "openverse",
+   "query": "watermelon",
+   "tag": "watermelon:id"
+  },
+  {
+   "provider": "openverse",
+   "query": "watermelon market",
+   "tag": "watermelon:id"
+  },
+  {
+   "provider": "openverse",
+   "query": "watermelon kitchen",
+   "tag": "watermelon:id"
+  },
+  {
+   "provider": "openverse",
+   "query": "rotten watermelon",
+   "tag": "watermelon:spoiled"
+  },
+  {
+   "provider": "openverse",
+   "query": "moldy watermelon",
+   "tag": "watermelon:spoiled"
+  },
+  {
+   "provider": "openverse",
+   "query": "melon cantaloupe",
+   "tag": "melon:id"
+  },
+  {
+   "provider": "openverse",
+   "query": "melon cantaloupe market",
+   "tag": "melon:id"
+  },
+  {
+   "provider": "openverse",
+   "query": "melon cantaloupe kitchen",
+   "tag": "melon:id"
+  },
+  {
+   "provider": "openverse",
+   "query": "rotten melon cantaloupe",
+   "tag": "melon:spoiled"
+  },
+  {
+   "provider": "openverse",
+   "query": "moldy melon cantaloupe",
+   "tag": "melon:spoiled"
+  },
+  {
+   "provider": "openverse",
+   "query": "grapes",
+   "tag": "grape:id"
+  },
+  {
+   "provider": "openverse",
+   "query": "grapes market",
+   "tag": "grape:id"
+  },
+  {
+   "provider": "openverse",
+   "query": "grapes kitchen",
+   "tag": "grape:id"
+  },
+  {
+   "provider": "openverse",
+   "query": "rotten grapes",
+   "tag": "grape:spoiled"
+  },
+  {
+   "provider": "openverse",
+   "query": "moldy grapes",
+   "tag": "grape:spoiled"
+  },
+  {
+   "provider": "openverse",
+   "query": "strawberry",
+   "tag": "strawberry:id"
+  },
+  {
+   "provider": "openverse",
+   "query": "strawberry market",
+   "tag": "strawberry:id"
+  },
+  {
+   "provider": "openverse",
+   "query": "strawberry kitchen",
+   "tag": "strawberry:id"
+  },
+  {
+   "provider": "openverse",
+   "query": "rotten strawberry",
+   "tag": "strawberry:spoiled"
+  },
+  {
+   "provider": "openverse",
+   "query": "moldy strawberry",
+   "tag": "strawberry:spoiled"
+  },
+  {
+   "provider": "openverse",
+   "query": "unripe strawberry",
+   "tag": "strawberry:unripe"
+  },
+  {
+   "provider": "openverse",
+   "query": "ripe strawberry",
+   "tag": "strawberry:ripe"
+  },
+  {
+   "provider": "openverse",
+   "query": "overripe strawberry",
+   "tag": "strawberry:overripe"
+  },
+  {
+   "provider": "openverse",
+   "query": "pomegranate",
+   "tag": "pomegranate:id"
+  },
+  {
+   "provider": "openverse",
+   "query": "pomegranate market",
+   "tag": "pomegranate:id"
+  },
+  {
+   "provider": "openverse",
+   "query": "pomegranate kitchen",
+   "tag": "pomegranate:id"
+  },
+  {
+   "provider": "openverse",
+   "query": "rotten pomegranate",
+   "tag": "pomegranate:spoiled"
+  },
+  {
+   "provider": "openverse",
+   "query": "moldy pomegranate",
+   "tag": "pomegranate:spoiled"
+  },
+  {
+   "provider": "openverse",
+   "query": "pear",
+   "tag": "pear:id"
+  },
+  {
+   "provider": "openverse",
+   "query": "pear market",
+   "tag": "pear:id"
+  },
+  {
+   "provider": "openverse",
+   "query": "pear kitchen",
+   "tag": "pear:id"
+  },
+  {
+   "provider": "openverse",
+   "query": "rotten pear",
+   "tag": "pear:spoiled"
+  },
+  {
+   "provider": "openverse",
+   "query": "moldy pear",
+   "tag": "pear:spoiled"
+  },
+  {
+   "provider": "openverse",
+   "query": "kiwi fruit",
+   "tag": "kiwi:id"
+  },
+  {
+   "provider": "openverse",
+   "query": "kiwi fruit market",
+   "tag": "kiwi:id"
+  },
+  {
+   "provider": "openverse",
+   "query": "kiwi fruit kitchen",
+   "tag": "kiwi:id"
+  },
+  {
+   "provider": "openverse",
+   "query": "rotten kiwi fruit",
+   "tag": "kiwi:spoiled"
+  },
+  {
+   "provider": "openverse",
+   "query": "moldy kiwi fruit",
+   "tag": "kiwi:spoiled"
+  },
+  {
+   "provider": "openverse",
+   "query": "plum",
+   "tag": "plum:id"
+  },
+  {
+   "provider": "openverse",
+   "query": "plum market",
+   "tag": "plum:id"
+  },
+  {
+   "provider": "openverse",
+   "query": "plum kitchen",
+   "tag": "plum:id"
+  },
+  {
+   "provider": "openverse",
+   "query": "rotten plum",
+   "tag": "plum:spoiled"
+  },
+  {
+   "provider": "openverse",
+   "query": "moldy plum",
+   "tag": "plum:spoiled"
+  },
+  {
+   "provider": "openverse",
+   "query": "unripe plum",
+   "tag": "plum:unripe"
+  },
+  {
+   "provider": "openverse",
+   "query": "ripe plum",
+   "tag": "plum:ripe"
+  },
+  {
+   "provider": "openverse",
+   "query": "overripe plum",
+   "tag": "plum:overripe"
+  },
+  {
+   "provider": "openverse",
+   "query": "persimmon",
+   "tag": "persimmon:id"
+  },
+  {
+   "provider": "openverse",
+   "query": "persimmon market",
+   "tag": "persimmon:id"
+  },
+  {
+   "provider": "openverse",
+   "query": "persimmon kitchen",
+   "tag": "persimmon:id"
+  },
+  {
+   "provider": "openverse",
+   "query": "rotten persimmon",
+   "tag": "persimmon:spoiled"
+  },
+  {
+   "provider": "openverse",
+   "query": "moldy persimmon",
+   "tag": "persimmon:spoiled"
+  },
+  {
+   "provider": "openverse",
+   "query": "lemon",
+   "tag": "lemon:id"
+  },
+  {
+   "provider": "openverse",
+   "query": "lemon market",
+   "tag": "lemon:id"
+  },
+  {
+   "provider": "openverse",
+   "query": "lemon kitchen",
+   "tag": "lemon:id"
+  },
+  {
+   "provider": "openverse",
+   "query": "rotten lemon",
+   "tag": "lemon:spoiled"
+  },
+  {
+   "provider": "openverse",
+   "query": "moldy lemon",
+   "tag": "lemon:spoiled"
+  },
+  {
+   "provider": "openverse",
+   "query": "guava",
+   "tag": "guava:id"
+  },
+  {
+   "provider": "openverse",
+   "query": "guava market",
+   "tag": "guava:id"
+  },
+  {
+   "provider": "openverse",
+   "query": "guava kitchen",
+   "tag": "guava:id"
+  },
+  {
+   "provider": "openverse",
+   "query": "rotten guava",
+   "tag": "guava:spoiled"
+  },
+  {
+   "provider": "openverse",
+   "query": "moldy guava",
+   "tag": "guava:spoiled"
+  },
+  {
+   "provider": "openverse",
+   "query": "unripe guava",
+   "tag": "guava:unripe"
+  },
+  {
+   "provider": "openverse",
+   "query": "ripe guava",
+   "tag": "guava:ripe"
+  },
+  {
+   "provider": "openverse",
+   "query": "overripe guava",
+   "tag": "guava:overripe"
+  },
+  {
+   "provider": "openverse",
+   "query": "bell pepper",
+   "tag": "pepper:id"
+  },
+  {
+   "provider": "openverse",
+   "query": "bell pepper market",
+   "tag": "pepper:id"
+  },
+  {
+   "provider": "openverse",
+   "query": "bell pepper kitchen",
+   "tag": "pepper:id"
+  },
+  {
+   "provider": "openverse",
+   "query": "rotten bell pepper",
+   "tag": "pepper:spoiled"
+  },
+  {
+   "provider": "openverse",
+   "query": "moldy bell pepper",
+   "tag": "pepper:spoiled"
+  },
+  {
+   "provider": "openverse",
+   "query": "lime",
+   "tag": "lime:id"
+  },
+  {
+   "provider": "openverse",
+   "query": "lime market",
+   "tag": "lime:id"
+  },
+  {
+   "provider": "openverse",
+   "query": "grapefruit",
+   "tag": "grapefruit:id"
+  },
+  {
+   "provider": "openverse",
+   "query": "grapefruit market",
+   "tag": "grapefruit:id"
+  },
+  {
+   "provider": "openverse",
+   "query": "zucchini",
+   "tag": "zucchini:id"
+  },
+  {
+   "provider": "openverse",
+   "query": "zucchini market",
+   "tag": "zucchini:id"
+  },
+  {
+   "provider": "openverse",
+   "query": "potato",
+   "tag": "potato:id"
+  },
+  {
+   "provider": "openverse",
+   "query": "potato market",
+   "tag": "potato:id"
+  },
+  {
+   "provider": "openverse",
+   "query": "passion fruit",
+   "tag": "passion_fruit:id"
+  },
+  {
+   "provider": "openverse",
+   "query": "passion fruit market",
+   "tag": "passion_fruit:id"
+  },
+  {
+   "provider": "commons",
+   "category": "Rotting tomatoes",
+   "tag": "tomato:spoiled"
+  },
+  {
+   "provider": "commons",
+   "category": "Unripe fruit",
+   "tag": "mixed:unripe"
+  }
+ ]
+}

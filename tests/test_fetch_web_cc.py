@@ -48,3 +48,18 @@ def test_commons_drops_restricted_and_sharealike(monkeypatch, tmp_path):
     monkeypatch.setattr(fw.time, "sleep", lambda s: None)
     assert fw.save(fw.commons_items("Rotting tomatoes", 10), "tomato:rotting", out=tmp_path) == 2
     assert "Bob" in (tmp_path / "attribution.csv").read_text()
+
+
+def test_plan_covers_every_supported_produce():
+    from ml.common.taxonomy import load_taxonomy
+    plan = json.loads((Path(__file__).resolve().parents[1] / "data/web_cc_queries.json").read_text())
+    tax = load_taxonomy()
+    tags = {q["tag"] for q in plan["queries"]}
+    for p, m in tax.produce_meta.items():
+        if p == "other":
+            continue
+        assert f"{p}:id" in tags, p
+        if not m.get("is_negative_class"):
+            assert f"{p}:spoiled" in tags, p
+        if m.get("ripeness_visual") in ("weak", "not_applicable"):
+            assert f"{p}:overripe" not in tags, p  # no ripeness hints where colour carries no ripeness evidence
