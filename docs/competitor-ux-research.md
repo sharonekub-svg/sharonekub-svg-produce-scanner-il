@@ -182,6 +182,22 @@ Our gap versus the category:
 
 The design is defined in [ux-principles.md](ux-principles.md).
 
+## 6. Update 27 Sep 2026: new entrants
+
+"PluckFresh" doesn't exist under that name in either store; the app meant is **PickFresh** (§2). Three newer apps, reviewed from their store listings only (no hands-on install from this environment):
+
+| App | Flow / steps | Result | Monetisation | Worth noting |
+|---|---|---|---|---|
+| [ProduceHero: Ripeness Tracker](https://apps.apple.com/us/app/producehero-ripeness-tracker/id6759592042) | Camera → result (2 taps) | Ripeness + reference photo of "perfectly ripe", shelf life, "when to eat", counter/fridge storage, prep and nutrition | Limited free scans; $3.99/month, $24/year | "What should I do today?" pantry tracker. The reference photo of a ripe example is a good trust pattern. |
+| [VisionRipe](https://apps.apple.com/us/app/visionripe/id6760273981) | Photo or library → result | Ripeness stage incl. "not safe to eat", 0–100 ripeness score, days of shelf life, nutrition, safety alerts | Free, no account, history on device | A numeric score and a safety verdict without any stated accuracy: exactly what we avoid. |
+| [Fresh Checker](https://apps.apple.com/us/app/fresh-checker-ai-food-scanner/id6751602348) | One-tap photo | Freshness + confidence, shelf life, storage tips, pantry with expiry notifications, side-by-side comparison | $1.99/week to $34.99/year | Covers all foods (meat, dairy); a weekly plan again. |
+
+What this changes for us:
+- The category has converged on **camera → one result screen with a score + storage tip**. Our flow matches it in 2 taps.
+- **A number is expected by users**, so we show a 1–10 score. We differ by showing it only for produce types that passed a held-out test (docs/research/quality-score.md), and otherwise saying so plainly.
+- **Safety verdicts** ("not safe to eat") remain out. Ours: "לא מומלץ לאכול – נראים סימני קלקול" plus the Ministry of Health mould rule, with the visual-only disclaimer.
+- Pantry / expiry tracking and comparison stay out of v1 (principle 9).
+
 ## Sources
 
 - FreshScanAI: https://apps.apple.com/ca/app/freshscanai/id6758030277
@@ -192,3 +208,7 @@ The design is defined in [ux-principles.md](ux-principles.md).
 - RipenessFoody: https://apps.apple.com/us/app/ripenessfoody-check-ripeness/id6753583987
 - Freshness AI: https://apps.apple.com/us/app/freshness-ai-food-identifier/id6630364674
 - Also seen: Fresh Checker https://apps.apple.com/us/app/fresh-checker-ai-food-scanner/id6751602348 · Food Scanner: AI Food Checker https://apps.apple.com/us/app/food-scanner-ai-food-checker/id6749257301 · FruitScan – Fruit & Vegetables https://apps.apple.com/us/app/fruitscan-fruit-vegetables/id6754556478 · RipeOrNot https://apps.apple.com/us/app/ripeornot-ai-for-avocados/id6478156869 · RipeMelon https://apps.apple.com/us/app/ripemelon-watermelon-analyzer/id6749167930 · AvoCadabra https://avocadabra.co/
+- ProduceHero: https://apps.apple.com/us/app/producehero-ripeness-tracker/id6759592042
+- VisionRipe: https://apps.apple.com/us/app/visionripe/id6760273981
+- Fresh Checker: https://apps.apple.com/us/app/fresh-checker-ai-food-scanner/id6751602348
+- Store search for "PluckFresh" (no such app; PickFresh): https://apps.apple.com/us/app/pickfresh-app/id6746766572

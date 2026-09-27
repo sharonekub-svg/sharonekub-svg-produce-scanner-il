@@ -131,15 +131,37 @@ async def analyze(image: UploadFile = File(...)):
                         "laplacian_var": q.laplacian_var, "clipped_frac": q.clipped_frac}}
 
 
-@app.post("/v1/scan")
-async def scan(image: UploadFile = File(...)):
-    img = await _read_image(image)
-    e = engine()
+def _probs(e, img) -> tuple[dict, float, str | None]:
     q = quality.assess(img, e.bundle.get("quality"))
     lg = e.logits(img)
     temps = e.bundle.get("temperatures", {})
     probs = {h: softmax(lg[h][None], temps.get(h, 1.0))[0] for h in HEADS}
-    res = decision.decide(e.tax, probs, e.bundle.get("supported_heads", {}), quality_reason=q.reason,
-                          energy_score=float(energy(lg["produce"][None])[0]), thresholds=e.bundle.get("thresholds"))
-    return {"model_id": e.bundle["model_id"], **res.to_dict(),
+    return probs, float(energy(lg["produce"][None])[0]), q.reason
+
+
+def _combine(a: np.ndarray, b: np.ndarray) -> np.ndarray:
+    """Two photos of the same fruit: normalised geometric mean per head (same as app/src/model/advice.ts)."""
+    g = np.sqrt(np.maximum(a, 1e-12) * np.maximum(b, 1e-12))
+    return g / g.sum()
+
+
+@app.post("/v1/scan")
+async def scan(image: UploadFile = File(...), image2: UploadFile | None = File(None)):
+    """One photo, or two angles of the same fruit ("צלם מזווית נוספת": evidence of both is combined)."""
+    e = engine()
+    probs, en, qreason = _probs(e, await _read_image(image))
+    angles = 1
+    if image2 is not None:
+        p2, en2, q2 = _probs(e, await _read_image(image2))
+        if q2 is None and qreason is None:  # two good photos: combine the evidence
+            probs, en, angles = {h: _combine(probs[h], p2[h]) for h in HEADS}, max(en, en2), 2
+        elif q2 is None:  # only the second photo is usable
+            probs, en, qreason = p2, en2, None
+        # a bad second photo never spoils a good first one
+    res = decision.decide(e.tax, probs, e.bundle.get("supported_heads", {}), quality_reason=qreason,
+                          energy_score=en, thresholds=e.bundle.get("thresholds"))
+    top = np.argsort(-probs["produce"])[:3]
+    top3 = [{"produce": e.tax.produce[int(i)], "he": e.tax.produce_meta[e.tax.produce[int(i)]]["he"],
+             "prob": round(float(probs["produce"][i]), 4)} for i in top]
+    return {"model_id": e.bundle["model_id"], **res.to_dict(), "angles": angles, "top3": top3,
             "storage_tip_he": storage_tip_he(res.produce) if res.status == "ok" else None}

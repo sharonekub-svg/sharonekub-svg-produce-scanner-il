@@ -12,7 +12,10 @@ Derived from [competitor-ux-research.md](competitor-ux-research.md). Priority or
    - Multi-angle capture is a *fallback*, never a toll (unlike FreshScanAI's default 3-angle flow).
    - Bad photos get a specific fix ("חשוך מדי", "מטושטש").
    - Unsupported heads say "לא זמין עדיין לסוג זה". We never display a guess we can't stand behind.
-5. **Confidence in words, number second.** "ביטחון גבוה / בינוני" plus the calibrated percentage, rounded to 5%. We never show a 0–100 "freshness score" or a "N days left" estimate we haven't validated.
+5. **Confidence in words, number second. A 1–10 score only where it's earned.**
+   - Identity confidence: "ביטחון גבוה / בינוני" plus the calibrated percentage, rounded to 5%.
+   - Quality: a **1–10 visual score** with a one-line reason. It is shown only for produce types whose quality model passed a held-out test (docs/research/quality-score.md). Every other type says so plainly: "עדיין אין דירוג איכות לסוג הזה".
+   - Never a "N days left" estimate we haven't validated.
 6. **Visual, not safety.** One short disclaimer is always visible, never a modal: "הערכה חזותית בלבד". We never write "בטוח לאכילה".
 7. **End with one useful action.** Every `ok` result ends with a recommendation. Where the model can't assess ripeness or freshness yet, it ends with **general storage guidance for that produce**, visibly labelled as general advice rather than a result about *this* fruit. This fills the gap without overclaiming.
 8. **Trust signals in plain sight.** "מעובד במכשיר · בלי הרשמה · בלי פרסומות" appears on the permission screen and in the About/credits area. There are no accounts and no ads.
@@ -71,6 +74,18 @@ Not produce    → "לא זיהיתי פרי או ירק" + [ נסה שוב ]
 ```
 
 Steps to a result: **2 taps** (open, "סרוק פרי"). In the worst case: 3 (plus one extra angle).
+
+## Web version (Vercel), same architecture
+
+Until the iOS build exists, the API root serves `server/web/index.html`: the same journey in a phone browser.
+- **Camera is home:** live viewfinder (`getUserMedia`, rear camera) with the framing square and one "סרוק פרי" button. "מהגלריה" is secondary.
+- **Permission:** one card, shown once, that says honestly the photo goes to *our server* for processing and is not stored (unlike the app, which works on the device). "בלי מצלמה חיה" falls back to the phone's own camera sheet.
+- **Result:** the frozen frame plus "בודק…", then a sheet slides up. It shows identity + confidence, the recommendation (hero), the 1–10 score + reason, chips, a general storage tip, the disclaimer, "מה זיהינו?" / "למה?" collapsed, "סרוק פרי נוסף", and 👍/👎 (Supabase feedback).
+- **Unsure:** one "צלם מזווית נוספת". The server combines both photos (`/v1/scan` with `image2`), the same as the app.
+
+| Permission | Camera | Result | Spoiled | Unsure |
+|---|---|---|---|---|
+| ![](img/ux/web_permission.jpg) | ![](img/ux/web_camera.jpg) | ![](img/ux/web_banana.jpg) | ![](img/ux/web_rotten.jpg) | ![](img/ux/web_unsure.jpg) |
 
 ## What we adopted, and from where
 
