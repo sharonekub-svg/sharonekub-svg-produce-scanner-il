@@ -43,8 +43,13 @@ def label_mask(tax: Taxonomy, head: str, value) -> torch.Tensor:
 
 
 class ManifestDataset(Dataset):
-    def __init__(self, rows: list[dict], root: Path, tax: Taxonomy, transform):
+    def __init__(self, rows: list[dict], root: Path, tax: Taxonomy, transform,
+                 no_produce_loss: set[str] | frozenset = frozenset()):
+        """`no_produce_loss`: dataset ids whose rows train the quality heads only. Their produce label is
+        hidden from the loss (empty mask), so studio backgrounds cannot become a produce shortcut
+        (measured: studio lemons cut lemon recall on phone photos 0.54 -> 0.34, results.md C7)."""
         self.rows, self.root, self.tax, self.transform = rows, root, tax, transform
+        self.no_produce_loss = set(no_produce_loss)
 
     def __len__(self) -> int:
         return len(self.rows)
@@ -53,6 +58,8 @@ class ManifestDataset(Dataset):
         r = self.rows[i]
         x = self.transform(load_rgb(self.root / r["image"]))
         y = {h: label_mask(self.tax, h, r["labels"][h]) for h in HEADS}
+        if r.get("dataset_id") in self.no_produce_loss:
+            y["produce"] = torch.zeros_like(y["produce"])
         return x, y
 
 

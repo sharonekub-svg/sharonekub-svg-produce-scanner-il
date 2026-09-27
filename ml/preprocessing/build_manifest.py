@@ -51,6 +51,12 @@ def build(dataset_ids: list[str], purpose: str, raw_root: Path, out_dir: Path,
         report["datasets"][ds]["n_valid"] = n
 
     cluster_ids, stats = dedup.cluster(recs, max_distance=max_distance)
+    # Studio datasets (one lightbox/rig, many different fruits) chain into one giant near-duplicate
+    # cluster, which would put the whole dataset in one split. For datasets flagged
+    # `split_by_metadata_group`, the physical-fruit group IS the leakage unit: split by it instead.
+    by_group = [tax.datasets[s.dataset_id].get("split_by_metadata_group") and s.group_key for s, _, _ in samples]
+    cluster_ids = [f"m:{g}" if g else c for g, c in zip(by_group, cluster_ids)]
+    stats["regrouped_by_metadata"] = sum(bool(g) for g in by_group)
     report["dedup"] = stats
     strata = [f"{s.dataset_id}|{s.labels['produce']}" for s, _, _ in samples]
     split = splits.group_split(cluster_ids, strata, seed=seed)
@@ -81,6 +87,8 @@ def build(dataset_ids: list[str], purpose: str, raw_root: Path, out_dir: Path,
             row = {"image": rel_out, "dataset_id": s.dataset_id, "source_path": s.rel_path,
                    "sha256": chk.sha256, "group": f"g{cid}", "split": sp,
                    "labels": {h: tax.decode(h, s.labels[h]) for h in HEADS}}
+            if tax.datasets[s.dataset_id].get("cultivar"):  # needed to enable cultivar-dependent ripeness
+                row["cultivar"] = tax.datasets[s.dataset_id]["cultivar"]
             f.write(json.dumps(row, ensure_ascii=False) + "\n")
             counts[(sp, tax.decode("produce", s.labels["produce"]))] += 1
     report["split_counts"] = {f"{k[0]}/{k[1]}": v for k, v in sorted(counts.items())}

@@ -23,6 +23,7 @@ const REC_HE: Record<string, string> = {
   wait: 'כדאי לחכות – עדיין לא בשל',
   wait_little: 'כמעט בשל – כדאי לחכות עוד מעט',
   overripe: 'בשל מאוד – לאכול היום או להשתמש לבישול/אפייה',
+  check_defects: 'נראים פגמים או סימני קלקול – בדקו את הפרי לפני שאוכלים',
   inspect: 'לא ניתן להעריך בוודאות – מומלץ לבדוק ידנית',
 };
 export const DEFAULT_THRESHOLDS: Thresholds = {
@@ -42,6 +43,25 @@ function empty(status: ScanResult['status'], message: string | null, conf: numbe
   };
 }
 
+// Coarse heads (good vs bad only) — mirrors decision.py COARSE; marked "<head>~coarse" in supported_heads.
+const COARSE: Record<'freshness' | 'visual_spoilage', [string, string[], string]> = {
+  freshness: ['fresh', ['declining', 'spoiled'], 'not_fresh'],
+  visual_spoilage: ['none', ['mild', 'severe'], 'defects'],
+};
+const COARSE_LABEL_HE: Record<string, string> = { not_fresh: 'לא טרי', defects: 'פגמים נראים' };
+const COARSE_BAD_POINTS = 3;
+
+function coarseHead(bundle: Bundle, head: 'freshness' | 'visual_spoilage', probs: number[] | undefined,
+                    minProb: number): HeadResult {
+  if (!probs) return { label: null, label_he: null, confidence: null, available: false };
+  const [good, , group] = COARSE[head];
+  const pGood = probs[bundle.outputs[head].indexOf(good)];
+  const pBad = 1 - pGood;
+  if (pGood >= minProb) return { label: good, label_he: bundle.label_he[head][good], confidence: pGood, available: true };
+  if (pBad >= minProb) return { label: group, label_he: COARSE_LABEL_HE[group], confidence: pBad, available: true };
+  return { label: UNKNOWN, label_he: bundle.label_he[head][UNKNOWN], confidence: Math.max(pGood, pBad), available: true };
+}
+
 // 1-10 visual quality score — mirrors decision.py quality_score (docs/research/quality-score.md).
 const SCORE_POINTS: Record<'freshness' | 'visual_spoilage' | 'ripeness', Record<string, number>> = {
   freshness: { fresh: 10, declining: 6, spoiled: 1 },
@@ -53,6 +73,7 @@ const SCORE_REASON_HE: Record<string, string> = {
   spoilage: 'נראים סימני ריקבון, עובש או פגמים בקליפה.',
   spoiled: 'המראה מתאים לפרי שהתקלקל.',
   declining: 'מתחיל לאבד טריות – כדאי לאכול בקרוב.',
+  not_fresh: 'המראה מראה ירידה בטריות או קלקול.',
   unripe: 'עדיין לא בשל – יהיה טעים יותר בעוד כמה ימים.',
   overripe: 'בשל מאוד – לאכול היום או להשתמש לאפייה.',
 };
@@ -60,13 +81,18 @@ const LOW_CONF_SCORE_HE = 'לא ניתן לדרג בביטחון מהתמונה 
 const NO_SCORE_HE = 'עדיין אין דירוג איכות לסוג הזה – המודל מזהה אותו אבל עוד לא אומן להעריך את מצבו.';
 
 export function qualityScore(bundle: Bundle, probs: Probs, available: Record<'freshness' | 'visual_spoilage' | 'ripeness', boolean>,
-                             discard: boolean): [number | null, string] {
+                             discard: boolean, coarse: Set<string> = new Set()): [number | null, string] {
   const comps: [('freshness' | 'visual_spoilage' | 'ripeness'), number][] = [];
   for (const head of ['freshness', 'visual_spoilage', 'ripeness'] as const) {
     const p = probs[head];
     if (available[head] && p) {
       let e = 0;
-      bundle.outputs[head].forEach((lbl, i) => { e += p[i] * SCORE_POINTS[head][lbl]; });
+      if (coarse.has(head)) {
+        const pg = p[bundle.outputs[head].indexOf(COARSE[head as 'freshness' | 'visual_spoilage'][0])];
+        e = pg * 10 + (1 - pg) * COARSE_BAD_POINTS;
+      } else {
+        bundle.outputs[head].forEach((lbl, i) => { e += p[i] * SCORE_POINTS[head][lbl]; });
+      }
       comps.push([head, e]);
     }
   }
@@ -82,6 +108,7 @@ export function qualityScore(bundle: Bundle, probs: Probs, available: Record<'fr
   let reason: string;
   if (score >= 8) reason = 'good';
   else if (worst === 'visual_spoilage') reason = 'spoilage';
+  else if (worst === 'freshness' && coarse.has(worst)) reason = 'not_fresh';
   else if (worst === 'freshness') reason = topLabel === 'spoiled' ? 'spoiled' : 'declining';
   else reason = topLabel === 'overripe' ? 'overripe' : 'unripe';
   return [score, SCORE_REASON_HE[reason]];
@@ -116,17 +143,20 @@ export function decide(bundle: Bundle, probs: Probs, qualityReason: string | nul
   if (conf < t.produce_min_prob || margin < t.produce_min_margin) return empty('unsure', UNSURE_HE, conf);
 
   const sup = new Set(bundle.supported_heads[name] ?? []);
+  const coarse = new Set((['freshness', 'visual_spoilage'] as const).filter((h) => !sup.has(h) && sup.has(`${h}~coarse`)));
   const r = headResult(bundle, 'ripeness', probs.ripeness, sup.has('ripeness'), t.head_min_prob);
-  const f = headResult(bundle, 'freshness', probs.freshness, sup.has('freshness'), t.head_min_prob);
-  const s = headResult(bundle, 'visual_spoilage', probs.visual_spoilage, sup.has('visual_spoilage'), t.head_min_prob);
+  const f = coarse.has('freshness') ? coarseHead(bundle, 'freshness', probs.freshness, t.head_min_prob)
+    : headResult(bundle, 'freshness', probs.freshness, sup.has('freshness'), t.head_min_prob);
+  const s = coarse.has('visual_spoilage') ? coarseHead(bundle, 'visual_spoilage', probs.visual_spoilage, t.head_min_prob)
+    : headResult(bundle, 'visual_spoilage', probs.visual_spoilage, sup.has('visual_spoilage'), t.head_min_prob);
   const res: ScanResult = {
     ...empty('ok', null, conf), produce: name, produce_he: meta.he, emoji: meta.emoji,
     ripeness: r, freshness: f, visual_spoilage: s,
   };
 
   let pSpoiled = 0;
-  if (f.available && probs.freshness) pSpoiled = probs.freshness[bundle.outputs.freshness.indexOf('spoiled')];
-  if (s.available && probs.visual_spoilage) {
+  if (f.available && !coarse.has('freshness') && probs.freshness) pSpoiled = probs.freshness[bundle.outputs.freshness.indexOf('spoiled')];
+  if (s.available && !coarse.has('visual_spoilage') && probs.visual_spoilage) {
     pSpoiled = Math.max(pSpoiled, probs.visual_spoilage[bundle.outputs.visual_spoilage.indexOf('severe')]);
   }
   let rec: string;
@@ -134,15 +164,23 @@ export function decide(bundle: Bundle, probs: Probs, qualityReason: string | nul
     rec = 'discard';
     res.explanation_he.push('זוהו סימנים חזותיים שמתאימים בדרך כלל לקלקול או ריקבון.');
     res.explanation_he.push(MOULD_RULE_HE);
+  } else if ((f.available && f.label === 'not_fresh') || (s.available && s.label === 'defects')) {
+    rec = 'check_defects';
+    res.explanation_he.push('המראה מתאים לפרי עם פגמים, מכות או סימני ריקבון.');
+    res.explanation_he.push(MOULD_RULE_HE);
   } else if (r.available && r.label !== null && r.label !== UNKNOWN) {
     rec = ({ unripe: 'wait', partially_ripe: 'wait_little', ripe: 'eat_now', overripe: 'overripe' } as Record<string, string>)[r.label];
     res.explanation_he.push(`הצבע והמראה החיצוני תואמים בדרך כלל ל${meta.he} במצב '${r.label_he}'.`);
+    if (meta.ripeness_note_he) res.explanation_he.push(meta.ripeness_note_he);
   } else if (f.available && f.label === 'fresh') {
     rec = 'eat_now';
     res.explanation_he.push('המראה החיצוני תואם בדרך כלל לפרי טרי. לא זוהו סימני ריקבון משמעותיים.');
   } else if (f.available && f.label === 'declining') {
     rec = 'eat_soon';
     res.explanation_he.push('נראים סימנים ראשונים לירידה בטריות.');
+  } else if (s.available && s.label === 'none') {
+    rec = 'eat_now';
+    res.explanation_he.push('לא נראים פגמים או סימני ריקבון בקליפה.');
   } else {
     rec = 'inspect';
     res.explanation_he.push('למודל אין מספיק ביטחון או נתוני אימון כדי להעריך בשילות/טריות לסוג זה.');
@@ -150,7 +188,7 @@ export function decide(bundle: Bundle, probs: Probs, qualityReason: string | nul
   res.recommendation = rec;
   res.recommendation_he = REC_HE[rec];
   [res.score, res.score_reason_he] = qualityScore(
-    bundle, probs, { freshness: f.available, visual_spoilage: s.available, ripeness: r.available }, rec === 'discard');
+    bundle, probs, { freshness: f.available, visual_spoilage: s.available, ripeness: r.available }, rec === 'discard', coarse);
   if (rec === 'inspect' && res.score !== null) [res.score, res.score_reason_he] = [null, LOW_CONF_SCORE_HE];
   return res;
 }

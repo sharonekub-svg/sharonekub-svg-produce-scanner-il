@@ -10,6 +10,8 @@ export const CHIP: Record<string, { dot: string; bg: string }> = {
   none: { dot: '🟢', bg: '#DFF3E4' },
   mild: { dot: '🟠', bg: '#FFE6CC' },
   severe: { dot: '🔴', bg: '#FADBD8' },
+  not_fresh: { dot: '🔴', bg: '#FADBD8' },
+  defects: { dot: '🔴', bg: '#FADBD8' },
   unknown: { dot: '⚪', bg: '#EEEEEE' },
 };
 

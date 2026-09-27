@@ -23,6 +23,7 @@ const REC_TONE: Record<string, { fg: string; bg: string; icon: string }> = {
   wait: { fg: '#6b5a00', bg: '#FFF8D6', icon: '🕒' },
   wait_little: { fg: '#6b5a00', bg: '#FFF8D6', icon: '🕒' },
   discard: { fg: '#9b1c1c', bg: '#FDE4E1', icon: '⚠️' },
+  check_defects: { fg: '#9b1c1c', bg: '#FDE4E1', icon: '🔎' },
 };
 
 // Score colour: green 8-10, amber 5-7, red 1-4 (same palette as the recommendation).
@@ -84,9 +85,9 @@ export default function ResultScreen() {
     setDonate(sent ? 'sent' : 'failed');
   };
   const ok = r.status === 'ok';
-  const assessed = ok && Boolean(r.ripeness?.available || r.freshness?.available);
+  const assessed = ok && Boolean(r.ripeness?.available || r.freshness?.available || r.visual_spoilage?.available);
   const tone = r.recommendation ? REC_TONE[r.recommendation] : undefined;
-  const tip = ok && r.produce && r.recommendation !== 'discard' ? STORAGE_TIP_HE[r.produce] : undefined;
+  const tip = ok && r.produce && r.recommendation !== 'discard' && r.recommendation !== 'check_defects' ? STORAGE_TIP_HE[r.produce] : undefined;
   const statusHead = STATUS_HEAD[r.status];
 
   return (
@@ -124,8 +125,9 @@ export default function ResultScreen() {
 
             {assessed ? (
               <View style={styles.chips}>
-                <Chip title={he.ripeness} head={r.ripeness} />
-                <Chip title={he.freshness} head={r.freshness} />
+                {r.ripeness?.available ? <Chip title={he.ripeness} head={r.ripeness} /> : null}
+                {r.freshness?.available ? <Chip title={he.freshness} head={r.freshness} /> : null}
+                {r.visual_spoilage?.available ? <Chip title={he.spoilage} head={r.visual_spoilage} /> : null}
               </View>
             ) : null}
 

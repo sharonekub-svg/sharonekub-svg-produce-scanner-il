@@ -160,3 +160,34 @@ def test_quality_score_worst_head_decides_and_is_bounded():
 def test_identify_only_types_get_no_score():
     r = decision.decide(TAX, _probs(produce="kiwi"), {"kiwi": []})
     assert r.status == "ok" and r.score is None and r.score_reason_he == decision.NO_SCORE_HE
+
+
+def test_coarse_heads_support_and_decision():
+    def row(prod, fr, sp):
+        return {"split": "train", "labels": {"produce": prod, "ripeness": "unknown", "freshness": fr, "visual_spoilage": sp}}
+    rows = [row("orange", "fresh", "none")] * 150 + [row("orange", ["declining", "spoiled"], ["mild", "severe"])] * 150
+    sup = decision.supported_heads_from_manifest(rows)
+    assert sup == {"orange": ["freshness~coarse", "visual_spoilage~coarse"]}
+    bad = _probs(produce="orange")
+    bad["freshness"] = np.array([0.1, 0.1, 0.8]); bad["visual_spoilage"] = np.array([0.1, 0.1, 0.8])
+    r = decision.decide(TAX, bad, sup)
+    assert r.recommendation == "check_defects"      # coarse "bad" never becomes "discard"
+    assert r.freshness.label == "not_fresh" and r.score == 4 and decision.MOULD_RULE_HE in r.explanation_he
+    good = _probs(produce="orange")
+    good["freshness"] = np.array([0.95, 0.03, 0.02]); good["visual_spoilage"] = np.array([0.95, 0.03, 0.02])
+    g = decision.decide(TAX, good, sup)
+    assert g.recommendation == "eat_now" and g.score == 10
+
+
+def test_quality_gate_keeps_only_heads_that_passed():
+    import importlib.util
+    from pathlib import Path
+    spec = importlib.util.spec_from_file_location("g", Path(__file__).resolve().parents[2] / "scripts/gate_quality_heads.py")
+    g = importlib.util.module_from_spec(spec); spec.loader.exec_module(g)
+    q = {"visual_spoilage": {"apple": {"n_good": 200, "n_bad": 180, "balanced_accuracy": 0.93, "auroc": 0.97},
+                             "lemon": {"n_good": 20, "n_bad": 20, "balanced_accuracy": 0.99, "auroc": 1.0}},
+         "ripeness": {"avocado": {"n": 1400, "accuracy": 0.66, "within_one_stage": 0.97}}}
+    sup = {"apple": ["visual_spoilage~coarse"], "lemon": ["visual_spoilage~coarse"], "avocado": ["ripeness"],
+           "orange": ["freshness~coarse"]}
+    kept, _ = g.gate(q, sup)
+    assert kept == {"apple": ["visual_spoilage~coarse"]}   # lemon: too few test photos; avocado: below 0.70; orange: no evidence

@@ -97,18 +97,28 @@ def main() -> None:
     va_rows = dataset.select_rows(cfg, {"val"}, data_root)
     (run_dir / "supported_heads.json").write_text(json.dumps(supported_heads_from_manifest(
         tr_rows, ripeness_visual={k: m.get("ripeness_visual", "not_applicable") for k, m in tax.produce_meta.items()}), indent=2))
-    tr = dataset.ManifestDataset(tr_rows, data_root, tax, augment.build_train_transform(cfg))
+    # Quality-only auxiliary datasets: {dataset_id: share of every epoch}. Produce loss masked, and a fixed
+    # sampling share so a large lab set (e.g. 14k Hass avocado photos) cannot dominate the epoch.
+    aux = cfg["train"].get("aux_datasets") or {}
+    tr = dataset.ManifestDataset(tr_rows, data_root, tax, augment.build_train_transform(cfg), no_produce_loss=set(aux))
     va = dataset.ManifestDataset(va_rows, data_root, tax, augment.build_eval_transform(cfg))
     g = torch.Generator().manual_seed(cfg["seed"])
     bs, nw = cfg["train"]["batch_size"], cfg["train"].get("num_workers", 4)
     # Class-balanced sampling on produce: weight ~ count^-alpha (alpha=0 -> uniform, 1 -> fully balanced).
     alpha = cfg["train"].get("balance_alpha", 0.0)
     n_per_epoch = cfg["train"].get("samples_per_epoch") or len(tr)
-    if alpha > 0 or cfg["train"].get("samples_per_epoch"):
+    if alpha > 0 or cfg["train"].get("samples_per_epoch") or aux:
         from collections import Counter
+        is_aux = [r.get("dataset_id") in aux for r in tr_rows]
         keys = [str(r["labels"]["produce"]) for r in tr_rows]
-        cnt = Counter(keys)
-        w = torch.tensor([cnt[k] ** -alpha for k in keys], dtype=torch.double)
+        cnt = Counter(k for k, a in zip(keys, is_aux) if not a)
+        w = torch.tensor([0.0 if a else cnt[k] ** -alpha for k, a in zip(keys, is_aux)], dtype=torch.double)
+        if aux:
+            w *= (1.0 - sum(aux.values())) / w.sum()
+            n_aux = Counter(r["dataset_id"] for r, a in zip(tr_rows, is_aux) if a)
+            for i, (r, a) in enumerate(zip(tr_rows, is_aux)):
+                if a:
+                    w[i] = aux[r["dataset_id"]] / n_aux[r["dataset_id"]]
         sampler = WeightedRandomSampler(w, n_per_epoch, replacement=True, generator=g)
         tl = DataLoader(tr, bs, sampler=sampler, num_workers=nw, collate_fn=dataset.collate, drop_last=True)
     else:

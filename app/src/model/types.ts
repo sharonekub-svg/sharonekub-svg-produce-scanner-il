@@ -9,6 +9,8 @@ export interface ProduceMeta {
   emoji: string;
   priority: string;
   is_negative_class?: boolean;
+  ripeness_visual?: string;
+  ripeness_note_he?: string;
 }
 
 export interface Thresholds {

@@ -18,7 +18,14 @@
     "apple":         {"category": "fruit", "he": "תפוח", "emoji": "🍎", "priority": "P1", "ripeness_visual": "not_applicable"},
     "orange":        {"category": "fruit", "he": "תפוז", "emoji": "🍊", "priority": "P1", "ripeness_visual": "not_applicable"},
     "mandarin":      {"category": "fruit", "he": "קלמנטינה", "emoji": "🍊", "priority": "P1", "ripeness_visual": "not_applicable"},
-    "avocado":       {"category": "fruit", "he": "אבוקדו", "emoji": "🥑", "priority": "P1", "ripeness_visual": "cultivar_dependent"},
+    "avocado": {
+      "category": "fruit",
+      "he": "אבוקדו",
+      "emoji": "🥑",
+      "priority": "P1",
+      "ripeness_visual": "cultivar_dependent",
+      "ripeness_note_he": "הערכת הבשילות מבוססת על אבוקדו האס (קליפה שמכהה כשהוא מבשיל). בזנים ירוקים כמו אטינגר, פינקרטון וריד הצבע כמעט לא משתנה – בדקו רכות בלחיצה עדינה."
+    },
     "tomato":        {"category": "vegetable", "he": "עגבנייה", "emoji": "🍅", "priority": "P1", "ripeness_visual": "strong"},
     "cucumber":      {"category": "vegetable", "he": "מלפפון", "emoji": "🥒", "priority": "P1", "ripeness_visual": "not_applicable"},
     "mango":         {"category": "fruit", "he": "מנגו", "emoji": "🥭", "priority": "P2", "ripeness_visual": "cultivar_dependent"},
@@ -133,7 +140,7 @@
     },
     "fruitnet_indian": {
       "adapter": "path_rules",
-      "verified_against_download": false,
+      "verified_against_download": true,
       "exclude_patterns": ["(?i)mixed"],
       "rules": [
         {"pattern": "(?i)apple", "labels": {"produce": "apple"}},
@@ -142,19 +149,24 @@
         {"pattern": "(?i)lime", "labels": {"produce": "lime"}},
         {"pattern": "(?i)orange", "labels": {"produce": "orange"}},
         {"pattern": "(?i)pomegranate", "labels": {"produce": "pomegranate"}},
-        {"pattern": "(?i)(_good|good[ _]quality)", "labels": {"freshness": "fresh"}},
-        {"pattern": "(?i)(_bad|bad[ _]quality)", "labels": {"freshness": ["declining", "spoiled"]}}
-      ]
+        {"pattern": "(?i)(_good|good[ _]quality)", "labels": {"freshness": "fresh", "visual_spoilage": "none"}},
+        {"pattern": "(?i)banana_bad", "labels": {"freshness": "unknown", "visual_spoilage": "unknown"}},
+        {"pattern": "(?i)(_bad|bad[ _]quality)", "labels": {"freshness": ["declining", "spoiled"], "visual_spoilage": ["mild", "severe"]}}
+      ],
+      "verified_note": "Layout checked 2026-09-27 (b6fftwbr2v-3/FruitNetDataset/{Good Quality_Fruits,Bad Quality_Fruits,Mixed Qualit_Fruits}/<Fruit>_<Good|Bad>/). Visual audit of 36 random Bad photos: mostly rot/mould, some single bruises or spots, speckled overripe bananas -> set-valued labels, banana Bad unlabelled. Mixed (several fruits per image) excluded."
     },
     "hass_avocado_ripening": {
       "adapter": "table",
-      "verified_against_download": false,
+      "verified_against_download": true,
       "table": "metadata.csv",
       "path_column": "filename",
       "group_column": "sample",
       "constant_labels":           {"produce": "avocado"},
       "columns":                   {"ripeness": "ripening_index"},
-      "value_maps":                {"ripeness": {"1": "unripe", "2": "partially_ripe", "3": "ripe", "4": "ripe", "5": "overripe"}}
+      "value_maps":                {"ripeness": {"1": "unripe", "2": "partially_ripe", "3": "ripe", "4": "ripe", "5": "overripe"}},
+      "verified_note": "Downloaded 2026-09-27 via scripts/fetch_mendeley.py (--zip); metadata.csv from the authors' xlsx by scripts/prepare_hass_avocado.py",
+      "cultivar": "hass",
+      "split_by_metadata_group": true
     },
     "strawberry_avocado_ripening": {
       "adapter": "path_rules",
@@ -302,7 +314,8 @@
       "path_column": "filename",
       "group_column": "group",
       "constant_labels":           {"produce": "lemon"},
-      "columns":                   {"visual_spoilage": "visual_spoilage", "freshness": "freshness"}
+      "columns":                   {"visual_spoilage": "visual_spoilage", "freshness": "freshness"},
+      "split_by_metadata_group": true
     },
     "bananas_psolymos": {
       "adapter": "table",
@@ -312,7 +325,32 @@
       "path_column": "filename",
       "group_column": "fruit",
       "constant_labels":           {"produce": "banana"},
-      "columns":                   {"ripeness": "ripeness"}
+      "columns":                   {"ripeness": "ripeness"},
+      "split_by_metadata_group": true
+    },
+    "apple_good_bad": {
+      "adapter": "path_rules",
+      "verified_against_download": true,
+      "verified_note": "Layout checked 2026-09-27: 'Good and bad classification of apple/{Good ,Bad}/<name>[-XXXXXX].jpg'; -XXXXXX suffixes are augmented copies of one photo (grouped). Visual audit: Bad = bruises, dark rot, cracks.",
+      "default_produce": "apple",
+      "group_pattern": "/(?P<group>[^/]+?)(-[A-Za-z0-9]{6})?\\.(jpe?g|png)$",
+      "rules": [
+        {"pattern": "/Good ?/", "labels": {"freshness": "fresh", "visual_spoilage": "none"}},
+        {"pattern": "/Bad/", "labels": {"freshness": ["declining", "spoiled"], "visual_spoilage": ["mild", "severe"]}}
+      ],
+      "split_by_metadata_group": true
+    },
+    "grapenet": {
+      "adapter": "path_rules",
+      "verified_against_download": true,
+      "verified_note": "Layout checked 2026-09-27: Grapes_Dataset/<black|flame|green>/<shape>_<fresh|rotten>/<...>/<variety>_<shape>_<state>_IMG_<date>_<time>_TIMEBURSTn_<id>_<aug>_iterN.jpg. Loose grapes on white; ~5 augmented copies per burst frame. Group = burst (IMG_date_time).",
+      "default_produce": "grape",
+      "split_by_metadata_group": true,
+      "group_pattern": "(?P<group>IMG_\\d{8}_\\d{6})",
+      "rules": [
+        {"pattern": "_fresh/", "labels": {"freshness": "fresh", "visual_spoilage": "none"}},
+        {"pattern": "_rotten/", "labels": {"freshness": "spoiled"}}
+      ]
     }
   }
 }

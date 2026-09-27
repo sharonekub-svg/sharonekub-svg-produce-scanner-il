@@ -29,11 +29,14 @@ def main() -> int:
     bundle = {"bundle_version": 1, "model_id": "fixture", "outputs": {h: list(tax.classes(h)) for h in HEADS},
               "produce_meta": tax.produce_meta, "label_he": tax.label_he, "temperatures": {},
               "thresholds": {**DEFAULT_THRESHOLDS, "ood_min_energy": 2.0},
-              "supported_heads": {"banana": ["freshness", "ripeness", "visual_spoilage"], "avocado": ["ripeness"],
-                                  "apple": ["freshness"], "tomato": ["freshness", "visual_spoilage"]},
+              "supported_heads": {"banana": ["freshness", "ripeness", "visual_spoilage"],
+                                  "avocado": ["ripeness", "visual_spoilage~coarse"], "apple": ["freshness"],
+                                  "tomato": ["freshness", "visual_spoilage"],
+                                  "orange": ["freshness~coarse", "visual_spoilage~coarse"],
+                                  "pomegranate": ["visual_spoilage~coarse"]},
               "input": {"size": 224, "mean": [0.485, 0.456, 0.406], "std": [0.229, 0.224, 0.225],
                         "resize": "short_side_then_center_crop", "resize_ratio": 1.14}}
-    focus = [tax.produce.index(p) for p in ("banana", "avocado", "apple", "tomato", "other", "kiwi")]
+    focus = [tax.produce.index(p) for p in ("banana", "avocado", "apple", "tomato", "other", "kiwi", "orange", "pomegranate")]
     cases = []
     for k in range(args.n):
         probs = {}

@@ -69,10 +69,14 @@ def test_trainable_datasets_have_mappings():
 
 
 def test_binary_quality_labels_do_not_fabricate_ripeness():
-    lab = map_path(TAX, "fruitnet_indian", "Bad Quality_Fruits/Banana_Bad/IMG_1.jpg")
+    lab = map_path(TAX, "fruitnet_indian", "Bad Quality_Fruits/Apple_Bad/IMG_1.jpg")
     assert lab["ripeness"] is None
-    assert lab["freshness"] == TAX.encode("freshness", ["declining", "spoiled"])
-    assert lab["produce"] == TAX.encode("produce", "banana")
+    assert lab["freshness"] == TAX.encode("freshness", ["declining", "spoiled"])   # never plain "spoiled"
+    assert lab["visual_spoilage"] == TAX.encode("visual_spoilage", ["mild", "severe"])
+    assert lab["produce"] == TAX.encode("produce", "apple")
+    # audit: FruitNet "bad" bananas include speckled, edible overripe fruit -> no quality label at all
+    ban = map_path(TAX, "fruitnet_indian", "Bad Quality_Fruits/Banana_Bad/IMG_1.jpg")
+    assert ban["freshness"] is None and ban["visual_spoilage"] is None and ban["produce"] == TAX.encode("produce", "banana")
     assert map_path(TAX, "fruitnet_indian", "Mixed Qualit_Fruits/Apple/IMG_2.jpg") is None
 
 

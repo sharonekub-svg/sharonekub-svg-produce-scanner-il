@@ -140,6 +140,41 @@ def main() -> None:
         exact = (masks[h].sum(1) == 1) & ind
         if exact.sum():
             res["heads"][h] = metrics.summarize(probs[h][exact], masks[h][exact].argmax(1), list(tax.classes(h)))
+    # Quality heads per produce type: coarse good-vs-bad (set-valued "bad" rows, e.g. FruitNet) and exact
+    # ripeness (e.g. Hass). This is what the 1-10 score is built from (docs/research/quality-score.md).
+    from ml.inference.decision import COARSE
+    prod_exact = masks["produce"].sum(1) == 1
+    prod_idx = masks["produce"].argmax(1)
+    q: dict = {}
+    for h, (good, bad, _) in COARSE.items():
+        gi = tax.heads[h].index(good)
+        bad_mask = np.zeros(tax.num_classes(h), bool)
+        bad_mask[[tax.heads[h].index(b) for b in bad]] = True
+        m = masks[h].astype(bool)
+        is_good = (m.sum(1) == 1) & m[:, gi]
+        is_bad = (m & ~bad_mask).sum(1) == 0
+        is_bad &= m.sum(1) > 0
+        sel = (is_good | is_bad) & prod_exact & ind
+        for pi in np.unique(prod_idx[sel]):
+            rows_ = sel & (prod_idx == pi)
+            yg, pg = is_good[rows_], probs[h][rows_, gi]
+            if yg.all() or (~yg).all():
+                continue
+            pred = pg >= 0.5
+            q.setdefault(h, {})[tax.produce[int(pi)]] = {
+                "n_good": int(yg.sum()), "n_bad": int((~yg).sum()),
+                "accuracy": float((pred == yg).mean()),
+                "balanced_accuracy": float(((pred & yg).sum() / yg.sum() + (~pred & ~yg).sum() / (~yg).sum()) / 2),
+                "auroc": ood.auroc(pg[yg], pg[~yg])}
+    rex = (masks["ripeness"].sum(1) == 1) & prod_exact & ind
+    for pi in np.unique(prod_idx[rex]):
+        rows_ = rex & (prod_idx == pi)
+        yt, yp = masks["ripeness"][rows_].argmax(1), probs["ripeness"][rows_].argmax(1)
+        if len(yt) >= 20:
+            q.setdefault("ripeness", {})[tax.produce[int(pi)]] = {
+                "n": int(len(yt)), "accuracy": float((yt == yp).mean()),
+                "within_one_stage": float((np.abs(yt - yp) <= 1).mean())}
+    res["quality_heads"] = q
     # System-level behaviour through the real decision policy (abstention included).
     thr = dict(DEFAULT_THRESHOLDS)
     tpath = args.ckpt.parent / "thresholds.json"
@@ -208,7 +243,8 @@ def main() -> None:
     if "produce" in res["heads"]:
         confusion_png(np.array(res["heads"]["produce"]["confusion_matrix"]), list(tax.produce), out.with_suffix(".confusion.png"))
     brief = {k: res["heads"]["produce"][k] for k in ("n", "top1", "macro_f1", "balanced_accuracy", "worst_class_recall", "ece")} if "produce" in res["heads"] else {}
-    print(json.dumps({"produce": brief, "decision": res["decision"], "ood": res.get("ood"), "tuned": res.get("tuned_thresholds")}, indent=2))
+    print(json.dumps({"produce": brief, "decision": res["decision"], "ood": res.get("ood"), "tuned": res.get("tuned_thresholds"),
+                      "quality_heads": res.get("quality_heads")}, indent=2))
 
 
 if __name__ == "__main__":
