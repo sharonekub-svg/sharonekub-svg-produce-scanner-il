@@ -77,15 +77,22 @@ Steps to a result: **2 taps** (open, "סרוק פרי"). In the worst case: 3 (p
 
 ## Web version (Vercel), same architecture
 
-Until the iOS build exists, the API root serves `server/web/index.html`: the same journey in a phone browser.
-- **Camera is home:** live viewfinder (`getUserMedia`, rear camera) with the framing square and one "סרוק פרי" button. "מהגלריה" is secondary.
-- **Permission:** one card, shown once, that says honestly the photo goes to *our server* for processing and is not stored (unlike the app, which works on the device). "בלי מצלמה חיה" falls back to the phone's own camera sheet.
-- **Result:** the frozen frame plus "בודק…", then a sheet slides up. It shows identity + confidence, the recommendation (hero), the 1–10 score + reason, chips, a general storage tip, the disclaimer, "מה זיהינו?" / "למה?" collapsed, "סרוק פרי נוסף", and 👍/👎 (Supabase feedback).
-- **Unsure:** one "צלם מזווית נוספת". The server combines both photos (`/v1/scan` with `image2`), the same as the app.
+Until the iOS build exists, the API root serves `server/web/index.html`: the same journey in a phone browser, installable as a PWA (manifest, icons, offline shell via `/sw.js`; scans always go to the network).
+- **Welcome = camera screen.** One question ("מה מצב הפרי?"), three trust facts, and the big "סרוק פרי" pill. The first press asks for the camera just-in-time (Yuka, Seek). Returning users go straight to the live viewfinder. Without a camera, the phone's own camera sheet opens.
+- **Live guidance (Seek):** a pill above the viewfinder checks brightness, sharpness and glare every 450 ms. It uses the same thresholds as the server, so a bad photo is caught before the tap.
+- **Analysing:** flash on capture, the frozen frame, a scan line sweeping the viewfinder, and "בודק…". Controls are dimmed.
+- **Result sheet (Yuka + Vivino):** photo + name + confidence in words. Then the **score ring 1–10** with a verdict word (מצוין / טוב / סביר / חלש / לא מומלץ) and one-line reason. Then the action, toned green/amber/red, then "מה בדקנו בתמונה" scales (ripeness, freshness, defects) and the general storage tip. "למה?" and "מה עוד זה יכול להיות?" (top 3) are collapsed. The disclaimer is always present. A sticky "סרוק פרי נוסף" sits beside 👍/👎 (Supabase feedback).
+- **Unsure / retake / not produce / offline:** the user's photo with a status badge, one sentence, and one button. Unsure offers "צלמו מזווית נוספת"; the server combines both photos (`image2`).
+- **Samples (Google Lens "try it"):** three licensed photos let someone see the full result without fruit at hand.
+- **"איך זה עובד":** the three steps, which fruits have a validated score (live from `/v1/bundle`), what a photo cannot know, privacy, and dataset credits.
 
-| Permission | Camera | Result | Spoiled | Unsure |
+| Welcome | Live camera | Analysing | Result | Spoiled |
 |---|---|---|---|---|
-| ![](img/ux/web_permission.jpg) | ![](img/ux/web_camera.jpg) | ![](img/ux/web_banana.jpg) | ![](img/ux/web_rotten.jpg) | ![](img/ux/web_unsure.jpg) |
+| ![](img/ux/web_welcome.jpg) | ![](img/ux/web_camera.jpg) | ![](img/ux/web_analysing.jpg) | ![](img/ux/web_banana.jpg) | ![](img/ux/web_rotten.jpg) |
+
+| Unsure | Samples | How it works |
+|---|---|---|
+| ![](img/ux/web_unsure.jpg) | ![](img/ux/web_samples.jpg) | ![](img/ux/web_info.jpg) |
 
 ## What we adopted, and from where
 

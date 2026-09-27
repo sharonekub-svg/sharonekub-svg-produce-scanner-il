@@ -23,7 +23,8 @@ from pathlib import Path
 
 import numpy as np
 from fastapi import FastAPI, File, HTTPException, Request, UploadFile
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse, Response
+from fastapi.staticfiles import StaticFiles
 from PIL import Image, UnidentifiedImageError
 
 from ml.common.taxonomy import HEADS, load_taxonomy, restrict_produce
@@ -107,6 +108,27 @@ def root(request: Request):
         return HTMLResponse((WEB / "index.html").read_text(encoding="utf-8"))
     return {"service": "produce-scanner inference API", "endpoints": ["/healthz", "/v1/bundle", "POST /v1/analyze", "POST /v1/scan"],
             "note": "Visual assessment only; not a food-safety guarantee."}
+
+
+SW_JS = """// Offline shell only: the page and its icons. Scans (/v1/*) always go to the network.
+const C = 'shell-v1', SHELL = ['/web/manifest.webmanifest', '/web/icon-192.png', '/web/favicon.png'];
+self.addEventListener('install', e => { e.waitUntil(caches.open(C).then(c => c.addAll(SHELL))); self.skipWaiting(); });
+self.addEventListener('activate', e => { e.waitUntil(caches.keys().then(ks => Promise.all(ks.filter(k => k !== C).map(k => caches.delete(k))))); self.clients.claim(); });
+self.addEventListener('fetch', e => {
+  const u = new URL(e.request.url);
+  if (e.request.method !== 'GET' || u.origin !== location.origin || u.pathname.startsWith('/v1/')) return;
+  e.respondWith(fetch(e.request).then(r => { const cp = r.clone(); caches.open(C).then(c => c.put(e.request, cp)); return r; })
+    .catch(() => caches.match(e.request)));
+});
+"""
+
+
+@app.get("/sw.js")
+def service_worker():
+    return Response(SW_JS, media_type="application/javascript", headers={"Cache-Control": "no-cache"})
+
+
+app.mount("/web", StaticFiles(directory=WEB), name="web")
 
 
 @app.get("/healthz")

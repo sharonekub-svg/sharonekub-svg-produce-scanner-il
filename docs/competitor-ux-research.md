@@ -198,6 +198,28 @@ What this changes for us:
 - **Safety verdicts** ("not safe to eat") remain out. Ours: "לא מומלץ לאכול – נראים סימני קלקול" plus the Ministry of Health mould rule, with the visual-only disclaimer.
 - Pantry / expiry tracking and comparison stay out of v1 (principle 9).
 
+## 7. Best-in-class scanning apps (outside produce) and a correction
+
+**Correction.** The App Store listing "PickFresh App" (id6746766572) is a local-produce *marketplace*. It has no freshness, storage or recipe content in its listing. The scanner flow described in §2 comes from pickfresh.app. The nearest match to the brief's "camera-first → freshness → remaining life → storage → recipes" is **FreshPick AI**, a browser-installable web app ([freshpick.ai](https://freshpick.ai/), a Gemini API competition entry). It ranks up to 5 items in one photo with numbered circles, flags bad items with a red ✕, and adds look/feel, storage and recipe tips.
+
+The best scan-to-result products in adjacent categories set the bar users actually compare us to:
+
+| App | Pattern | Evidence | What we take |
+|---|---|---|---|
+| **Yuka** (food/cosmetics barcode) | Score first with a verdict word (excellent / good / poor / bad) and traffic-light colour; then pros and cons; green-to-red scales give each number context; camera permission asked **only when the user taps scan**; simple swipe-to-delete history | [screensdesign.com breakdown](https://screensdesign.com/showcase/yuka-food-cosmetic-scanner), [App Store](https://apps.apple.com/us/app/yuka-food-cosmetic-scanner/id1092799236), redesign case studies ([1](https://medium.com/@anagaluppo/redesigning-the-yuka-app-a-case-study-041a6fe86a7f), [2](https://medium.com/@mp.marinapastor/redesigning-yuka-app-2c99e41697ac)) | Score + verdict word first; colour **and** word (case studies flag colour-only as an accessibility failure); scales for ripeness/freshness; just-in-time camera permission |
+| **Seek by iNaturalist** | Live on-camera feedback that guides the user to a better photo *before* shooting. v1's "shoot, then find out it's unidentifiable" caused frustration. | [iNaturalist blog](https://www.inaturalist.org/blog/23075-real-time-computer-vision-predictions-in-seek-by-inaturalist-version-2-0) | Live **photo-quality** hint (light, focus) with the same thresholds as our server gate. It is honest: no live fruit guesses (we rejected flickering live verdicts). |
+| **PictureThis** (plants) | First scan is guided so the first experience succeeds; results are rich but need "significant scrolling and tapping"; early social-proof paywall | [screensdesign.com](https://screensdesign.com/showcase/picturethis-plant-identifier) | "No fruit nearby? try a sample" so the first result works; avoid density and the paywall-first approach |
+| **Google Lens** | Edge-to-edge viewfinder with rounded corners, the shutter as the obvious centre control, modes named in text | [9to5google](https://9to5google.com/2020/09/11/google-lens-camera-redesign/) | Full-bleed camera, rounded framing corners, one centre action |
+| **Vivino** | One number (1–5) that everyone understands, from a label photo | [Vivino](https://www.vivino.com/en/wine-news/how-the-vivino-label-scanner-works) | One number (1–10), explained in one line |
+| **FreshPick AI** | Installs from the browser (PWA) on iPhone and Android | [freshpick.ai](https://freshpick.ai/) | Web manifest and icons: "הוסף למסך הבית" makes the website feel like an app |
+
+**Typography.** Heebo is the default modern Hebrew UI face: clean, high contrast, Roboto-matched Latin ([Google Fonts](https://fonts.google.com/specimen/Heebo), [comparison](https://www.itsbaba.com/hebrew-fonts)). We use it for the web version.
+
+**Deliberately not adopted:**
+- Multi-item ranking in one photo: it needs a detection model we don't have, so it would be fake.
+- Recipes, pantry, social proof, a paywall.
+- A scan history. It remains out for v1 (principle 9).
+
 ## Sources
 
 - FreshScanAI: https://apps.apple.com/ca/app/freshscanai/id6758030277

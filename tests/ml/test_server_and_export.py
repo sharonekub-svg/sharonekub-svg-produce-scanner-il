@@ -1,6 +1,7 @@
 """Export bundle + self-hosted server contract, using a tiny random model (wiring only)."""
 import io
 import json
+import re
 import subprocess
 import sys
 from pathlib import Path
@@ -99,4 +100,8 @@ def test_web_page_and_care_copy():
     page = c.get("/", headers={"accept": "text/html"})
     assert page.status_code == 200 and "סרוק פרי" in page.text and "/v1/scan" in page.text
     assert c.get("/", headers={"accept": "application/json"}).json()["service"] == "produce-scanner inference API"
+    for path in re.findall(r'(?:href|src)="(/web/[^"$]+)"', page.text) + ["/web/samples/" + f for f in ("banana.jpg", "apple_rotten.jpg", "pomegranate.jpg")]:
+        assert c.get(path).status_code == 200, path
+    sw = c.get("/sw.js")
+    assert sw.status_code == 200 and "javascript" in sw.headers["content-type"] and "/v1/" in sw.text
     assert srv.storage_tip_he("banana").startswith("בטמפרטורת החדר")
