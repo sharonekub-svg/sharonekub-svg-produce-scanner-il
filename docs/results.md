@@ -234,6 +234,38 @@ Smoke test through the server:
 - banana → 8/10, "ripe";
 - orange → 10/10.
 
+## Round 3: C10 → `v0.5-dev` (27 Sep 2026)
+
+Config `p5_c10_calibrated.yaml`:
+- 16 epochs; aux share 0.46; 2 loader workers.
+- Validation masks the produce labels of aux (quality-only) rows. This fixes C9's inflated produce temperature, 0.94 → 0.53.
+
+Test set (`eval_test_all`, n = 8,833), C9 → C10:
+
+| Head | Metric | C9 | C10 |
+|---|---|---|---|
+| Freshness | top-1 | 0.912 | **0.969** |
+| Freshness | ECE | 0.071 | 0.014 |
+| Visual spoilage | top-1 | 0.913 | **0.995** |
+| Ripeness | top-1 | 0.774 | **0.790** |
+| Ripeness | "partially ripe" recall | 0.40 | 0.52 |
+
+**Identification threshold.** The val-tuned `produce_min_prob` (0.70) gave more coverage but lower accuracy when shown. We raised it to **0.93**: the smallest value whose Grocery-**val** accuracy (0.9938, n = 397) matches what C9 shipped with (0.9936 at 0.74). It was chosen on val, not test (`thresholds.json` → `tuned_on.override_note`). The confidence + margin rule on Grocery test, without OOD or photo gates:
+
+| Model | Threshold | Shown | Accuracy when shown |
+|---|---|---|---|
+| C9 | 0.74 | 67.9% | 95.3% |
+| C10 | 0.93 | **73.8%** | **97.0%** |
+
+**Per-fruit quality gate** (same bar as before):
+- New: **avocado ripeness passes** (0.724 exact, 0.999 within one stage, n = 1,470).
+- All six C9 types still pass.
+- Lemon (bal. acc. 0.74) and strawberry (37 test photos) still fail.
+- Banana freshness and grape spoilage pass the accuracy bar, but have only 21 "bad" test photos each, below the 30 required.
+- Lime passes but stays off: lime is a held-out "look-alike" class in the OOD test.
+
+Scores are live for **apple, banana, grapes, orange, pomegranate, guava and avocado**. Released as **`v0.5-dev`** (`p5_c10_calibrated@2f3772e51859`). The Grocery-only identification recall gates still fail (e.g. passion fruit 0.30, n = 27), so it stays a dev build.
+
 ## Phase 5 — validation (stress proxies on the P3 model, Grocery official test, n = 1,704)
 
 The Israeli real-world set does not exist yet. These are **synthetic proxies** (`ml/evaluation/evaluate.py --stress`), not a substitute for it.

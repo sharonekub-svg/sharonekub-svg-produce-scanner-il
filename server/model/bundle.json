@@ -1,7 +1,7 @@
 {
   "bundle_version": 1,
-  "model_id": "p5_c9_quality_all@7cc1686cb150",
-  "created_at": "2026-09-27T18:06:31.192340+00:00",
+  "model_id": "p5_c10_calibrated@2f3772e51859",
+  "created_at": "2026-09-27T21:07:35.785566+00:00",
   "input": {
     "size": 224,
     "layout": "NCHW",
@@ -67,15 +67,15 @@
     ]
   },
   "temperatures": {
-    "produce": 0.9410266337605595,
-    "ripeness": 0.7840979565747623,
-    "freshness": 0.40821814955109237,
-    "visual_spoilage": 0.2692100550810717
+    "produce": 0.5278406820817714,
+    "ripeness": 0.6602138773783506,
+    "freshness": 0.4275368485102569,
+    "visual_spoilage": 0.305059489748057
   },
   "thresholds": {
-    "produce_min_prob": 0.74,
+    "produce_min_prob": 0.93,
     "produce_min_margin": 0.15,
-    "ood_min_energy": 3.333124876022339,
+    "ood_min_energy": 4.636185646057129,
     "head_min_prob": 0.55,
     "spoiled_alert_prob": 0.4
   },
@@ -101,6 +101,9 @@
     ],
     "grape": [
       "freshness"
+    ],
+    "avocado": [
+      "ripeness"
     ]
   },
   "produce_meta": {
@@ -347,10 +350,10 @@
   ],
   "files": {
     "model.onnx": {
-      "sha256": "daf0c56aeb4e853ce12405a1969fe93ed050760220b8481c95869aba2a27bffd"
+      "sha256": "9ef418d9ccd7ae39b52904776366e94f06e762f9b267eafc6f6cb95e010980ac"
     },
     "ProduceScanner.mlpackage": {
-      "sha256": "c37ef409ba515d4cd977a30619b11ee3848ab2b9a9a3730ed8604b2ca95bd968"
+      "sha256": "eb3ede90da8a51dc0c34d563a9fe73989377349da649424e155b788ca70bb147"
     }
   }
 }
