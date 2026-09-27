@@ -141,11 +141,13 @@ All runs use the C1 recipe on Grocery Store only (commercial). Every column is m
 | C4 | C1 + white-balance augmentation | 0.892 | 0.848 | 0.45 | 68.2% | 95.0% | 99.5% | 0.640 | **0.849** | **94.7%** |
 | **C5 (`v0.2-dev`)** | lookalikes as **named negative classes** | **0.898** | **0.874** | **0.52** | 67.3% | 94.6% | 98.4% | 0.693 | 0.797 | 93.1% |
 | C6 | C5 + white-balance augmentation | 0.894 | 0.858 | 0.45 | 67.4% | 95.0% | 98.9% | 0.683 | 0.836 | 94.1% |
+| C7 | C5 + 2,690 studio lemons (SoftwareMill, MIT) | 0.878 | 0.824 | 0.34 | 52.1% | 97.0% | 100% | 0.675 | 0.750 | 96.3% |
 
 In-distribution per-class recall, C1 → C5: lemon 0.44 → 0.54, mandarin 0.53 → 0.66, kiwi 0.78 → 0.91, avocado 0.85 → 0.95, cucumber 0.67 → 0.70, mango 0.68 → 0.68. Orange drops 0.70 → 0.52: 10 of 56 oranges are now called grapefruit. Grapefruit is a negative class, so those photos end as "not something I know", not as a wrong answer, and accuracy when shown is unchanged.
 
 Decisions:
 - **C3 rejected.** Without seeing lookalikes in training, only 69% of them are caught. The OOD score cannot replace negatives.
+- **C7 rejected.** Adding studio lemons on a black background *lowered* lemon recall on phone photos (0.54 → 0.34) and macro-F1 (0.874 → 0.824). The model learned "black background = lemon", and 'shown' fell to 52%. This is the domain gap measured before (results R4). Scored from the best checkpoint (epoch 14); the run stopped at epoch 18 of 20. The lemon mould labels stay registered, to be used only once they're paired with phone-photo lemons.
 - **C5 adopted → `v0.2-dev`.** It has the best macro-F1 and the best worst-class recall of any run, catches more lookalikes than C1, and keeps accuracy when shown.
 - **White balance (C4/C6) not adopted yet.** It clearly helps warm light (+0.02–0.04 macro-F1, +1.0–1.5 points accuracy when shown). But on one seed it costs in-distribution macro-F1 (−0.013 and −0.016), mostly on mango and citrus. Warm-light accuracy of what is *shown* is 93.1% for C5 anyway, because abstention absorbs the difference. Re-test on the real-world set, where warm kitchen light is real rather than synthetic. The switch is `augment.white_balance_p`.
 
