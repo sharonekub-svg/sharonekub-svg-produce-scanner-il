@@ -22,7 +22,8 @@ from functools import lru_cache
 from pathlib import Path
 
 import numpy as np
-from fastapi import FastAPI, File, HTTPException, UploadFile
+from fastapi import FastAPI, File, HTTPException, Request, UploadFile
+from fastapi.responses import HTMLResponse
 from PIL import Image, UnidentifiedImageError
 
 from ml.common.taxonomy import HEADS, load_taxonomy, restrict_produce
@@ -84,8 +85,26 @@ async def _read_image(file: UploadFile) -> Image.Image:
         raise HTTPException(400, "not a decodable image")
 
 
+WEB = Path(__file__).resolve().parent / "web"
+# Copy of app/src/model/produce_care.json (app/ is not deployed); tests/ml/test_server_and_export.py keeps them equal.
+CARE = json.loads((WEB / "produce_care.json").read_text(encoding="utf-8"))
+
+
+def storage_tip_he(produce: str | None) -> str | None:
+    """Same text as the app's STORAGE_TIP_HE (app/src/model/advice.ts): tip + the ethylene rule."""
+    c = CARE["produce"].get(produce or "")
+    if not c:
+        return None
+    g = CARE["general_he"]
+    eth = g["ethylene_producer"] if c["ethylene"]["producer"] else g["ethylene_sensitive"] if c["ethylene"]["sensitive"] else ""
+    return f"{c['tip_he']} {eth}" if eth else c["tip_he"]
+
+
 @app.get("/")
-def root():
+def root(request: Request):
+    # Browsers get the scan page (docs/mobile.md: web fallback until the iOS build); programs get JSON.
+    if "text/html" in request.headers.get("accept", ""):
+        return HTMLResponse((WEB / "index.html").read_text(encoding="utf-8"))
     return {"service": "produce-scanner inference API", "endpoints": ["/healthz", "/v1/bundle", "POST /v1/analyze", "POST /v1/scan"],
             "note": "Visual assessment only; not a food-safety guarantee."}
 
@@ -122,4 +141,5 @@ async def scan(image: UploadFile = File(...)):
     probs = {h: softmax(lg[h][None], temps.get(h, 1.0))[0] for h in HEADS}
     res = decision.decide(e.tax, probs, e.bundle.get("supported_heads", {}), quality_reason=q.reason,
                           energy_score=float(energy(lg["produce"][None])[0]), thresholds=e.bundle.get("thresholds"))
-    return {"model_id": e.bundle["model_id"], **res.to_dict()}
+    return {"model_id": e.bundle["model_id"], **res.to_dict(),
+            "storage_tip_he": storage_tip_he(res.produce) if res.status == "ok" else None}

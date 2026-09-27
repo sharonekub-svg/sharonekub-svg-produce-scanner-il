@@ -87,3 +87,16 @@ def test_server_preprocess_matches_training_eval_transform(bundle_dir, monkeypat
     a = srv.engine().preprocess(img)[0]
     b = build_eval_transform({"data": {"image_size": 96}})(img).numpy()
     assert a.shape == b.shape and np.abs(a - b).mean() < 0.02
+
+
+def test_web_page_and_care_copy():
+    root = Path(__file__).resolve().parents[2]
+    assert json.loads((root / "server/web/produce_care.json").read_text()) == json.loads((root / "app/src/model/produce_care.json").read_text())
+    from fastapi.testclient import TestClient
+
+    from server import app as srv
+    c = TestClient(srv.app)
+    page = c.get("/", headers={"accept": "text/html"})
+    assert page.status_code == 200 and "סרוק פרי" in page.text and "/v1/scan" in page.text
+    assert c.get("/", headers={"accept": "application/json"}).json()["service"] == "produce-scanner inference API"
+    assert srv.storage_tip_he("banana").startswith("בטמפרטורת החדר")

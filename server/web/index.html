@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>סורק פירות וירקות</title>
+<style>
+  :root { --bg:#FAFAF7; --card:#fff; --ink:#1d1d1b; --muted:#6b6b66; --line:#E4E4DD; --green:#2f7d4f;
+          --g-bg:#E3F3E8; --g-fg:#1f5c38; --a-bg:#FFF1DB; --a-fg:#8a5300; --r-bg:#FDE4E1; --r-fg:#9b1c1c; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--ink); font:16px/1.5 system-ui,-apple-system,"Segoe UI",Arial,sans-serif; }
+  main { max-width:480px; margin:0 auto; padding:16px; }
+  h1 { font-size:22px; margin:8px 0 4px; }
+  .sub { color:var(--muted); font-size:14px; margin:0 0 16px; }
+  .btn { display:flex; align-items:center; justify-content:center; width:100%; min-height:56px; border-radius:14px;
+         background:var(--green); color:#fff; font-size:19px; font-weight:700; border:0; cursor:pointer; }
+  .btn.secondary { background:transparent; color:var(--green); border:1.5px solid var(--green); margin-top:10px; font-size:17px; min-height:48px; }
+  input[type=file] { display:none; }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:18px; padding:16px; margin-top:14px; }
+  img.photo { width:100%; max-height:260px; object-fit:cover; border-radius:14px; margin-top:14px; display:none; }
+  .row { display:flex; align-items:baseline; justify-content:space-between; gap:8px; flex-wrap:wrap; }
+  .name { font-size:28px; font-weight:800; }
+  .muted { color:var(--muted); font-size:14px; }
+  .score { display:flex; gap:12px; align-items:center; margin-top:12px; }
+  .badge { direction:ltr; border-radius:14px; padding:6px 12px; font-weight:800; white-space:nowrap; }
+  .badge b { font-size:34px; } .badge span { font-size:16px; }
+  .rec { border-radius:14px; padding:12px 14px; font-size:20px; font-weight:800; margin-top:12px; }
+  .g { background:var(--g-bg); color:var(--g-fg); } .a { background:var(--a-bg); color:var(--a-fg); } .r { background:var(--r-bg); color:var(--r-fg); }
+  .tip { background:#F3F7F2; border-radius:12px; padding:12px; margin-top:12px; font-size:15px; }
+  .disc { background:#FFF8E1; border-radius:12px; padding:10px; margin-top:12px; font-size:13px; }
+  ul { margin:8px 0 0; padding-inline-start:20px; font-size:15px; }
+  .spin { text-align:center; color:var(--muted); margin-top:16px; display:none; }
+  footer { color:var(--muted); font-size:12px; text-align:center; margin:18px 0; }
+</style>
+</head>
+<body>
+<main>
+  <h1>🍎 סורק פירות וירקות</h1>
+  <p class="sub">צלמו פרי או ירק אחד, מקרוב ובאור טוב — ותקבלו זיהוי, ציון איכות חזותי מ-1 עד 10 והסבר קצר.</p>
+  <label class="btn" for="cam">📷 סרוק פרי</label>
+  <input id="cam" type="file" accept="image/*" capture="environment">
+  <label class="btn secondary" for="gal">בחירת תמונה מהגלריה</label>
+  <input id="gal" type="file" accept="image/*">
+  <img id="photo" class="photo" alt="">
+  <div id="spin" class="spin">בודק…</div>
+  <div id="out"></div>
+  <footer>הערכה חזותית בלבד · התמונה נשלחת לעיבוד ואינה נשמרת</footer>
+</main>
+<script>
+const TONE = { eat_now:'g', eat_soon:'a', overripe:'a', wait:'a', wait_little:'a', check_defects:'r', discard:'r' };
+const STATUS_TITLE = { unsure:'🤔 לא בטוח', retake:'📷 צריך צילום נוסף', not_produce:'🔍 לא זוהה פרי או ירק' };
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const confWord = p => p == null ? '' : p >= 0.85 ? 'ביטחון גבוה' : p >= 0.7 ? 'ביטחון בינוני' : 'ביטחון נמוך';
+const scoreTone = s => s >= 8 ? 'g' : s >= 5 ? 'a' : 'r';
+
+async function send(file) {
+  if (!file) return;
+  const out = document.getElementById('out'), spin = document.getElementById('spin'), photo = document.getElementById('photo');
+  photo.src = URL.createObjectURL(file); photo.style.display = 'block';
+  out.innerHTML = ''; spin.style.display = 'block';
+  try {
+    const fd = new FormData(); fd.append('image', file);
+    const res = await fetch('/v1/scan', { method: 'POST', body: fd });
+    if (!res.ok) throw new Error(res.status);
+    render(await res.json());
+  } catch (e) {
+    out.innerHTML = '<div class="card"><b>משהו השתבש.</b> נסו שוב.</div>';
+  } finally { spin.style.display = 'none'; }
+}
+
+function render(r) {
+  const out = document.getElementById('out');
+  if (r.status !== 'ok') {
+    out.innerHTML = `<div class="card"><div class="name" style="font-size:22px">${STATUS_TITLE[r.status] || ''}</div>
+      <p>${esc(r.message_he)}</p></div>`;
+    return;
+  }
+  let h = `<div class="card"><div class="row"><div class="name">${esc(r.emoji)} ${esc(r.produce_he)}</div>
+    <div class="muted">${confWord(r.produce_confidence)} (${Math.round(r.produce_confidence * 20) * 5}%)</div></div>`;
+  if (r.score != null) {
+    h += `<div class="score"><div class="badge ${scoreTone(r.score)}"><b>${r.score}</b><span>/10</span></div>
+      <div><div class="muted">ציון איכות חזותי</div><div>${esc(r.score_reason_he)}</div></div></div>`;
+  } else {
+    h += `<p class="muted" style="margin:10px 0 0">${esc(r.score_reason_he)}</p>`;
+  }
+  if (r.recommendation && r.recommendation !== 'inspect') {
+    h += `<div class="rec ${TONE[r.recommendation] || 'a'}">${esc(r.recommendation_he)}</div>`;
+  }
+  if (r.explanation_he && r.explanation_he.length && r.recommendation !== 'inspect') {
+    h += `<ul>${r.explanation_he.map(e => `<li>${esc(e)}</li>`).join('')}</ul>`;
+  }
+  if (r.storage_tip_he && !['discard', 'check_defects'].includes(r.recommendation)) {
+    h += `<div class="tip"><b>💡 טיפ אחסון (כללי)</b><br>${esc(r.storage_tip_he)}</div>`;
+  }
+  h += `<div class="disc">&#x200F;ⓘ ${esc(r.disclaimer_he)}</div></div>`;
+  out.innerHTML = h;
+}
+document.getElementById('cam').addEventListener('change', e => send(e.target.files[0]));
+document.getElementById('gal').addEventListener('change', e => send(e.target.files[0]));
+</script>
+</body>
+</html>
