@@ -1,0 +1,33 @@
+{
+  "_about": "General produce-care guidance per type (NOT a claim about the photographed item). Evidence and sources: docs/research/food-quality.md. fridge: no | after_ripening | yes. chill_below_c: chilling-injury threshold (cold damage), null if not chill-sensitive at home-fridge temperatures. ethylene.producer: gives off ethylene (speeds ripening of others). ethylene.sensitive: ripens/yellows/softens faster near producers.",
+  "produce": {
+    "banana":      {"fridge": "no",             "chill_below_c": 13,   "ethylene": {"producer": true,  "sensitive": false}, "tip_he": "בטמפרטורת החדר, לא במקרר – בננה רגישה לקור."},
+    "avocado":     {"fridge": "after_ripening", "chill_below_c": 5,    "ethylene": {"producer": true,  "sensitive": false}, "tip_he": "להבשלה – על השיש (בשקית נייר עם בננה זה מהיר יותר). כשהתרכך מעט – למקרר, לכמה ימים."},
+    "tomato":      {"fridge": "no",             "chill_below_c": 10,   "ethylene": {"producer": true,  "sensitive": false}, "tip_he": "בטמפרטורת החדר, הרחק משמש ישירה. קירור פוגע בטעם ובמרקם."},
+    "apple":       {"fridge": "yes",            "chill_below_c": null, "ethylene": {"producer": true,  "sensitive": false}, "tip_he": "במקרר, בשקית נפרדת – נשמר טרי כמה שבועות."},
+    "orange":      {"fridge": "yes",            "chill_below_c": null, "ethylene": {"producer": false, "sensitive": false}, "tip_he": "במקום קריר או במקרר, לא בשקית סגורה – נשמר 1–3 שבועות."},
+    "mandarin":    {"fridge": "yes",            "chill_below_c": null, "ethylene": {"producer": false, "sensitive": false}, "tip_he": "במקום קריר או במקרר, לא בשקית סגורה."},
+    "lemon":       {"fridge": "yes",            "chill_below_c": null, "ethylene": {"producer": false, "sensitive": false}, "tip_he": "במקרר, במגירת הירקות – נשמר כמה שבועות."},
+    "cucumber":    {"fridge": "yes",            "chill_below_c": 7,    "ethylene": {"producer": false, "sensitive": true},  "tip_he": "במגירת הירקות (החלק הפחות קר במקרר), עטוף, ולאכול תוך כמה ימים."},
+    "mango":       {"fridge": "after_ripening", "chill_below_c": 10,   "ethylene": {"producer": true,  "sensitive": false}, "tip_he": "להבשלה – בטמפרטורת החדר. אחרי שהבשיל – במקרר, לכמה ימים."},
+    "peach":       {"fridge": "after_ripening", "chill_below_c": null, "ethylene": {"producer": true,  "sensitive": false}, "tip_he": "להבשלה – על השיש עד שמתרכך מעט. אחרי שהבשיל – במקרר ולאכול בהקדם."},
+    "nectarine":   {"fridge": "after_ripening", "chill_below_c": null, "ethylene": {"producer": true,  "sensitive": false}, "tip_he": "להבשלה – על השיש עד שמתרככת מעט. אחרי שהבשילה – במקרר ולאכול בהקדם."},
+    "plum":        {"fridge": "after_ripening", "chill_below_c": null, "ethylene": {"producer": true,  "sensitive": false}, "tip_he": "להבשלה – בטמפרטורת החדר. אחרי שהבשיל – במקרר."},
+    "kiwi":        {"fridge": "after_ripening", "chill_below_c": null, "ethylene": {"producer": false, "sensitive": true},  "tip_he": "להבשלה – על השיש (ליד תפוח או בננה זה מהיר יותר). אחרי שהתרכך – במקרר."},
+    "pear":        {"fridge": "after_ripening", "chill_below_c": null, "ethylene": {"producer": true,  "sensitive": false}, "tip_he": "להבשלה – בטמפרטורת החדר. אחרי שהבשיל – במקרר."},
+    "persimmon":   {"fridge": "after_ripening", "chill_below_c": null, "ethylene": {"producer": false, "sensitive": true},  "tip_he": "להבשלה – בטמפרטורת החדר. אחרי שהתרכך – במקרר. עפיצות (טעם 'מכווץ') לא נראית בתמונה."},
+    "guava":       {"fridge": "after_ripening", "chill_below_c": null, "ethylene": {"producer": false, "sensitive": false}, "tip_he": "בטמפרטורת החדר עד שמתרככת, אחר כך במקרר."},
+    "strawberry":  {"fridge": "yes",            "chill_below_c": null, "ethylene": {"producer": false, "sensitive": false}, "tip_he": "במקרר, לא שטופים – לשטוף רק לפני האכילה."},
+    "grape":       {"fridge": "yes",            "chill_below_c": null, "ethylene": {"producer": false, "sensitive": false}, "tip_he": "במקרר, לא שטופים – לשטוף רק לפני האכילה."},
+    "watermelon":  {"fridge": "after_ripening", "chill_below_c": 10,   "ethylene": {"producer": false, "sensitive": true},  "tip_he": "שלם – בטמפרטורת החדר. חתוך – במקרר, מכוסה."},
+    "melon":       {"fridge": "after_ripening", "chill_below_c": null, "ethylene": {"producer": true,  "sensitive": false}, "tip_he": "שלם – בטמפרטורת החדר עד שמבשיל. חתוך – במקרר, מכוסה."},
+    "pomegranate": {"fridge": "yes",            "chill_below_c": null, "ethylene": {"producer": false, "sensitive": false}, "tip_he": "במקום קריר או במקרר – נשמר זמן רב."},
+    "pepper":      {"fridge": "yes",            "chill_below_c": 7,    "ethylene": {"producer": false, "sensitive": true},  "tip_he": "במגירת הירקות במקרר."}
+  },
+  "general_he": {
+    "ethylene_producer": "משחרר גז אתילן שמזרז הבשלה – לשמור בנפרד מפירות וירקות שלא רוצים שיבשילו או יצהיבו מהר (למשל קיווי, מלפפון, פלפל).",
+    "ethylene_sensitive": "רגיש לאתילן – לשמור בנפרד מבננות, תפוחים, אבוקדו ועגבניות.",
+    "mould": "לפי משרד הבריאות: מזון שצמח עליו עובש – לזרוק בשלמותו, ולא לחתוך רק את החלק שנראה עבש.",
+    "wash": "לשטוף מיד לפני האכילה, לא לפני האחסון – לחות מזרזת ריקבון."
+  }
+}

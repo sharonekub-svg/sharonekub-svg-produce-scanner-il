@@ -130,6 +130,41 @@ Produced by `scripts/release_model.sh runs/p4_c1_commercial_mnv3_full/… data/p
 | End-to-end via self-hosted server (real photos) | ✅ avocado/tomato identified; banana at 0.52 → "unsure"; asparagus → "not produce"; dark photo → "retake"; satsuma → "orange" at 1.00 (known citrus confusion) |
 | Ripeness / freshness / spoilage | Unsupported (no licensed labels). The app shows "not available yet for this type" and the recommendation "check manually" |
 
+## Follow-ups after `v0.1-dev` (2026-09-27): negatives, lighting, and `v0.2-dev`
+
+All runs use the C1 recipe on Grocery Store only (commercial). Every column is measured on **identical test rows**: in-distribution = test minus the five lookalike types. Lookalikes are lime, grapefruit, zucchini, potato and passion fruit, and should end as "unsure" or "not produce". Warm light is the synthetic tungsten proxy. Single seed each (`scripts/compare_runs.py`).
+
+| Run | Change | top-1 | macro-F1 | worst class | shown | acc. when shown | lookalikes abstained | energy AUROC (lookalikes) | warm macro-F1 | warm acc. shown |
+|---|---|---|---|---|---|---|---|---|---|---|
+| C1 (`v0.1-dev`) | lookalikes inside "other" | 0.896 | 0.861 | 0.44 | 68.3% | 94.8% | 96.8% | 0.700 | 0.826 | 93.2% |
+| C3 | lookalikes removed from training | 0.900 | 0.851 | 0.37 | 69.9% | 92.0% | **68.9%** | 0.864 | 0.771 | 86.2% |
+| C4 | C1 + white-balance augmentation | 0.892 | 0.848 | 0.45 | 68.2% | 95.0% | 99.5% | 0.640 | **0.849** | **94.7%** |
+| **C5 (`v0.2-dev`)** | lookalikes as **named negative classes** | **0.898** | **0.874** | **0.52** | 67.3% | 94.6% | 98.4% | 0.693 | 0.797 | 93.1% |
+| C6 | C5 + white-balance augmentation | 0.894 | 0.858 | 0.45 | 67.4% | 95.0% | 98.9% | 0.683 | 0.836 | 94.1% |
+
+In-distribution per-class recall, C1 → C5: lemon 0.44 → 0.54, mandarin 0.53 → 0.66, kiwi 0.78 → 0.91, avocado 0.85 → 0.95, cucumber 0.67 → 0.70, mango 0.68 → 0.68. Orange drops 0.70 → 0.52: 10 of 56 oranges are now called grapefruit. Grapefruit is a negative class, so those photos end as "not something I know", not as a wrong answer, and accuracy when shown is unchanged.
+
+Decisions:
+- **C3 rejected.** Without seeing lookalikes in training, only 69% of them are caught. The OOD score cannot replace negatives.
+- **C5 adopted → `v0.2-dev`.** It has the best macro-F1 and the best worst-class recall of any run, catches more lookalikes than C1, and keeps accuracy when shown.
+- **White balance (C4/C6) not adopted yet.** It clearly helps warm light (+0.02–0.04 macro-F1, +1.0–1.5 points accuracy when shown). But on one seed it costs in-distribution macro-F1 (−0.013 and −0.016), mostly on mango and citrus. Warm-light accuracy of what is *shown* is 93.1% for C5 anyway, because abstention absorbs the difference. Re-test on the real-world set, where warm kitchen light is real rather than synthetic. The switch is `augment.white_balance_p`.
+
+### `v0.2-dev` release (`scripts/release_model.sh runs/p4_c5_named_negatives/… data/processed_commercial_v2 v0.2-dev --allow-gate-failures`)
+
+| Check | Result |
+|---|---|
+| Licence gate | ✅ Grocery Store (MIT) only |
+| ONNX == PyTorch | ✅ 100% agreement; 16.55 MB |
+| Core ML fp16 | ✅ 8.5 MB weights |
+| Full test (28 classes incl. negatives, quality gate on) | top-1 0.891, macro-F1 0.847, ECE 0.046; accuracy when shown 94.3% |
+| Gates | ❌ 7 per-class failures (orange, mandarin, lemon, cucumber, mango, nectarine, passion fruit), down from 8 → **internal dev build only** |
+| Synced | app bundle, credits, `ProduceScanner.mlpackage`, `server/model` (Vercel API) |
+| Server class list | Now read from the bundle (`restrict_produce`). Previously it used the mapping file, which would have mislabelled index 22 after classes were added. |
+
+Also measured, in [research/ml-methods.md §6](research/ml-methods.md):
+- Feature-space OOD. Mahalanobis AUROC is 0.83 vs energy 0.70 on lookalikes, and 0.71 vs 0.69 on unseen produce. Not shipped yet.
+- Blur-gate sweep. The threshold moved 60 → 30: same accuracy on what passes, and unnecessary retakes on mild blur fall from 67% to 16%.
+
 ## Phase 5 — validation (stress proxies on the P3 model, Grocery official test, n = 1,704)
 
 The Israeli real-world set does not exist yet. These are **synthetic proxies** (`ml/evaluation/evaluate.py --stress`), not a substitute for it.

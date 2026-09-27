@@ -2,6 +2,16 @@
 
 Goal: the only dataset with Israeli produce, real conditions, **ground-truth** ripeness/freshness and a physical-fruit ID that makes leakage-free splits possible. Output feeds `own_il_collection` (`data/raw/own_il_collection/labels.csv`), validated by `scripts/validate_collection.py`.
 
+## 0. Where the photos come from (in order of speed)
+
+| Source | What it gives | Labels | Status |
+|---|---|---|---|
+| **Own team (streams A and B below)** | Longitudinal ripeness series + the real-world test set | Ground truth: firmness, cut test, °Brix per `§4` | Ready to start: protocol, labeler (`tools/labeler`), validator (`scripts/validate_collection.py`) |
+| **In-app photo donation** (opt-in, per photo, consent v1) | Many real phones, kitchens and lighting conditions across Israel | Model prediction + user yes/no; **identity/quality labels must be added by our graders** (a photo alone never gives ripeness ground truth) | Live: `app/src/donation.ts`, bucket `scan-donations` (`server/supabase/migrations/003_photo_donations.sql`). Donated photos go to **train only after grading**, never into stream B. |
+| **Partners** (ask for photos of graded lots, or permission to shoot at their graders) | Graded fruit with measured maturity (dry matter for avocado, °Brix, firmness) | Instrument-measured | To contact: ARO/Volcani Institute (postharvest dept.), Hebrew University Faculty of Agriculture (Rehovot), Plants Production & Marketing Board (מועצת הצמחים), packing houses, supermarket produce QA |
+
+Donated photos keep `consent_version`, must pass the same QA (§5), and any photo showing people or documents is deleted during grading.
+
 ## 1. Two collection streams
 
 | Stream | Purpose | Who | Volume (MVP) |

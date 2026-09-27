@@ -14,7 +14,7 @@ from pathlib import Path
 
 import torch
 
-from ml.common.taxonomy import HEADS, load_taxonomy
+from ml.common.taxonomy import HEADS, load_taxonomy, restrict_produce
 from ml.inference.decision import DEFAULT_THRESHOLDS
 from ml.training.model import build_model
 
@@ -37,9 +37,19 @@ class ExportWrapper(torch.nn.Module):
         return tuple(o[h] for h in OUTPUT_NAMES)
 
 
+NAMED_NEGATIVES_V2 = ("lime", "grapefruit", "zucchini", "potato", "passion_fruit")
+
+
 def load(ckpt_path: Path):
     ck = torch.load(ckpt_path, map_location="cpu")
     tax = load_taxonomy()
+    # The taxonomy a checkpoint was trained with: stored since the named-negative classes were
+    # added; older checkpoints were trained on the original 23 classes.
+    names = tuple(ck.get("produce_classes") or ())
+    if not names and ck["model"]["produce.weight"].shape[0] != len(tax.produce):
+        names = tuple(p for p in tax.produce if p not in NAMED_NEGATIVES_V2)
+    if names and names != tax.produce:
+        tax = restrict_produce(tax, names)
     cfg = ck["cfg"]
     cfg["model"]["pretrained"] = False
     net = build_model(cfg, {h: tax.num_classes(h) for h in HEADS})

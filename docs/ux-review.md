@@ -24,3 +24,13 @@ Demo photo: Grocery Store Dataset (MIT, Klasson et al. 2019).
 | 5 | Error states had no title, showed the "visual assessment" disclaimer with no assessment, and used an outline button for their only action | Icon + title per state; disclaimer only on assessments; filled primary button |
 | 6 | Text hard-aligned `left` (relied on iOS mirroring; broke on web) | Natural alignment everywhere; RLM before the ⓘ disclaimer (ⓘ is bidi-L) |
 | 7 | Disclosure arrows pointed the LTR way | `◂` collapsed / `▾` expanded |
+
+## 2026-09-27 additions: produce care, mould rule, photo donation
+
+| Storage tip with ethylene rule | Photo donation: per-photo consent | "Discard" explains the Ministry of Health mould rule |
+|---|---|---|
+| ![](img/ux/care_tip.jpg) | ![](img/ux/donate_consent.jpg) | ![](img/ux/spoiled_mould.jpg) |
+
+- The donation offer appears only **after** the user answers "was it right?", and never before a result. It is a secondary button. The consent text is shown in full before anything is sent, and applies to that photo only. The consent text says plainly that the photo is anonymous and therefore cannot be deleted later.
+- In this render, "send" ends in the "failed, try again" state, because Supabase is not reachable from the build container. The same policies were verified in SQL as the anonymous role (server/supabase/migrations/003_photo_donations.sql).
+- The tip is longer now, because it includes the ethylene rule. It stays inside the tip card, below the answer, and is hidden when the recommendation is "discard".

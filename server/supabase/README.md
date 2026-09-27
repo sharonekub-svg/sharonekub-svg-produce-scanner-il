@@ -1,4 +1,4 @@
-# Supabase — scan feedback backend
+# Supabase — scan feedback and photo-donation backend
 
 | | |
 |---|---|
@@ -17,8 +17,18 @@ no user or device identifiers (see `docs/legal/privacy-policy-he.md`).
 **Reading results:** Supabase dashboard → SQL editor: `select * from feedback_daily order by day desc;`
 The service-role key must never be put in the app or the repo.
 
-**Known limits:** anonymous inserts can be spammed; before a public launch add rate limiting (e.g. an Edge
-Function in front of the insert, or a per-IP limit at the API gateway).
+**Rate limiting** (`migrations/002_feedback_rate_limit.sql`): ≤ 10 inserts per client per minute and ≤ 2000
+per minute overall, enforced by a trigger. Clients are keyed by a salted hash of the first
+`X-Forwarded-For` address (raw IPs are never stored; buckets are deleted after an hour). Verified in-database:
+12 inserts from one address → 10 accepted, 2 rejected; a second address unaffected. Advisors: 0 findings.
+
+**Photo donations** (`migrations/003_photo_donations.sql`): opt-in, per photo, after the user reads the consent text.
+The app registers a row in `photo_donations` (same rate-limit trigger), then uploads that one object to the
+**private** bucket `scan-donations` (JPEG only, ≤ 2 MB). The storage policy accepts only names registered in the
+last 10 minutes, so the publishable key can't be used as file hosting. Nothing can be listed or read back with it.
+Verified as `anon` in SQL on 2026-09-27: registered upload accepted; unregistered name → RLS violation; malformed
+name → check violation; rows and objects unreadable. Advisors: 0 findings. To review donations: dashboard →
+Storage → `scan-donations`, joined with `select * from photo_donations order by created_at desc;`.
 
 **Note:** to stay within the free plan's 2-active-project limit, the project `ipl-fc27` was paused on
 2026-09-26 at the owner's request. Restore it from the Supabase dashboard (Project → Restore) when needed;

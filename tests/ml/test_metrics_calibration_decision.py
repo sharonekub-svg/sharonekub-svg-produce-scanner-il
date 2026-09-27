@@ -94,9 +94,49 @@ def test_supported_heads_requires_multiple_classes():
     assert decision.supported_heads_from_manifest(rows) == {"avocado": ["ripeness"]}
 
 
+def test_ripeness_visual_vetoes_ripeness():
+    def rows(prod, cultivar=None):
+        base = {"split": "train", "labels": {"produce": prod, "freshness": "unknown", "visual_spoilage": "unknown"}}
+        if cultivar:
+            base["cultivar"] = cultivar
+        return [{**base, "labels": {**base["labels"], "ripeness": v}} for v in ("ripe", "unripe") for _ in range(150)]
+    rv = {"banana": "strong", "orange": "not_applicable", "melon": "weak", "avocado": "cultivar_dependent"}
+    all_rows = rows("banana") + rows("orange") + rows("melon") + rows("avocado")
+    assert decision.supported_heads_from_manifest(all_rows, ripeness_visual=rv) == {"banana": ["ripeness"]}
+    assert decision.supported_heads_from_manifest(all_rows + rows("avocado", "hass"), ripeness_visual=rv) == {
+        "avocado": ["ripeness"], "banana": ["ripeness"]}
+    # real mapping: every produce has a valid value, citrus never gets ripeness
+    tax = load_taxonomy()
+    vals = {m["ripeness_visual"] for m in tax.produce_meta.values()}
+    assert vals <= {"strong", "cultivar_dependent", "weak", "not_applicable"}
+    assert all(tax.produce_meta[c]["ripeness_visual"] == "not_applicable" for c in ("orange", "mandarin", "lemon"))
+
 def test_quality_gate():
     rng = np.random.default_rng(0)
     sharp = Image.fromarray(rng.integers(0, 255, (256, 256, 3), dtype=np.uint8))
     assert quality.assess(sharp).ok
     assert quality.assess(Image.new("RGB", (256, 256), (10, 10, 10))).reason == "too_dark"
     assert quality.assess(sharp.filter(ImageFilter.GaussianBlur(8))).reason == "blurry"
+
+
+def test_feature_ood_scores_separate_far_points():
+    from ml.evaluation import feature_ood
+    rng = np.random.default_rng(0)
+    f = np.concatenate([rng.normal(0, 1, (200, 8)) + 5 * np.eye(8)[0], rng.normal(0, 1, (200, 8)) - 5 * np.eye(8)[0]])
+    y = np.repeat([0, 1], 200)
+    mu, prec = feature_ood.fit_mahalanobis(f, y)
+    near, far = f[:50], rng.normal(0, 1, (50, 8)) + 5 * np.eye(8)[1]
+    m_in, m_out = feature_ood.mahalanobis_score(near, mu, prec), feature_ood.mahalanobis_score(far, mu, prec)
+    assert ood.auroc(m_in, m_out) > 0.95
+    k_in, k_out = feature_ood.knn_score(near, f, k=10), feature_ood.knn_score(far, f, k=10)
+    assert ood.auroc(k_in, k_out) > 0.9
+
+
+def test_restrict_produce_follows_model_classes():
+    from ml.common.taxonomy import restrict_produce
+    names = [p for p in TAX.produce if p not in ("lime", "grapefruit")]
+    t = restrict_produce(TAX, names)
+    assert t.produce == tuple(names) and t.produce[-1] == "other" and "lime" not in t.produce_meta
+    import pytest
+    with pytest.raises(ValueError):
+        restrict_produce(TAX, ["banana", "durian"])

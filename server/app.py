@@ -25,7 +25,7 @@ import numpy as np
 from fastapi import FastAPI, File, HTTPException, UploadFile
 from PIL import Image, UnidentifiedImageError
 
-from ml.common.taxonomy import HEADS, load_taxonomy
+from ml.common.taxonomy import HEADS, load_taxonomy, restrict_produce
 from ml.evaluation.calibration import softmax
 from ml.evaluation.ood import energy
 from ml.inference import decision, quality
@@ -43,7 +43,7 @@ class Engine:
         opts.intra_op_num_threads = int(os.environ.get("PRODUCE_THREADS", "2"))
         self.sess = ort.InferenceSession(str(bundle_dir / onnx_file), opts, providers=["CPUExecutionProvider"])
         self.onnx_file = onnx_file
-        self.tax = load_taxonomy()
+        self.tax = restrict_produce(load_taxonomy(), self.bundle["outputs"]["produce"])
 
     def preprocess(self, img: Image.Image) -> np.ndarray:
         """Must match ml.training.augment.build_eval_transform and the app's native path:

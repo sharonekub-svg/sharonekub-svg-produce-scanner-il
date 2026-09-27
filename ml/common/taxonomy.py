@@ -8,7 +8,7 @@ A label for one head is represented as a frozenset of allowed class indices:
 from __future__ import annotations
 
 import json
-from dataclasses import dataclass, field
+from dataclasses import replace, dataclass, field
 from pathlib import Path
 from typing import Any
 
@@ -70,3 +70,17 @@ def load_taxonomy(path: str | Path = DEFAULT_MAPPING_PATH) -> Taxonomy:
         label_he=raw["label_he"],
         datasets=raw.get("datasets", {}),
     )
+
+
+def restrict_produce(tax: Taxonomy, names: tuple[str, ...] | list[str]) -> Taxonomy:
+    """The taxonomy a trained model actually outputs (checkpoint / bundle class list), which can be a
+    subset of label_mapping.json after classes are added. Index i of the model's produce logits
+    always means names[i]; never index the mapping's current list with a model's argmax."""
+    names = tuple(names)
+    if names == tax.produce:
+        return tax
+    missing = [n for n in names if n not in tax.produce_meta]
+    if missing:
+        raise ValueError(f"model classes not in label_mapping.json: {missing}")
+    return replace(tax, produce=names, produce_meta={n: tax.produce_meta[n] for n in names})
+

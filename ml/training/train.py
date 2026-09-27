@@ -95,7 +95,8 @@ def main() -> None:
     data_root = REPO_ROOT / cfg["data"]["processed_dir"]
     tr_rows = dataset.select_rows(cfg, {"train"}, data_root)
     va_rows = dataset.select_rows(cfg, {"val"}, data_root)
-    (run_dir / "supported_heads.json").write_text(json.dumps(supported_heads_from_manifest(tr_rows), indent=2))
+    (run_dir / "supported_heads.json").write_text(json.dumps(supported_heads_from_manifest(
+        tr_rows, ripeness_visual={k: m.get("ripeness_visual", "not_applicable") for k, m in tax.produce_meta.items()}), indent=2))
     tr = dataset.ManifestDataset(tr_rows, data_root, tax, augment.build_train_transform(cfg))
     va = dataset.ManifestDataset(va_rows, data_root, tax, augment.build_eval_transform(cfg))
     g = torch.Generator().manual_seed(cfg["seed"])
@@ -152,10 +153,10 @@ def main() -> None:
         with open(run_dir / "metrics.jsonl", "a") as f:
             f.write(json.dumps(rec) + "\n")
         print(json.dumps(rec))
-        torch.save({"model": net.state_dict(), "cfg": cfg, "epoch": ep}, run_dir / "last.pt")
+        torch.save({"model": net.state_dict(), "cfg": cfg, "epoch": ep, "produce_classes": list(tax.produce)}, run_dir / "last.pt")
         if score > best:
             best = score
-            torch.save({"model": net.state_dict(), "cfg": cfg, "epoch": ep}, run_dir / "best.pt")
+            torch.save({"model": net.state_dict(), "cfg": cfg, "epoch": ep, "produce_classes": list(tax.produce)}, run_dir / "best.pt")
         if args.max_steps and step >= args.max_steps:
             break
 

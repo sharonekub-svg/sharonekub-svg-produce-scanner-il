@@ -130,7 +130,7 @@ public func luma(_ rgb: PixelBuffer) -> PixelBuffer {
 }
 
 public struct QualityConfig {
-  public var minMeanLuma = 40.0, maxMeanLuma = 235.0, minLaplacianVar = 60.0, maxClippedFrac = 0.35
+  public var minMeanLuma = 40.0, maxMeanLuma = 235.0, minLaplacianVar = 30.0, maxClippedFrac = 0.35
   public var analysisSize = 256
   public init() {}
 }

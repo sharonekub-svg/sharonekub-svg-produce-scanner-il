@@ -3,8 +3,8 @@
 Photograph a fruit or vegetable → our own on-device computer-vision model estimates **produce type, ripeness, freshness and visible spoilage**, and returns a Hebrew recommendation with a visual-only disclaimer. No third-party vision API.
 
 > **Status (all phases worked through; see [roadmap](docs/roadmap.md) and [results](docs/results.md)):**
-> - **Trained and measured:** a produce-identification model (MobileNetV3-L) trained only on commercially-cleared data. On unseen supermarket phone photos it reaches top-1 0.892 and macro-F1 0.851, but it **fails the per-class gates** (citrus, mango, cucumber and 5 more). Build `v0.1-dev` is therefore an internal dev build, **not releasable**.
-> - **Working and tested here:** the Expo app, the parity-tested decision logic, the self-hosted inference server, the Core ML fp16 export, the release pipeline, CI.
+> - **Trained and measured:** a produce-identification model (MobileNetV3-L) trained only on commercially-cleared data. The current build is `v0.2-dev`, with lookalike produce as named negative classes. On unseen supermarket phone photos, excluding lookalikes, it reaches top-1 0.898 and macro-F1 0.874, with 94.6% accuracy on the answers it shows. It still **fails 7 per-class gates** (citrus, mango, cucumber, nectarine), so it is an internal dev build, **not releasable**.
+> - **Working and tested here:** the Expo app (with per-produce care advice from official sources and opt-in photo donation), the Swift/Core ML module (parity-tested on Linux), the parity-tested decision logic, the self-hosted inference server, the Core ML fp16 export, the release pipeline, CI.
 > - **Not possible here:** ripeness, freshness and spoilage. No legally usable labelled data was reachable, so those heads are unsupported and the app says so.
 > - **Blocked on people and devices:** the Israeli photo collection and real-world test set, licence sign-offs, a Mac/iPhone build with on-device benchmarks, TestFlight beta.
 > - **Strongest measured finding:** public web and studio data scores 0.32 top-1 on phone photos, so our own data collection is the critical path.
@@ -29,6 +29,9 @@ Photograph a fruit or vegetable → our own on-device computer-vision model esti
 | [competitor-ux-research](docs/competitor-ux-research.md) | 7 scanner apps × 20 UX dimensions, patterns to adopt/avoid |
 | [ux-principles](docs/ux-principles.md) | Our UX principles + final v1 UI architecture |
 | [ux-review](docs/ux-review.md) | Rendered screens of every state + problems found and fixed |
+| [research/produce-science](docs/research/produce-science.md) | What a photo can and cannot tell, per produce type |
+| [research/food-quality](docs/research/food-quality.md) | Storage, chilling, ethylene, mould (Ministry of Health / Ministry of Agriculture / USDA / UC Davis) |
+| [research/ml-methods](docs/research/ml-methods.md) | OOD, calibration, lighting, blur: literature + our measurements |
 | [beta-and-production](docs/beta-and-production.md) | Beta entry/exit criteria, release checklist, monitoring, retraining |
 
 ## Layout

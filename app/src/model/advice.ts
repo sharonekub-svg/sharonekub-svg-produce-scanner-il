@@ -1,29 +1,18 @@
-// General storage guidance per produce type (ux-principles.md #7). This is generic food-storage
-// advice, NOT a claim about the photographed item, and the UI labels it "כללי".
-export const STORAGE_TIP_HE: Record<string, string> = {
-  banana: 'לשמור בטמפרטורת החדר, בנפרד משאר הפירות. אחרי שהבשילה אפשר לקרר – הקליפה תשחים, הפרי נשאר טוב.',
-  avocado: 'להבשלה – בטמפרטורת החדר (שקית נייר מזרזת). אחרי שהבשיל – במקרר, לכמה ימים.',
-  tomato: 'בטמפרטורת החדר, הרחק משמש ישירה. קירור פוגע בטעם.',
-  apple: 'במקרר, במגירת הירקות – נשמר טרי לאורך זמן.',
-  orange: 'במקום קריר או במקרר, לא בשקית סגורה.',
-  mandarin: 'במקום קריר או במקרר, לא בשקית סגורה.',
-  lemon: 'במקרר, במגירת הירקות.',
-  cucumber: 'במקרר, עטוף, הרחק מבננות ועגבניות.',
-  mango: 'להבשלה – בטמפרטורת החדר. אחרי שהבשיל – במקרר.',
-  peach: 'להבשלה – בטמפרטורת החדר. אחרי שהבשיל – במקרר ולאכול בהקדם.',
-  nectarine: 'להבשלה – בטמפרטורת החדר. אחרי שהבשיל – במקרר ולאכול בהקדם.',
-  plum: 'להבשלה – בטמפרטורת החדר. אחרי שהבשיל – במקרר.',
-  kiwi: 'להבשלה – בטמפרטורת החדר. אחרי שהבשיל – במקרר.',
-  pear: 'להבשלה – בטמפרטורת החדר. אחרי שהבשיל – במקרר.',
-  persimmon: 'להבשלה – בטמפרטורת החדר. אחרי שהתרכך – במקרר.',
-  guava: 'בטמפרטורת החדר עד שמתרככת, אחר כך במקרר.',
-  strawberry: 'במקרר. לשטוף רק לפני האכילה.',
-  grape: 'במקרר. לשטוף רק לפני האכילה.',
-  watermelon: 'שלם – בטמפרטורת החדר. חתוך – במקרר, מכוסה.',
-  melon: 'שלם – בטמפרטורת החדר עד שמבשיל. חתוך – במקרר, מכוסה.',
-  pomegranate: 'במקום קריר או במקרר – נשמר זמן רב.',
-  pepper: 'במקרר, במגירת הירקות.',
-};
+// General produce-care guidance per type (ux-principles.md #7), from produce_care.json — evidence and
+// sources in docs/research/food-quality.md. Generic advice, NOT a claim about the photographed item.
+import CARE from './produce_care.json';
+
+type Care = { fridge: string; chill_below_c: number | null; ethylene: { producer: boolean; sensitive: boolean }; tip_he: string };
+const PRODUCE_CARE = CARE.produce as Record<string, Care>;
+export const CARE_GENERAL_HE = CARE.general_he;
+
+/** Storage tip + the ethylene rule that applies to this type (one short paragraph). */
+export const STORAGE_TIP_HE: Record<string, string> = Object.fromEntries(
+  Object.entries(PRODUCE_CARE).map(([k, c]) => {
+    const eth = c.ethylene.producer ? CARE.general_he.ethylene_producer : c.ethylene.sensitive ? CARE.general_he.ethylene_sensitive : '';
+    return [k, eth ? `${c.tip_he} ${eth}` : c.tip_he];
+  }),
+);
 
 /** Confidence in words first, calibrated number second (ux-principles.md #5). */
 export function confidenceWord(p: number | null | undefined): string {

@@ -13,6 +13,8 @@ const RETAKE_HE: Record<string, string> = {
   multiple_objects: 'זוהו כמה פריטים. צלם פרי או ירק אחד בכל פעם.',
 };
 const UNSURE_HE = 'לא הצלחתי לזהות את הפרי בוודאות. נסה לצלם אותו מקרוב ובתאורה טובה יותר.';
+// Israeli Ministry of Health: discard mouldy food whole (docs/research/food-quality.md). Mirrors decision.py.
+const MOULD_RULE_HE = 'לפי משרד הבריאות: מזון שצמח עליו עובש – לזרוק בשלמותו, ולא לחתוך רק את החלק שנראה עבש.';
 const NOT_PRODUCE_HE = 'לא זיהיתי פרי או ירק שאני מכיר בתמונה.';
 const REC_HE: Record<string, string> = {
   discard: 'לא מומלץ לאכול – נראים סימני קלקול',
@@ -86,6 +88,7 @@ export function decide(bundle: Bundle, probs: Probs, qualityReason: string | nul
   if (pSpoiled >= t.spoiled_alert_prob) {
     rec = 'discard';
     res.explanation_he.push('זוהו סימנים חזותיים שמתאימים בדרך כלל לקלקול או ריקבון.');
+    res.explanation_he.push(MOULD_RULE_HE);
   } else if (r.available && r.label !== null && r.label !== UNKNOWN) {
     rec = ({ unripe: 'wait', partially_ripe: 'wait_little', ripe: 'eat_now', overripe: 'overripe' } as Record<string, string>)[r.label];
     res.explanation_he.push(`הצבע והמראה החיצוני תואמים בדרך כלל ל${meta.he} במצב '${r.label_he}'.`);

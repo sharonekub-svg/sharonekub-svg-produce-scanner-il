@@ -24,6 +24,9 @@ RETAKE_HE = {
     "multiple_objects": "זוהו כמה פריטים. צלם פרי או ירק אחד בכל פעם.",
 }
 UNSURE_HE = "לא הצלחתי לזהות את הפרי בוודאות. נסה לצלם אותו מקרוב ובתאורה טובה יותר."
+# Israeli Ministry of Health guidance (docs/research/food-quality.md): discard mouldy food whole,
+# do not cut the visible mould out. Stricter than USDA's firm-produce exception, and it is the local rule.
+MOULD_RULE_HE = "לפי משרד הבריאות: מזון שצמח עליו עובש – לזרוק בשלמותו, ולא לחתוך רק את החלק שנראה עבש."
 NOT_PRODUCE_HE = "לא זיהיתי פרי או ירק שאני מכיר בתמונה."
 
 REC_HE = {
@@ -122,6 +125,7 @@ def decide(tax: Taxonomy, probs: dict[str, np.ndarray], supported_heads: dict[st
     if p_spoiled >= t["spoiled_alert_prob"]:
         rec = "discard"
         res.explanation_he.append("זוהו סימנים חזותיים שמתאימים בדרך כלל לקלקול או ריקבון.")
+        res.explanation_he.append(MOULD_RULE_HE)
     elif r.available and r.label not in (None, tax.unknown):
         rec = {"unripe": "wait", "partially_ripe": "wait_little", "ripe": "eat_now", "overripe": "overripe"}[r.label]
         res.explanation_he.append(f"הצבע והמראה החיצוני תואמים בדרך כלל ל{meta['he']} במצב '{r.label_he}'.")
@@ -139,17 +143,27 @@ def decide(tax: Taxonomy, probs: dict[str, np.ndarray], supported_heads: dict[st
 
 
 def supported_heads_from_manifest(rows: list[dict], min_exact: int = 200, min_per_class: int = 50,
-                                  min_classes: int = 2) -> dict[str, list[str]]:
+                                  min_classes: int = 2,
+                                  ripeness_visual: dict[str, str] | None = None) -> dict[str, list[str]]:
     """A head is 'supported' for a produce type only if the TRAIN split has >= `min_exact`
     exactly-labelled examples AND >= `min_classes` distinct classes with >= `min_per_class`
     each (a head trained on one class only - e.g. Fruits-360 'Avocado ripe' - is not a
-    ripeness model). Written into the model bundle and enforced by `decide`."""
+    ripeness model). Written into the model bundle and enforced by `decide`.
+
+    `ripeness_visual` (label_mapping produce.*.ripeness_visual, docs/research/produce-science.md)
+    vetoes ripeness where the skin carries no ripeness evidence ('weak', 'not_applicable'), and for
+    'cultivar_dependent' produce counts only rows that name their cultivar (row["cultivar"])."""
     from collections import Counter
     c: Counter = Counter()
     for r in rows:
         if r["split"] != "train" or not isinstance(r["labels"]["produce"], str):
             continue
+        prod = r["labels"]["produce"]
         for h in ("ripeness", "freshness", "visual_spoilage"):
+            if h == "ripeness" and ripeness_visual is not None:
+                rv = ripeness_visual.get(prod, "not_applicable")
+                if rv in ("weak", "not_applicable") or (rv == "cultivar_dependent" and not r.get("cultivar")):
+                    continue
             v = r["labels"][h]
             if isinstance(v, str) and v != "unknown":
                 c[(r["labels"]["produce"], h, v)] += 1

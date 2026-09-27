@@ -10,7 +10,10 @@ from dataclasses import dataclass
 import numpy as np
 from PIL import Image
 
-DEFAULTS = {"min_mean_luma": 40.0, "max_mean_luma": 235.0, "min_laplacian_var": 60.0,
+# min_laplacian_var chosen by ml/evaluation/blur_sweep.py (docs/research/ml-methods.md §6): 30 keeps
+# accuracy-of-passed equal to 60 while letting through blur the model is still right on. Keep in sync
+# with QualityConfig in app/modules/produce-model/ios/ProduceCore.swift.
+DEFAULTS = {"min_mean_luma": 40.0, "max_mean_luma": 235.0, "min_laplacian_var": 30.0,
             "max_clipped_frac": 0.35, "analysis_size": 256}
 
 

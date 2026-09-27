@@ -1,5 +1,5 @@
 {
-  "model_id": "p4_c1_commercial_mnv3_full@13d796f04dca",
+  "model_id": "p4_c5_named_negatives@343c6b6c2bf7",
   "datasets": [
     {
       "dataset_id": "grocery_store_klasson",

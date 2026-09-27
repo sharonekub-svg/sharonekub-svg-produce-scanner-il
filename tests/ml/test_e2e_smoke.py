@@ -14,6 +14,7 @@ from PIL import Image, ImageFilter
 pytest.importorskip("torch")
 pytest.importorskip("timm")
 
+from ml.common.taxonomy import load_taxonomy  # noqa: E402
 from ml.preprocessing.build_manifest import build  # noqa: E402
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -76,4 +77,4 @@ def test_pipeline_end_to_end(tmp_path):
     ort = pytest.importorskip("onnxruntime")
     sess = ort.InferenceSession(str(tmp_path / "export/model.onnx"))
     outs = sess.run(None, {"image": np.random.rand(1, 3, 96, 96).astype(np.float32)})
-    assert [o.shape[1] for o in outs] == [23, 4, 3, 3]
+    assert [o.shape[1] for o in outs] == [len(load_taxonomy().produce), 4, 3, 3]

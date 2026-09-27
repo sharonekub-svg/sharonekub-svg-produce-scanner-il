@@ -1,7 +1,7 @@
 {
   "bundle_version": 1,
-  "model_id": "p4_c1_commercial_mnv3_full@13d796f04dca",
-  "created_at": "2026-09-26T17:59:37.983370+00:00",
+  "model_id": "p4_c5_named_negatives@343c6b6c2bf7",
+  "created_at": "2026-09-27T07:38:12.620464+00:00",
   "input": {
     "size": 224,
     "layout": "NCHW",
@@ -42,6 +42,11 @@
       "lemon",
       "guava",
       "pepper",
+      "lime",
+      "grapefruit",
+      "zucchini",
+      "potato",
+      "passion_fruit",
       "other"
     ],
     "ripeness": [
@@ -62,12 +67,12 @@
     ]
   },
   "temperatures": {
-    "produce": 0.5910517206782391
+    "produce": 0.5294755796885258
   },
   "thresholds": {
     "produce_min_prob": 0.7,
     "produce_min_margin": 0.15,
-    "ood_min_energy": 3.9843502044677734,
+    "ood_min_energy": 4.217545509338379,
     "head_min_prob": 0.55,
     "spoiled_alert_prob": 0.4
   },
@@ -77,140 +82,208 @@
       "category": "fruit",
       "he": "בננה",
       "emoji": "🍌",
-      "priority": "P1"
+      "priority": "P1",
+      "ripeness_visual": "strong"
     },
     "apple": {
       "category": "fruit",
       "he": "תפוח",
       "emoji": "🍎",
-      "priority": "P1"
+      "priority": "P1",
+      "ripeness_visual": "not_applicable"
     },
     "orange": {
       "category": "fruit",
       "he": "תפוז",
       "emoji": "🍊",
-      "priority": "P1"
+      "priority": "P1",
+      "ripeness_visual": "not_applicable"
     },
     "mandarin": {
       "category": "fruit",
       "he": "קלמנטינה",
       "emoji": "🍊",
-      "priority": "P1"
+      "priority": "P1",
+      "ripeness_visual": "not_applicable"
     },
     "avocado": {
       "category": "fruit",
       "he": "אבוקדו",
       "emoji": "🥑",
-      "priority": "P1"
+      "priority": "P1",
+      "ripeness_visual": "cultivar_dependent"
     },
     "tomato": {
       "category": "vegetable",
       "he": "עגבנייה",
       "emoji": "🍅",
-      "priority": "P1"
+      "priority": "P1",
+      "ripeness_visual": "strong"
     },
     "cucumber": {
       "category": "vegetable",
       "he": "מלפפון",
       "emoji": "🥒",
-      "priority": "P1"
+      "priority": "P1",
+      "ripeness_visual": "not_applicable"
     },
     "mango": {
       "category": "fruit",
       "he": "מנגו",
       "emoji": "🥭",
-      "priority": "P2"
+      "priority": "P2",
+      "ripeness_visual": "cultivar_dependent"
     },
     "peach": {
       "category": "fruit",
       "he": "אפרסק",
       "emoji": "🍑",
-      "priority": "P2"
+      "priority": "P2",
+      "ripeness_visual": "cultivar_dependent"
     },
     "nectarine": {
       "category": "fruit",
       "he": "נקטרינה",
       "emoji": "🍑",
-      "priority": "P2"
+      "priority": "P2",
+      "ripeness_visual": "cultivar_dependent"
     },
     "watermelon": {
       "category": "fruit",
       "he": "אבטיח",
       "emoji": "🍉",
-      "priority": "P2"
+      "priority": "P2",
+      "ripeness_visual": "weak"
     },
     "melon": {
       "category": "fruit",
       "he": "מלון",
       "emoji": "🍈",
-      "priority": "P2"
+      "priority": "P2",
+      "ripeness_visual": "weak"
     },
     "grape": {
       "category": "fruit",
       "he": "ענבים",
       "emoji": "🍇",
-      "priority": "P2"
+      "priority": "P2",
+      "ripeness_visual": "not_applicable"
     },
     "strawberry": {
       "category": "fruit",
       "he": "תות",
       "emoji": "🍓",
-      "priority": "P2"
+      "priority": "P2",
+      "ripeness_visual": "strong"
     },
     "pomegranate": {
       "category": "fruit",
       "he": "רימון",
       "emoji": "🔴",
-      "priority": "P2"
+      "priority": "P2",
+      "ripeness_visual": "not_applicable"
     },
     "pear": {
       "category": "fruit",
       "he": "אגס",
       "emoji": "🍐",
-      "priority": "P2"
+      "priority": "P2",
+      "ripeness_visual": "weak"
     },
     "kiwi": {
       "category": "fruit",
       "he": "קיווי",
       "emoji": "🥝",
-      "priority": "P3"
+      "priority": "P3",
+      "ripeness_visual": "not_applicable"
     },
     "plum": {
       "category": "fruit",
       "he": "שזיף",
       "emoji": "🟣",
-      "priority": "P3"
+      "priority": "P3",
+      "ripeness_visual": "cultivar_dependent"
     },
     "persimmon": {
       "category": "fruit",
       "he": "אפרסמון",
       "emoji": "🟠",
-      "priority": "P3"
+      "priority": "P3",
+      "ripeness_visual": "not_applicable"
     },
     "lemon": {
       "category": "fruit",
       "he": "לימון",
       "emoji": "🍋",
-      "priority": "P3"
+      "priority": "P3",
+      "ripeness_visual": "not_applicable"
     },
     "guava": {
       "category": "fruit",
       "he": "גויאבה",
       "emoji": "🟢",
-      "priority": "P3"
+      "priority": "P3",
+      "ripeness_visual": "cultivar_dependent"
     },
     "pepper": {
       "category": "vegetable",
       "he": "פלפל",
       "emoji": "🫑",
-      "priority": "P3"
+      "priority": "P3",
+      "ripeness_visual": "not_applicable"
+    },
+    "lime": {
+      "category": "fruit",
+      "he": "ליים",
+      "emoji": "🟢",
+      "priority": "-",
+      "is_negative_class": true,
+      "note": "named negative (lemon lookalike)",
+      "ripeness_visual": "not_applicable"
+    },
+    "grapefruit": {
+      "category": "fruit",
+      "he": "אשכולית",
+      "emoji": "🟠",
+      "priority": "-",
+      "is_negative_class": true,
+      "note": "named negative (orange lookalike)",
+      "ripeness_visual": "not_applicable"
+    },
+    "zucchini": {
+      "category": "vegetable",
+      "he": "קישוא",
+      "emoji": "🥒",
+      "priority": "-",
+      "is_negative_class": true,
+      "note": "named negative (cucumber lookalike)",
+      "ripeness_visual": "not_applicable"
+    },
+    "potato": {
+      "category": "vegetable",
+      "he": "תפוח אדמה",
+      "emoji": "🥔",
+      "priority": "-",
+      "is_negative_class": true,
+      "note": "named negative (kiwi lookalike)",
+      "ripeness_visual": "not_applicable"
+    },
+    "passion_fruit": {
+      "category": "fruit",
+      "he": "פסיפלורה",
+      "emoji": "🟣",
+      "priority": "-",
+      "is_negative_class": true,
+      "note": "named negative (plum/avocado lookalike)",
+      "ripeness_visual": "not_applicable"
     },
     "other": {
       "category": "none",
       "he": "אחר",
       "emoji": "❔",
       "priority": "-",
-      "is_negative_class": true
+      "is_negative_class": true,
+      "ripeness_visual": "not_applicable"
     }
   },
   "label_he": {
@@ -239,10 +312,10 @@
   ],
   "files": {
     "model.onnx": {
-      "sha256": "e0303efcbbc6cac836b6eeed97fa151c5ac2dde2dd262db8ef909c7d47288689"
+      "sha256": "ff034166874c5965186421d1a5d6908cd159231fb7d0f5f71bda8f151e051303"
     },
     "ProduceScanner.mlpackage": {
-      "sha256": "18a98fed0e9a8a959219b880d66bc279303a9492597362a6227aa49a8ff600f7"
+      "sha256": "176064780ddfb694bcbf923a8dcde2b35de5834362c91f831d9466dbfd59c28e"
     }
   }
 }

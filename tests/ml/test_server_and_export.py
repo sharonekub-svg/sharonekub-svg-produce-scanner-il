@@ -69,7 +69,7 @@ def test_server_endpoints(bundle_dir, monkeypatch):
     c = TestClient(srv.app)
     assert c.get("/healthz").json()["ok"]
     r = c.post("/v1/analyze", files={"image": ("a.jpg", _jpeg(), "image/jpeg")}).json()
-    assert [len(r["logits"][h]) for h in HEADS] == [23, 4, 3, 3]
+    assert [len(r["logits"][h]) for h in HEADS] == [len(json.loads((bundle_dir / "bundle.json").read_text())["outputs"]["produce"]), 4, 3, 3]
     s = c.post("/v1/scan", files={"image": ("a.jpg", _jpeg(), "image/jpeg")}).json()
     assert s["status"] in {"ok", "unsure", "not_produce", "retake"} and "הערכה חזותית" in s["disclaimer_he"]
     dark = c.post("/v1/scan", files={"image": ("d.jpg", _jpeg((5, 5, 5), noise=False), "image/jpeg")}).json()

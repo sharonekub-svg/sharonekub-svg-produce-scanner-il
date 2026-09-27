@@ -30,7 +30,7 @@ def test_grocery_store_real_layout():
     assert TAX.decode("produce", lab["produce"]) == "watermelon"
     assert TAX.decode("produce", map_path(TAX, "grocery_store_klasson", "dataset/test/Vegetables/Pepper/Red-Bell-Pepper/x.jpg")["produce"]) == "pepper"
     assert TAX.decode("produce", map_path(TAX, "grocery_store_klasson", "dataset/val/Fruit/Satsumas/x.jpg")["produce"]) == "mandarin"
-    assert TAX.decode("produce", map_path(TAX, "grocery_store_klasson", "dataset/val/Fruit/Lime/x.jpg")["produce"]) == "other"
+    assert TAX.decode("produce", map_path(TAX, "grocery_store_klasson", "dataset/val/Fruit/Lime/x.jpg")["produce"]) == "lime"
     assert map_path(TAX, "grocery_store_klasson", "dataset/train/Packages/Milk/Arla/x.jpg") is None
     assert map_path(TAX, "grocery_store_klasson", "sample_images/natural/x.jpg") is None
 

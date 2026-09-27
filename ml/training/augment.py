@@ -59,6 +59,23 @@ class SensorNoise:
         return Image.fromarray(arr.clip(0, 255).astype(np.uint8))
 
 
+class WhiteBalanceShift:
+    """Illuminant colour-temperature error (warm tungsten kitchen light ↔ cool daylight).
+    Per-channel gains approximating a 2700–7500 K light on a daylight-balanced sensor. This is
+    a realistic *lighting* change (humans perceive the fruit's colour as constant under it), so it
+    is compatible with colour-carrying labels, unlike hue jitter."""
+    def __init__(self, p: float = 0.3, warm_max: float = 0.35, cool_max: float = 0.15):
+        self.p, self.warm_max, self.cool_max = p, warm_max, cool_max
+
+    def __call__(self, img: Image.Image) -> Image.Image:
+        if random.random() > self.p:
+            return img
+        t = random.uniform(-self.cool_max, self.warm_max)  # >0 warm (more red, less blue)
+        gains = np.array([1 + 0.45 * t, 1 + 0.05 * t, 1 - 0.9 * t], dtype=np.float32)
+        arr = np.asarray(img, dtype=np.float32) * gains
+        return Image.fromarray(arr.clip(0, 255).astype(np.uint8))
+
+
 class BackgroundReplace:
     """For studio datasets (white background): composite the fruit onto a random
     real background so the model cannot learn 'white background => class X'.
@@ -88,6 +105,7 @@ def build_train_transform(cfg: dict):
         T.RandomApply([T.ColorJitter(brightness=a.get("brightness", 0.35), contrast=a.get("contrast", 0.3),
                                      saturation=a.get("saturation", 0.15), hue=a.get("hue", 0.01))], p=0.8),
         RandomShadow(p=a.get("shadow_p", 0.3)),
+        WhiteBalanceShift(p=a.get("white_balance_p", 0.0)),
         T.RandomApply([T.GaussianBlur(kernel_size=7, sigma=(0.1, 2.0))], p=a.get("blur_p", 0.2)),
         SensorNoise(p=a.get("noise_p", 0.3)),
         JpegCompression(p=a.get("jpeg_p", 0.5)),

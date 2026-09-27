@@ -9,6 +9,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { STORAGE_TIP_HE, confidenceWord } from '../model/advice';
 import { getBundle } from '../model/engine';
 import type { HeadResult } from '../model/types';
+import { donatePhoto, donationEnabled } from '../donation';
 import { sendFeedback } from '../feedback';
 import { CHIP, pct } from '../ui/chips';
 import { getLastScan, setPendingPrevious } from '../ui/state';
@@ -56,6 +57,8 @@ export default function ResultScreen() {
   const last = getLastScan();
   const [open, setOpen] = useState<'what' | 'why' | null>(null);
   const [feedbackSent, setFeedbackSent] = useState(false);
+  const [answer, setAnswer] = useState<boolean | null>(null);
+  const [donate, setDonate] = useState<'idle' | 'consent' | 'sending' | 'sent' | 'failed'>('idle');
   if (!last) {
     router.replace('/');
     return null;
@@ -65,8 +68,15 @@ export default function ResultScreen() {
   const anotherAngle = () => { setPendingPrevious(last.output); router.back(); };
   const onFeedback = async (correct: boolean) => {
     setFeedbackSent(true);
+    setAnswer(correct);
     await sendFeedback({ model_id: getBundle().model_id, status: r.status, produce: r.produce,
                          confidence: r.produce_confidence, correct });
+  };
+  const onDonate = async () => {
+    setDonate('sending');
+    const sent = await donatePhoto({ photoUri: last.photoUri, model_id: getBundle().model_id,
+                                     predicted: r.produce, correct: answer });
+    setDonate(sent ? 'sent' : 'failed');
   };
   const ok = r.status === 'ok';
   const assessed = ok && Boolean(r.ripeness?.available || r.freshness?.available);
@@ -160,6 +170,32 @@ export default function ResultScreen() {
             )}
           </View>
         )}
+        {feedbackSent && donationEnabled() ? (
+          <View style={styles.donate}>
+            {donate === 'idle' || donate === 'failed' ? (
+              <>
+                <Text style={styles.muted}>{donate === 'failed' ? he.donateFailed : he.donateAsk}</Text>
+                <Pressable accessibilityRole="button" style={styles.secondarySmall} onPress={() => setDonate('consent')}>
+                  <Text style={styles.secondaryText}>{he.donateButton}</Text>
+                </Pressable>
+              </>
+            ) : donate === 'consent' ? (
+              <>
+                <Text style={styles.body}>{he.donateConsent}</Text>
+                <View style={styles.row}>
+                  <Pressable accessibilityRole="button" style={[styles.primary, styles.flex]} onPress={onDonate}>
+                    <Text style={styles.primaryText}>{he.donateConfirm}</Text>
+                  </Pressable>
+                  <Pressable accessibilityRole="button" style={[styles.secondary, styles.flex]} onPress={() => setDonate('idle')}>
+                    <Text style={styles.secondaryText}>{he.donateCancel}</Text>
+                  </Pressable>
+                </View>
+              </>
+            ) : (
+              <Text style={styles.muted}>{donate === 'sending' ? he.donateSending : he.donateThanks}</Text>
+            )}
+          </View>
+        ) : null}
         <Link href="/credits" style={styles.footer}>{he.trustLine} · {he.credits}</Link>
       </ScrollView>
     </SafeAreaView>
@@ -197,5 +233,9 @@ const styles = StyleSheet.create({
   primaryText: { color: '#fff', fontSize: 18, fontWeight: '700' },
   secondary: { borderWidth: 1.5, borderColor: '#2f7d4f', minHeight: 52, borderRadius: 14, alignItems: 'center', justifyContent: 'center' },
   secondaryText: { color: '#2f7d4f', fontSize: 18, fontWeight: '700' },
+  donate: { backgroundColor: '#F3F7F2', borderRadius: 12, padding: 12, gap: 10 },
+  row: { flexDirection: 'row', gap: 10 },
+  flex: { flex: 1, paddingHorizontal: 8 },
+  secondarySmall: { borderWidth: 1.5, borderColor: '#2f7d4f', minHeight: 44, borderRadius: 12, alignItems: 'center', justifyContent: 'center' },
   footer: { color: '#6b6b66', fontSize: 12, textAlign: 'center' },
 });
