@@ -2,7 +2,7 @@
 set -uo pipefail
 cd "$(dirname "$0")/.."
 LOOK='(^|/)(Lime|Red-Grapefruit|Zucchini|Potato|Passion-Fruit)/'
-P=data/processed_commercial_v2
+P=${2:-data/processed_commercial_v2}
 cfg=${1:-p4_c5_named_negatives}; log="runs_${cfg}.log"
 python3 -m ml.training.train --config "ml/configs/${cfg}.yaml" > "$log" 2>&1 || { echo "FAIL"; exit 1; }
 run=$(grep '^RUN_DIR' "$log" | cut -d' ' -f2)

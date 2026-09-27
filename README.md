@@ -31,6 +31,7 @@ Photograph a fruit or vegetable → our own on-device computer-vision model esti
 | [ux-review](docs/ux-review.md) | Rendered screens of every state + problems found and fixed |
 | [research/produce-science](docs/research/produce-science.md) | What a photo can and cannot tell, per produce type |
 | [research/food-quality](docs/research/food-quality.md) | Storage, chilling, ethylene, mould (Ministry of Health / Ministry of Agriculture / USDA / UC Davis) |
+| [research/dataset-search-2026-09](docs/research/dataset-search-2026-09.md) | Public datasets found (GitHub/Mendeley/Kaggle/HF), licences, what was integrated, colour grading |
 | [research/ml-methods](docs/research/ml-methods.md) | OOD, calibration, lighting, blur: literature + our measurements |
 | [beta-and-production](docs/beta-and-production.md) | Beta entry/exit criteria, release checklist, monitoring, retraining |
 
