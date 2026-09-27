@@ -25,6 +25,11 @@ const REC_TONE: Record<string, { fg: string; bg: string; icon: string }> = {
   discard: { fg: '#9b1c1c', bg: '#FDE4E1', icon: '⚠️' },
 };
 
+// Score colour: green 8-10, amber 5-7, red 1-4 (same palette as the recommendation).
+function scoreTone(score: number) {
+  return score >= 8 ? REC_TONE.eat_now : score >= 5 ? REC_TONE.eat_soon : REC_TONE.discard;
+}
+
 const STATUS_HEAD: Record<string, { icon: string; title: string }> = {
   unsure: { icon: '🤔', title: he.unsureTitle },
   retake: { icon: '📷', title: he.retakeTitle },
@@ -96,12 +101,25 @@ export default function ResultScreen() {
               <Text style={styles.muted}>{confidenceWord(r.produce_confidence)} ({pct(r.produce_confidence)})</Text>
             </View>
 
+            {r.score != null ? (
+              <View style={styles.scoreRow} accessible accessibilityLabel={`${he.qualityScore}: ${r.score} ${he.outOf10}. ${r.score_reason_he ?? ''}`}>
+                <View style={[styles.scoreBadge, { backgroundColor: scoreTone(r.score).bg }]}>
+                  <Text style={[styles.scoreNum, { color: scoreTone(r.score).fg }]}>{r.score}</Text>
+                  <Text style={[styles.scoreOf, { color: scoreTone(r.score).fg }]}>/10</Text>
+                </View>
+                <View style={styles.flex1}>
+                  <Text style={styles.scoreTitle}>{he.qualityScore}</Text>
+                  <Text style={styles.body}>{r.score_reason_he}</Text>
+                </View>
+              </View>
+            ) : null}
+
             {assessed && tone ? (
               <View style={[styles.hero, { backgroundColor: tone.bg }]}>
                 <Text style={[styles.rec, { color: tone.fg }]} accessibilityRole="header">{tone.icon} {r.recommendation_he}</Text>
               </View>
             ) : (
-              <Text style={styles.identifyOnly}>{he.identifyOnly}</Text>
+              <Text style={styles.identifyOnly}>{r.score_reason_he ?? he.identifyOnly}</Text>
             )}
 
             {assessed ? (
@@ -213,6 +231,12 @@ const styles = StyleSheet.create({
   hero: { borderRadius: 14, paddingHorizontal: 14, paddingVertical: 12 },
   rec: { fontSize: 22, fontWeight: '800' },
   identifyOnly: { fontSize: 14, color: '#6b6b66' },
+  scoreRow: { flexDirection: 'row', alignItems: 'center', gap: 12 },
+  scoreBadge: { flexDirection: 'row', direction: 'ltr', alignItems: 'baseline', borderRadius: 14, paddingHorizontal: 12, paddingVertical: 6 },
+  scoreNum: { fontSize: 34, fontWeight: '800' },
+  scoreOf: { fontSize: 16, fontWeight: '700' },
+  scoreTitle: { fontSize: 13, color: '#6b6b66' },
+  flex1: { flex: 1 },
   chips: { flexDirection: 'row', gap: 12, flexWrap: 'wrap' },
   chipCol: { gap: 4 },
   chipTitle: { fontSize: 13, color: '#6b6b66' },

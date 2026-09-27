@@ -140,3 +140,23 @@ def test_restrict_produce_follows_model_classes():
     import pytest
     with pytest.raises(ValueError):
         restrict_produce(TAX, ["banana", "durian"])
+
+
+def test_quality_score_worst_head_decides_and_is_bounded():
+    avail = {"freshness": True, "visual_spoilage": True, "ripeness": True}
+    fresh_ripe = {"freshness": np.array([1.0, 0, 0]), "visual_spoilage": np.array([1.0, 0, 0]),
+                  "ripeness": np.array([0, 0, 1.0, 0])}
+    assert decision.quality_score(TAX, fresh_ripe, avail, False)[0] == 10
+    mouldy = {**fresh_ripe, "visual_spoilage": np.array([0, 0, 1.0])}
+    sc, why = decision.quality_score(TAX, mouldy, avail, False)
+    assert sc == 1 and "עובש" in why
+    unripe = {**fresh_ripe, "ripeness": np.array([1.0, 0, 0, 0])}
+    assert decision.quality_score(TAX, unripe, avail, False) == (5, decision.SCORE_REASON_HE["unripe"])
+    assert decision.quality_score(TAX, fresh_ripe, avail, True)[0] == 2          # discard caps the score
+    none = {"freshness": False, "visual_spoilage": False, "ripeness": False}
+    assert decision.quality_score(TAX, fresh_ripe, none, False) == (None, decision.NO_SCORE_HE)
+
+
+def test_identify_only_types_get_no_score():
+    r = decision.decide(TAX, _probs(produce="kiwi"), {"kiwi": []})
+    assert r.status == "ok" and r.score is None and r.score_reason_he == decision.NO_SCORE_HE

@@ -20,6 +20,8 @@ export const he = {
   permissionButton: 'אישור גישה',
   noEngine: 'המודל אינו זמין במכשיר הזה.',
   error: 'משהו השתבש. נסו שוב.',
+  qualityScore: 'ציון איכות חזותי',
+  outOf10: 'מתוך 10',
   ripeness: 'בשילות',
   freshness: 'טריות',
   spoilage: 'סימני קלקול',

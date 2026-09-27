@@ -38,8 +38,53 @@ function empty(status: ScanResult['status'], message: string | null, conf: numbe
   return {
     status, message_he: message, produce: null, produce_he: null, emoji: null, produce_confidence: conf,
     ripeness: null, freshness: null, visual_spoilage: null, recommendation: null, recommendation_he: null,
-    explanation_he: [], disclaimer_he: DISCLAIMER_HE,
+    explanation_he: [], score: null, score_reason_he: null, disclaimer_he: DISCLAIMER_HE,
   };
+}
+
+// 1-10 visual quality score — mirrors decision.py quality_score (docs/research/quality-score.md).
+const SCORE_POINTS: Record<'freshness' | 'visual_spoilage' | 'ripeness', Record<string, number>> = {
+  freshness: { fresh: 10, declining: 6, spoiled: 1 },
+  visual_spoilage: { none: 10, mild: 5, severe: 1 },
+  ripeness: { unripe: 5, partially_ripe: 8, ripe: 10, overripe: 6 },
+};
+const SCORE_REASON_HE: Record<string, string> = {
+  good: 'נראה טרי, בלי סימני קלקול נראים.',
+  spoilage: 'נראים סימני ריקבון, עובש או פגמים בקליפה.',
+  spoiled: 'המראה מתאים לפרי שהתקלקל.',
+  declining: 'מתחיל לאבד טריות – כדאי לאכול בקרוב.',
+  unripe: 'עדיין לא בשל – יהיה טעים יותר בעוד כמה ימים.',
+  overripe: 'בשל מאוד – לאכול היום או להשתמש לאפייה.',
+};
+const LOW_CONF_SCORE_HE = 'לא ניתן לדרג בביטחון מהתמונה הזו – נסו לצלם מקרוב ובאור טוב.';
+const NO_SCORE_HE = 'עדיין אין דירוג איכות לסוג הזה – המודל מזהה אותו אבל עוד לא אומן להעריך את מצבו.';
+
+export function qualityScore(bundle: Bundle, probs: Probs, available: Record<'freshness' | 'visual_spoilage' | 'ripeness', boolean>,
+                             discard: boolean): [number | null, string] {
+  const comps: [('freshness' | 'visual_spoilage' | 'ripeness'), number][] = [];
+  for (const head of ['freshness', 'visual_spoilage', 'ripeness'] as const) {
+    const p = probs[head];
+    if (available[head] && p) {
+      let e = 0;
+      bundle.outputs[head].forEach((lbl, i) => { e += p[i] * SCORE_POINTS[head][lbl]; });
+      comps.push([head, e]);
+    }
+  }
+  if (comps.length === 0) return [null, NO_SCORE_HE];
+  let [worst, val] = comps[0];
+  for (const [h, v] of comps.slice(1)) if (v < val) { worst = h; val = v; }
+  let score = Math.min(10, Math.max(1, Math.floor(val + 0.5)));
+  if (discard) score = Math.min(score, 2);
+  const p = probs[worst]!;
+  let top = 0;
+  p.forEach((v, i) => { if (v > p[top]) top = i; });
+  const topLabel = bundle.outputs[worst][top];
+  let reason: string;
+  if (score >= 8) reason = 'good';
+  else if (worst === 'visual_spoilage') reason = 'spoilage';
+  else if (worst === 'freshness') reason = topLabel === 'spoiled' ? 'spoiled' : 'declining';
+  else reason = topLabel === 'overripe' ? 'overripe' : 'unripe';
+  return [score, SCORE_REASON_HE[reason]];
 }
 
 function headResult(bundle: Bundle, head: 'ripeness' | 'freshness' | 'visual_spoilage', probs: number[] | undefined,
@@ -104,5 +149,8 @@ export function decide(bundle: Bundle, probs: Probs, qualityReason: string | nul
   }
   res.recommendation = rec;
   res.recommendation_he = REC_HE[rec];
+  [res.score, res.score_reason_he] = qualityScore(
+    bundle, probs, { freshness: f.available, visual_spoilage: s.available, ripeness: r.available }, rec === 'discard');
+  if (rec === 'inspect' && res.score !== null) [res.score, res.score_reason_he] = [null, LOW_CONF_SCORE_HE];
   return res;
 }

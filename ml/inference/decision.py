@@ -9,6 +9,7 @@ Principles:
 """
 from __future__ import annotations
 
+import math
 from dataclasses import asdict, dataclass, field
 
 import numpy as np
@@ -38,6 +39,25 @@ REC_HE = {
     "overripe": "בשל מאוד – לאכול היום או להשתמש לבישול/אפייה",
     "inspect": "לא ניתן להעריך בוודאות – מומלץ לבדוק ידנית",
 }
+
+# 1-10 visual quality score (docs/research/quality-score.md). Each available quality head gives an
+# expected score over its probabilities; the WORST one decides (rot beats "ripe"). Only heads that are
+# supported for this produce type count, so a type without trained quality heads gets no score.
+SCORE_POINTS = {
+    "freshness": {"fresh": 10.0, "declining": 6.0, "spoiled": 1.0},
+    "visual_spoilage": {"none": 10.0, "mild": 5.0, "severe": 1.0},
+    "ripeness": {"unripe": 5.0, "partially_ripe": 8.0, "ripe": 10.0, "overripe": 6.0},
+}
+SCORE_REASON_HE = {
+    "good": "נראה טרי, בלי סימני קלקול נראים.",
+    "spoilage": "נראים סימני ריקבון, עובש או פגמים בקליפה.",
+    "spoiled": "המראה מתאים לפרי שהתקלקל.",
+    "declining": "מתחיל לאבד טריות – כדאי לאכול בקרוב.",
+    "unripe": "עדיין לא בשל – יהיה טעים יותר בעוד כמה ימים.",
+    "overripe": "בשל מאוד – לאכול היום או להשתמש לאפייה.",
+}
+LOW_CONF_SCORE_HE = "לא ניתן לדרג בביטחון מהתמונה הזו – נסו לצלם מקרוב ובאור טוב."
+NO_SCORE_HE = "עדיין אין דירוג איכות לסוג הזה – המודל מזהה אותו אבל עוד לא אומן להעריך את מצבו."
 
 DEFAULT_THRESHOLDS = {
     "produce_min_prob": 0.70,
@@ -70,6 +90,8 @@ class ScanResult:
     recommendation: str | None = None
     recommendation_he: str | None = None
     explanation_he: list[str] = field(default_factory=list)
+    score: int | None = None                     # 1-10 visual quality, None = not available for this type
+    score_reason_he: str | None = None
     disclaimer_he: str = DISCLAIMER_HE
 
     def to_dict(self) -> dict:
@@ -85,6 +107,34 @@ def _head(tax: Taxonomy, head: str, probs: np.ndarray | None, available: bool, m
         return HeadResult(tax.unknown, tax.label_he[head][tax.unknown], conf, True)
     lbl = tax.heads[head][i]
     return HeadResult(lbl, tax.label_he[head][lbl], conf, True)
+
+
+def quality_score(tax: Taxonomy, probs: dict[str, np.ndarray], available: dict[str, bool],
+                  discard: bool) -> tuple[int | None, str]:
+    comps: dict[str, float] = {}
+    for head in ("freshness", "visual_spoilage", "ripeness"):
+        p = probs.get(head)
+        if available.get(head) and p is not None:
+            e = 0.0
+            for i, lbl in enumerate(tax.heads[head]):
+                e += float(p[i]) * SCORE_POINTS[head][lbl]
+            comps[head] = e
+    if not comps:
+        return None, NO_SCORE_HE
+    worst = min(comps, key=lambda h: comps[h])  # first of equal minima, in the order above
+    score = int(min(10.0, max(1.0, math.floor(comps[worst] + 0.5))))
+    if discard:
+        score = min(score, 2)
+    top = tax.heads[worst][int(np.argmax(probs[worst]))]
+    if score >= 8:
+        reason = "good"
+    elif worst == "visual_spoilage":
+        reason = "spoilage"
+    elif worst == "freshness":
+        reason = "spoiled" if top == "spoiled" else "declining"
+    else:
+        reason = "overripe" if top == "overripe" else "unripe"
+    return score, SCORE_REASON_HE[reason]
 
 
 def decide(tax: Taxonomy, probs: dict[str, np.ndarray], supported_heads: dict[str, list[str]],
@@ -139,6 +189,10 @@ def decide(tax: Taxonomy, probs: dict[str, np.ndarray], supported_heads: dict[st
         rec = "inspect"
         res.explanation_he.append("למודל אין מספיק ביטחון או נתוני אימון כדי להעריך בשילות/טריות לסוג זה.")
     res.recommendation, res.recommendation_he = rec, REC_HE[rec]
+    res.score, res.score_reason_he = quality_score(
+        tax, probs, {"freshness": f.available, "visual_spoilage": s.available, "ripeness": r.available}, rec == "discard")
+    if rec == "inspect" and res.score is not None:  # heads available but not confident: no number
+        res.score, res.score_reason_he = None, LOW_CONF_SCORE_HE
     return res
 
 

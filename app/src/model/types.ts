@@ -65,5 +65,7 @@ export interface ScanResult {
   recommendation: string | null;
   recommendation_he: string | null;
   explanation_he: string[];
+  score: number | null;
+  score_reason_he: string | null;
   disclaimer_he: string;
 }
