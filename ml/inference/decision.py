@@ -59,6 +59,7 @@ SCORE_POINTS = {
 }
 SCORE_REASON_HE = {
     "good": "נראה טרי, בלי סימני קלקול נראים.",
+    "ripe": "בשל – טוב לאכילה עכשיו.",
     "spoilage": "נראים סימני ריקבון, עובש או פגמים בקליפה.",
     "spoiled": "המראה מתאים לפרי שהתקלקל.",
     "not_fresh": "המראה מראה ירידה בטריות או קלקול.",
@@ -154,7 +155,7 @@ def quality_score(tax: Taxonomy, probs: dict[str, np.ndarray], available: dict[s
         score = min(score, 2)
     top = tax.heads[worst][int(np.argmax(probs[worst]))]
     if score >= 8:
-        reason = "good"
+        reason = "ripe" if worst == "ripeness" else "good"  # a ripeness-only type was not checked for rot
     elif worst == "visual_spoilage":
         reason = "spoilage"
     elif worst == "freshness" and worst in coarse:

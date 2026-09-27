@@ -1,7 +1,7 @@
 {
   "bundle_version": 1,
-  "model_id": "p4_c5_named_negatives@343c6b6c2bf7",
-  "created_at": "2026-09-27T07:38:12.620464+00:00",
+  "model_id": "p5_c8_quality@d3b41f3aff93",
+  "created_at": "2026-09-27T13:58:00.198524+00:00",
   "input": {
     "size": 224,
     "layout": "NCHW",
@@ -67,16 +67,39 @@
     ]
   },
   "temperatures": {
-    "produce": 0.5294755796885258
+    "produce": 0.7968326071656283,
+    "ripeness": 0.9206600873293183,
+    "freshness": 0.28025626447507673,
+    "visual_spoilage": 0.3050895548602069
   },
   "thresholds": {
     "produce_min_prob": 0.7,
     "produce_min_margin": 0.15,
-    "ood_min_energy": 4.217545509338379,
+    "ood_min_energy": 3.386277914047241,
     "head_min_prob": 0.55,
     "spoiled_alert_prob": 0.4
   },
-  "supported_heads": {},
+  "supported_heads": {
+    "avocado": [
+      "ripeness"
+    ],
+    "orange": [
+      "freshness~coarse",
+      "visual_spoilage~coarse"
+    ],
+    "pomegranate": [
+      "freshness~coarse",
+      "visual_spoilage~coarse"
+    ],
+    "guava": [
+      "freshness~coarse",
+      "visual_spoilage~coarse"
+    ],
+    "apple": [
+      "freshness~coarse",
+      "visual_spoilage~coarse"
+    ]
+  },
   "produce_meta": {
     "banana": {
       "category": "fruit",
@@ -111,7 +134,8 @@
       "he": "אבוקדו",
       "emoji": "🥑",
       "priority": "P1",
-      "ripeness_visual": "cultivar_dependent"
+      "ripeness_visual": "cultivar_dependent",
+      "ripeness_note_he": "הערכת הבשילות מבוססת על אבוקדו האס (קליפה שמכהה כשהוא מבשיל). בזנים ירוקים כמו אטינגר, פינקרטון וריד הצבע כמעט לא משתנה – בדקו רכות בלחיצה עדינה."
     },
     "tomato": {
       "category": "vegetable",
@@ -308,14 +332,18 @@
     }
   },
   "training_datasets": [
-    "grocery_store_klasson"
+    "bananas_psolymos",
+    "fruitnet_indian",
+    "grocery_store_klasson",
+    "hass_avocado_ripening",
+    "lemon_softwaremill"
   ],
   "files": {
     "model.onnx": {
-      "sha256": "ff034166874c5965186421d1a5d6908cd159231fb7d0f5f71bda8f151e051303"
+      "sha256": "dd2dad53860f4df139d5b3364fa9a07aed7050947139149153eee858c5dc13ba"
     },
     "ProduceScanner.mlpackage": {
-      "sha256": "176064780ddfb694bcbf923a8dcde2b35de5834362c91f831d9466dbfd59c28e"
+      "sha256": "6faa6c986fbbaac7cefa171528490492e93a459ef6505631d36968303bd1346a"
     }
   }
 }

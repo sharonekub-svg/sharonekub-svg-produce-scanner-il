@@ -167,6 +167,39 @@ Also measured, in [research/ml-methods.md §6](research/ml-methods.md):
 - Feature-space OOD. Mahalanobis AUROC is 0.83 vs energy 0.70 on lookalikes, and 0.71 vs 0.69 on unseen produce. Not shipped yet.
 - Blur-gate sweep. The threshold moved 60 → 30: same accuracy on what passes, and unnecessary retakes on mild blur fall from 67% to 16%.
 
+## First quality model: C8 → `v0.3-dev` (27 Sep 2026)
+
+**Data** (all licences verified at the primary source, 5 datasets):
+- Grocery Store and FruitNet (phone photos), used for identification and quality.
+- Quality only, with produce loss masked:
+  - Hass avocado ripening: 478 fruits, 5-stage index;
+  - psolymos bananas;
+  - SoftwareMill lemons.
+- Studio sets are split by physical fruit.
+- MobileNetV3-L, 12 epochs of 6,000 samples, CPU.
+
+**Quality heads on held-out photos** (`scripts/gate_quality_heads.py`; the bar was fixed before results):
+
+| Fruit | Head | Test photos | Result | Gate |
+|---|---|---|---|---|
+| Avocado (Hass) | ripeness, 4 stages | 1,470 | 71% exact, 99.9% within one stage | ✅ |
+| Apple | good vs visible defects | 174 / 55 | balanced accuracy 1.00, AUROC 1.00 | ✅ |
+| Orange | good vs visible defects | 138 / 91 | 0.967, AUROC 0.987 | ✅ |
+| Pomegranate | good vs visible defects | 613 / 99 | 0.975, AUROC 1.00 | ✅ |
+| Guava | good vs visible defects | 195 / 32 | 1.00 | ✅ |
+| Lemon | visible defects | 105 / 47 | 0.833, AUROC 0.894 | ❌ no score |
+
+**Caveat:** these are in-dataset test photos (same cameras and settings as training, different fruit). Clear rot is easy. On real Israeli phone photos, and for mild defects, expect lower numbers. The real-world test set remains the deciding measurement.
+
+**Identification regressed** on the Grocery phone-photo test (the same 1,514 rows as C5):
+- top-1 0.876 (C5: 0.898), macro-F1 0.820 (C5: 0.874);
+- accuracy when shown 97.5% (C5: 94.6%), at a lower share shown, 62.7% vs 67.3%;
+- orange recall 0.52 → 0.39: FruitNet's Indian "oranges" are green citrus.
+
+C9 therefore moves FruitNet to quality-only.
+
+Released as **`v0.3-dev`** (internal; the identification gates still fail). It is the first build where the app shows a 1–10 score, for avocado, apple, orange, pomegranate and guava.
+
 ## Phase 5 — validation (stress proxies on the P3 model, Grocery official test, n = 1,704)
 
 The Israeli real-world set does not exist yet. These are **synthetic proxies** (`ml/evaluation/evaluate.py --stress`), not a substitute for it.

@@ -21,8 +21,8 @@ from ml.inference.decision import DEFAULT_THRESHOLDS, decide  # noqa: E402
 
 def main() -> int:
     ap = argparse.ArgumentParser()
-    ap.add_argument("--n", type=int, default=600)
-    ap.add_argument("--seed", type=int, default=7)
+    ap.add_argument("--n", type=int, default=800)
+    ap.add_argument("--seed", type=int, default=8)
     args = ap.parse_args()
     tax = load_taxonomy()
     rng = np.random.default_rng(args.seed)

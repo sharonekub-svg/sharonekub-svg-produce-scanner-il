@@ -34,8 +34,4 @@ Rendered (synthetic head outputs; ![](../img/ux/score_good.jpg) good · ![](../i
 
 A quality head is switched on for a produce type only when training has enough **exactly labelled** examples: at least 200, with at least 2 classes of at least 50 each (`supported_heads_from_manifest`). Ripeness is also vetoed where it isn't visible. The release gates then check the head on held-out photos.
 
-**Status 27 Sep 2026:** no produce type qualifies yet. The model is trained, but not on quality labels, because none legally usable were reachable:
-- lemons (mould, MIT): only one exact class ("none"), since mould is set-valued mild/severe;
-- bananas (ripeness, MIT): 150 exact labels, below the 200 minimum.
-
-What switches scores on, type by type, is in [dataset-search-2026-09.md](dataset-search-2026-09.md) §F: the Mendeley freshness and ripeness sets, the web-CC crawl plus grading, and our own graded photos. **No code change is needed.** Retraining writes `supported_heads`, and the score appears for each type that passes.
+**Status 27 Sep 2026, `v0.3-dev`:** scores are live for **avocado (Hass ripeness), apple, orange, pomegranate and guava**; see results.md, first quality model. Lemon was trained but failed the gate, so it shows no score. Every other type shows "no quality rating yet" until it is trained and passes.

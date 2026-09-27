@@ -50,4 +50,4 @@ def test_gen_credits(tmp_path):
 def test_decision_fixtures_cover_all_branches():
     f = json.loads((ROOT / "app/__tests__/fixtures/decision_cases.json").read_text(encoding="utf-8"))
     recs = {c["expected"]["recommendation"] for c in f["cases"]}
-    assert {"discard", "wait", "wait_little", "eat_now", "eat_soon", "inspect"} <= recs
+    assert {"discard", "wait", "wait_little", "eat_now", "eat_soon", "inspect", "check_defects", "overripe"} <= recs

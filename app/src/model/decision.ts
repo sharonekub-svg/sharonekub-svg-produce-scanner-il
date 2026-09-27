@@ -70,6 +70,7 @@ const SCORE_POINTS: Record<'freshness' | 'visual_spoilage' | 'ripeness', Record<
 };
 const SCORE_REASON_HE: Record<string, string> = {
   good: 'נראה טרי, בלי סימני קלקול נראים.',
+  ripe: 'בשל – טוב לאכילה עכשיו.',
   spoilage: 'נראים סימני ריקבון, עובש או פגמים בקליפה.',
   spoiled: 'המראה מתאים לפרי שהתקלקל.',
   declining: 'מתחיל לאבד טריות – כדאי לאכול בקרוב.',
@@ -106,7 +107,7 @@ export function qualityScore(bundle: Bundle, probs: Probs, available: Record<'fr
   p.forEach((v, i) => { if (v > p[top]) top = i; });
   const topLabel = bundle.outputs[worst][top];
   let reason: string;
-  if (score >= 8) reason = 'good';
+  if (score >= 8) reason = worst === 'ripeness' ? 'ripe' : 'good';
   else if (worst === 'visual_spoilage') reason = 'spoilage';
   else if (worst === 'freshness' && coarse.has(worst)) reason = 'not_fresh';
   else if (worst === 'freshness') reason = topLabel === 'spoiled' ? 'spoiled' : 'declining';

@@ -351,6 +351,36 @@
         {"pattern": "_fresh/", "labels": {"freshness": "fresh", "visual_spoilage": "none"}},
         {"pattern": "_rotten/", "labels": {"freshness": "spoiled"}}
       ]
+    },
+    "fresh_rotten_mendeley_bd": {
+      "adapter": "path_rules",
+      "verified_against_download": true,
+      "verified_note": "Layout checked 2026-09-27: bdd69gyhv8-1/{Original Image,Augmented Image}/<...>/<Fresh|Rotten><Fruit>/. Originals only (augmented = copies). Fresh/rotten graded by a domain expert (dataset method). Jujube not in taxonomy. Visual audit: rotten = clear rot/mould/collapse.",
+      "exclude_patterns": ["Augmented Image", "Jujube"],
+      "rules": [
+        {"pattern": "/(Fresh|Rotten)Apple/", "labels": {"produce": "apple"}},
+        {"pattern": "/(Fresh|Rotten)Banana/", "labels": {"produce": "banana"}},
+        {"pattern": "/(Fresh|Rotten)Grape/", "labels": {"produce": "grape"}},
+        {"pattern": "/(Fresh|Rotten)Guava/", "labels": {"produce": "guava"}},
+        {"pattern": "/(Fresh|Rotten)Orange/", "labels": {"produce": "orange"}},
+        {"pattern": "/(Fresh|Rotten)Pomegranate/", "labels": {"produce": "pomegranate"}},
+        {"pattern": "/(Fresh|Rotten)Strawberry/", "labels": {"produce": "strawberry"}},
+        {"pattern": "/Fresh[A-Z]", "labels": {"freshness": "fresh", "visual_spoilage": "none"}},
+        {"pattern": "/Rotten[A-Z]", "labels": {"freshness": "spoiled", "visual_spoilage": ["mild", "severe"]}}
+      ]
+    },
+    "mango_banana_ripe": {
+      "adapter": "path_rules",
+      "verified_against_download": true,
+      "verified_note": "Layout checked 2026-09-27: Mango_Banana_Dataset/data/{train,test}/images/<Raw|Ripe>_<Banana|Mango>...jpg (webcam, indoor+outdoor, several fruits per image). Group = capture session (uuid1 time_mid, ~7 min) or the numbered sequence. Used for ripeness only (aux): some 'ripe mango' photos are visually ambiguous for identification.",
+      "split_by_metadata_group": true,
+      "group_pattern": "(?P<group>(?<=\\.[0-9a-f]{8}-)[0-9a-f]{4}|(?<=/)[A-Za-z]+_[A-Za-z]+\\d+(?=_\\d))",
+      "rules": [
+        {"pattern": "/Raw_Banana", "labels": {"produce": "banana", "ripeness": "unripe"}},
+        {"pattern": "/Ripe_Banana", "labels": {"produce": "banana", "ripeness": "ripe"}},
+        {"pattern": "/Raw_Mango", "labels": {"produce": "mango", "ripeness": "unripe"}},
+        {"pattern": "/Ripe_Mango", "labels": {"produce": "mango", "ripeness": "ripe"}}
+      ]
     }
   }
 }
