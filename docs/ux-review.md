@@ -25,6 +25,13 @@ route fed with real server outputs, RTL set on the document because react-native
 |---|---|
 | ![](img/ux/v07_spoiled.jpg) | ![](img/ux/v07_details.jpg) |
 
+**My scans** (app, device only): opened from the camera screen; successful scans are kept with a small
+thumbnail (history/ in the app's documents, at most 30); tap reopens the result without feedback/share
+prompts; delete one or all. In the web preview the thumbnails fall back to the fruit emoji (no device
+file system there).
+
+![](img/ux/v07_history.jpg)
+
 ## Problems found by rendering, and fixes
 
 | # | Problem (first render) | Fix |

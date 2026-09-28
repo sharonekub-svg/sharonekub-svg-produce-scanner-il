@@ -5,6 +5,7 @@ import { useCallback, useRef, useState } from 'react';
 import { ActivityIndicator, Image, Pressable, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { addToHistory } from '../history';
 import { inferenceMode, scan } from '../model/engine';
 import { peekPendingPrevious, setLastScan, takePendingPrevious } from '../ui/state';
 import { he } from '../ui/strings';
@@ -46,6 +47,7 @@ export default function CameraScreen() {
       setFrozen(photo.uri); // freeze the frame: "בודק…" happens over what the user just shot
       const output = await scan(photo.uri, takePendingPrevious() ?? undefined);
       setLastScan({ output, photoUri: photo.uri });
+      addToHistory(photo.uri, output); // background; never blocks the result
       router.push('/result');
     } catch {
       setFrozen(null);
@@ -69,7 +71,13 @@ export default function CameraScreen() {
                    style={({ pressed }) => [styles.scanButton, (pressed || busy) && { opacity: 0.75, transform: [{ scale: 0.98 }] }]}>
           <Text style={styles.scanText}>{secondAngle ? he.anotherAngle : he.scan}</Text>
         </Pressable>
-        <Text style={styles.small}>{he.cameraFooter}</Text>
+        <View style={styles.bottomRow}>
+          <Text style={styles.small}>{he.cameraFooter}</Text>
+          <Pressable accessibilityRole="button" accessibilityLabel={he.myScans} onPress={() => router.push('/history')} disabled={busy} style={styles.histButton}>
+            <Text style={styles.histIcon}>🕘</Text>
+            <Text style={styles.histText}>{he.myScans}</Text>
+          </Pressable>
+        </View>
       </SafeAreaView>
     </View>
   );
@@ -96,4 +104,8 @@ const styles = StyleSheet.create({
   scanButton: { backgroundColor: '#fff', minWidth: 220, minHeight: 64, borderRadius: 32, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 28 },
   scanText: { color: '#1d1d1b', fontSize: 21, fontWeight: '800' },
   small: { color: '#ddd', fontSize: 13 },
+  bottomRow: { alignSelf: 'stretch', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
+  histButton: { flexDirection: 'row', alignItems: 'center', gap: 6, backgroundColor: 'rgba(0,0,0,0.55)', borderRadius: 20, paddingHorizontal: 14, minHeight: 44 },
+  histIcon: { fontSize: 16 },
+  histText: { color: '#fff', fontSize: 15, fontWeight: '700' },
 });

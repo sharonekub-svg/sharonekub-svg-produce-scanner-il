@@ -77,7 +77,8 @@ export default function ResultScreen() {
     return null;
   }
   const { result: r, top3 } = last.output;
-  const again = () => router.back();
+  const fromHistory = Boolean(last.fromHistory);
+  const again = () => (fromHistory ? router.dismissTo('/') : router.back());
   const anotherAngle = () => { setPendingPrevious(last.output); router.back(); };
   const onFeedback = async (correct: boolean) => {
     setFeedbackSent(true);
@@ -101,7 +102,8 @@ export default function ResultScreen() {
     <SafeAreaView style={styles.fill}>
       <ScrollView contentContainerStyle={styles.pad}>
         <View style={styles.photoWrap}>
-          <Image source={{ uri: last.photoUri }} style={styles.photo} accessibilityIgnoresInvertColors />
+          {last.photoUri ? <Image source={{ uri: last.photoUri }} style={styles.photo} accessibilityIgnoresInvertColors />
+            : <View style={[styles.photo, styles.photoEmpty]}><Text style={styles.photoEmoji}>{r.emoji}</Text></View>}
           {ok && r.produce_confidence != null ? (
             <View style={[styles.confRing, r.produce_confidence < 0.85 && styles.confRingLow]} accessible accessibilityLabel={`${he.confidence}: ${pct(r.produce_confidence)}`}>
               <Text style={styles.confSpark}>✦</Text>
@@ -202,11 +204,11 @@ export default function ResultScreen() {
           </>
         ) : (
           <Pressable accessibilityRole="button" style={styles.primary} onPress={again}>
-            <Text style={styles.primaryText}>{ok ? he.scanAnother : he.tryAgain}</Text>
+            <Text style={styles.primaryText}>{fromHistory ? he.newScan : ok ? he.scanAnother : he.tryAgain}</Text>
           </Pressable>
         )}
 
-        {ok && (
+        {ok && !fromHistory && (
           <View style={styles.feedback}>
             {feedbackSent ? <Text style={styles.muted}>{he.thanks}</Text> : (
               <>
@@ -217,7 +219,7 @@ export default function ResultScreen() {
             )}
           </View>
         )}
-        {feedbackSent && donationEnabled() ? (
+        {feedbackSent && !fromHistory && donationEnabled() ? (
           <View style={styles.donate}>
             {donate === 'idle' || donate === 'failed' ? (
               <>
@@ -254,6 +256,8 @@ const styles = StyleSheet.create({
   pad: { padding: 16, gap: 12 },
   photoWrap: { width: '68%', maxWidth: 280, alignSelf: 'center', marginBottom: 12 },
   photo: { width: '100%', aspectRatio: 1, borderRadius: 24 },
+  photoEmpty: { backgroundColor: '#EFE8DA', alignItems: 'center', justifyContent: 'center' },
+  photoEmoji: { fontSize: 96 },
   confRing: { position: 'absolute', bottom: -18, end: -14, width: 64, height: 64, borderRadius: 32, backgroundColor: '#fff',
     borderWidth: 4, borderColor: 'rgba(79,190,120,0.45)', alignItems: 'center', justifyContent: 'center',
     shadowColor: '#4FBE78', shadowOpacity: 0.55, shadowRadius: 12, shadowOffset: { width: 0, height: 0 }, elevation: 6 },
