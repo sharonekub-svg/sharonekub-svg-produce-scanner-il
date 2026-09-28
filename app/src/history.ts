@@ -1,9 +1,12 @@
-// "My scans" history, on this device only (same idea as the web app's history).
+// "My scans" history (same idea as the web app's history).
 // Stored in the app's document directory: history/index.json + one small JPEG thumbnail per scan.
 // Only successful scans ("ok") are kept; newest first; at most HMAX entries.
+// When signed in with Google (auth.ts), entries also sync with the account (cloud.ts) — shared with the web app.
 import { Directory, File, Paths } from 'expo-file-system';
 import { ImageManipulator, SaveFormat } from 'expo-image-manipulator';
 
+import { getSession } from './auth';
+import { type CloudRow, cloudAdd, cloudClear, cloudList, cloudRemove } from './cloud';
 import type { ScanOutput } from './model/engine';
 
 export const HMAX = 30;
@@ -71,20 +74,78 @@ export async function addToHistory(photoUri: string, output: ScanOutput): Promis
       thumb = dest.uri;
     }
   } catch { thumb = null; }
-  const h = [{ id, t: id, thumb, output }, ...loadHistory()];
+  const entry = { id, t: id, thumb, output };
+  const h = [entry, ...loadHistory()];
   h.slice(HMAX).forEach(deleteThumb);
   save(h.slice(0, HMAX));
+  if (getSession()) toCloud(entry).then((row) => cloudAdd([row]));
 }
 
 export function removeFromHistory(id: number) {
   const h = loadHistory();
   h.filter((e) => e.id === id).forEach(deleteThumb);
   save(h.filter((e) => e.id !== id));
+  if (getSession()) cloudRemove(id);
 }
 
 export function clearHistory() {
   loadHistory().forEach(deleteThumb);
   save([]);
+  if (getSession()) cloudClear();
+}
+
+// ---------- account sync ----------
+const THUMB_MAX = 60000; // server check: data URL length <= 60000
+
+async function toCloud(e: HistoryEntry): Promise<CloudRow> {
+  let thumb: string | null = null;
+  try {
+    if (e.thumb) {
+      const url = `data:image/jpeg;base64,${await new File(e.thumb).base64()}`;
+      thumb = url.length <= THUMB_MAX ? url : null;
+    }
+  } catch { thumb = null; }
+  // The web app keeps top3 inside the result object; keep the same shape so both can read every row.
+  return { t: e.id, result: { ...e.output.result, top3: e.output.top3 }, thumb };
+}
+
+function fromCloud(row: CloudRow): HistoryEntry {
+  let thumb: string | null = null;
+  const m = /^data:image\/jpeg;base64,(.+)$/.exec(row.thumb ?? '');
+  if (m) {
+    try {
+      const d = dir();
+      if (d) { const f = new File(d, `${row.t}.jpg`); f.write(m[1], { encoding: 'base64' }); thumb = f.uri; }
+      else thumb = row.thumb; // no device file system: a data URL still displays
+    } catch { thumb = null; }
+  }
+  const { top3, ...result } = row.result ?? {};
+  return { id: row.t, t: row.t, thumb, output: { result, top3: Array.isArray(top3) ? top3 : [], angles: 1 } as ScanOutput };
+}
+
+let syncing: Promise<void> | null = null;
+/** Merge the account's scans into this device and upload this device's scans (at most 8 per sync). */
+export function syncHistory(): Promise<void> {
+  if (!getSession()) return Promise.resolve();
+  syncing ??= (async () => {
+    try {
+      const rows = await cloudList();
+      if (!rows) return;
+      const local = loadHistory();
+      const have = new Set(local.map((e) => e.id));
+      const inCloud = new Set(rows.map((r) => r.t));
+      const up = local.filter((e) => !inCloud.has(e.id)).slice(0, 8);
+      if (up.length) await cloudAdd(await Promise.all(up.map(toCloud)));
+      const added = rows.filter((r) => !have.has(r.t)).map(fromCloud);
+      if (!added.length) return;
+      const merged = [...local, ...added].sort((a, b) => b.t - a.t);
+      merged.slice(HMAX).forEach(deleteThumb);
+      save(merged.slice(0, HMAX));
+    } finally {
+      syncing = null;
+    }
+  })();
+  return syncing;
 }
 
 /** Summary for the header pills: total, good (score ≥ 7), not recommended (score ≤ 3). */

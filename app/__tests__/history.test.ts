@@ -21,6 +21,17 @@ jest.mock('expo-image-manipulator', () => ({
   ImageManipulator: { manipulate: () => ({ resize: () => ({ renderAsync: async () => ({ saveAsync: async () => ({ uri: 'cache/t.jpg' }) }) }) }) },
 }));
 
+// Account: signed in or not, and an in-memory cloud table.
+let mockSignedIn = false;
+const mockCloud: { t: number; result: any; thumb: string | null }[] = [];
+jest.mock('../src/auth', () => ({ getSession: () => (mockSignedIn ? { name: 'x' } : null) }));
+jest.mock('../src/cloud', () => ({
+  cloudList: async () => [...mockCloud].sort((a, b) => b.t - a.t),
+  cloudAdd: async (rows: any[]) => { mockCloud.push(...rows); return true; },
+  cloudRemove: async (t: number) => { mockCloud.splice(0, mockCloud.length, ...mockCloud.filter((r) => r.t !== t)); return true; },
+  cloudClear: async () => { mockCloud.length = 0; return true; },
+}));
+
 const out = (status: string, score: number | null = 8) =>
   ({ result: { status, score, produce: 'apple', produce_he: 'תפוח', emoji: '🍎' }, top3: [], angles: 1 }) as any;
 
@@ -31,7 +42,7 @@ function freshModule() {
 }
 
 describe('my scans history', () => {
-  beforeEach(() => mockFiles.clear());
+  beforeEach(() => { mockFiles.clear(); mockCloud.length = 0; mockSignedIn = false; });
 
   it('keeps only successful scans, newest first, with a thumbnail', async () => {
     const h = freshModule();
@@ -63,5 +74,34 @@ describe('my scans history', () => {
     h.clearHistory();
     expect(h.loadHistory()).toEqual([]);
     expect([...mockFiles.keys()].filter((k) => k.endsWith('.jpg'))).toEqual([]);
+  });
+
+  it('signed in: new scans go to the account, and sync merges both ways (same row shape as the web)', async () => {
+    mockSignedIn = true;
+    mockFiles.set('doc/history/seed.jpg', 'x');
+    mockCloud.push({ t: 5, result: { status: 'ok', score: 3, produce: 'banana', produce_he: 'בננה', top3: [{ produce: 'banana', he: 'בננה', prob: 0.9 }] },
+                     thumb: 'data:image/jpeg;base64,QUJD' });
+    const h = freshModule();
+    await h.addToHistory('p.jpg', out('ok', 9));
+    await new Promise((r) => setTimeout(r, 5));
+    expect(mockCloud.map((r) => r.t)).toContain(h.loadHistory()[0].id);
+    expect(mockCloud.find((r) => r.t !== 5)!.result.top3).toEqual([]);
+    await h.syncHistory();
+    const list = h.loadHistory();
+    const web = list.find((e) => e.id === 5)!;
+    expect(web.output.result.produce).toBe('banana');
+    expect(web.output.top3).toHaveLength(1);
+    expect((web.output.result as any).top3).toBeUndefined();
+    expect(web.thumb).toBe('doc/history/5.jpg');
+    h.removeFromHistory(5);
+    await new Promise((r) => setTimeout(r, 1));
+    expect(mockCloud.map((r) => r.t)).not.toContain(5);
+  });
+
+  it('signed out: nothing is sent to the account', async () => {
+    const h = freshModule();
+    await h.addToHistory('p.jpg', out('ok'));
+    await h.syncHistory();
+    expect(mockCloud).toEqual([]);
   });
 });

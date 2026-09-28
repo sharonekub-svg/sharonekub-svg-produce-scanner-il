@@ -5,7 +5,8 @@ import { useCallback, useState } from 'react';
 import { Alert, FlatList, Image, Pressable, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { type HistoryEntry, clearHistory, loadHistory, onHistoryChange, removeFromHistory, summarize } from '../history';
+import { type Session, deleteAccount, getSession, googleEnabled, loadSession, onAuthChange, signIn, signOut } from '../auth';
+import { type HistoryEntry, clearHistory, loadHistory, onHistoryChange, removeFromHistory, summarize, syncHistory } from '../history';
 import type { ScanResult } from '../model/types';
 import { setLastScan } from '../ui/state';
 import { he } from '../ui/strings';
@@ -50,11 +51,56 @@ function Item({ e }: { e: HistoryEntry }) {
   );
 }
 
+// Account card: sign in (only when Google sign-in is enabled), or who is signed in + sign out / delete.
+function Account({ session, googleOn }: { session: Session | null; googleOn: boolean }) {
+  const [busy, setBusy] = useState(false);
+  const [msg, setMsg] = useState<string | null>(null);
+  if (!session && !googleOn) return null;
+  const onSignIn = async () => {
+    setBusy(true); setMsg(null);
+    const ok = await signIn();
+    setBusy(false);
+    if (ok) syncHistory(); else setMsg(he.signInFailed);
+  };
+  const onDelete = () => Alert.alert(he.deleteAccountTitle, he.deleteAccountBody, [
+    { text: he.donateCancel, style: 'cancel' },
+    { text: he.deleteAccount, style: 'destructive', onPress: async () => { if (!(await deleteAccount())) setMsg(he.deleteFailed); } },
+  ]);
+  return session ? (
+    <View style={styles.account}>
+      <View style={styles.accountRow}>
+        {session.avatar ? <Image source={{ uri: session.avatar }} style={styles.avatar} /> : null}
+        <View style={styles.flex1}>
+          <Text style={styles.accountTitle}>{he.signedInAs}</Text>
+          <Text style={styles.date}>{session.name}</Text>
+        </View>
+        <Pressable onPress={signOut} accessibilityRole="button" style={styles.linkBtn}><Text style={styles.link}>{he.signOut}</Text></Pressable>
+      </View>
+      <Pressable onPress={onDelete} accessibilityRole="button" style={styles.linkBtn}><Text style={[styles.link, styles.danger]}>{he.deleteAccount}</Text></Pressable>
+      {msg ? <Text style={styles.date}>{msg}</Text> : null}
+    </View>
+  ) : (
+    <View style={styles.account}>
+      <Text style={styles.emptyBody}>{he.signInCta}</Text>
+      <Pressable onPress={onSignIn} disabled={busy} accessibilityRole="button" style={[styles.google, busy && { opacity: 0.6 }]}>
+        <Text style={styles.googleG}>G</Text><Text style={styles.googleText}>{he.signInGoogle}</Text>
+      </Pressable>
+      {msg ? <Text style={styles.date}>{msg}</Text> : null}
+    </View>
+  );
+}
+
 export default function HistoryScreen() {
   const [items, setItems] = useState<HistoryEntry[]>(loadHistory());
+  const [session, setSession] = useState<Session | null>(getSession());
+  const [googleOn, setGoogleOn] = useState(false);
   useFocusEffect(useCallback(() => {
     setItems([...loadHistory()]);
-    return onHistoryChange(() => setItems([...loadHistory()]));
+    loadSession().then((s) => { setSession(s); if (s) syncHistory(); });
+    googleEnabled().then(setGoogleOn);
+    const offH = onHistoryChange(() => setItems([...loadHistory()]));
+    const offA = onAuthChange(() => setSession(getSession()));
+    return () => { offH(); offA(); };
   }, []));
   const s = summarize(items);
   const confirmClear = () => Alert.alert(he.clearAllTitle, undefined, [
@@ -73,6 +119,7 @@ export default function HistoryScreen() {
       </View>
       {items.length === 0 ? (
         <View style={styles.empty}>
+          <Account session={session} googleOn={googleOn} />
           <Text style={styles.emptyEmoji}>🧺</Text>
           <Text style={styles.emptyTitle}>{he.noScansYet}</Text>
           <Text style={styles.emptyBody}>{he.noScansBody}</Text>
@@ -84,14 +131,17 @@ export default function HistoryScreen() {
           keyExtractor={(e) => String(e.id)}
           contentContainerStyle={styles.list}
           ListHeaderComponent={
+            <>
+            <Account session={session} googleOn={googleOn} />
             <View style={styles.pills}>
               <Text style={styles.pill}>{s.total} {he.scansCount}</Text>
               {s.scored ? <Text style={[styles.pill, { color: TONE.good }]}>● {s.good} {he.inGoodShape}</Text> : null}
               {s.scored ? <Text style={[styles.pill, { color: TONE.bad }]}>● {s.bad} {he.notRecommended}</Text> : null}
             </View>
+            </>
           }
           renderItem={({ item }) => <Item e={item} />}
-          ListFooterComponent={<Text style={styles.footer}>{he.savedOnDevice}</Text>}
+          ListFooterComponent={<Text style={styles.footer}>{session ? he.savedInAccount : he.savedOnDevice}</Text>}
         />
       )}
     </SafeAreaView>
@@ -128,5 +178,15 @@ const styles = StyleSheet.create({
   emptyBody: { fontSize: 15, color: '#3C463F', textAlign: 'center', lineHeight: 22 },
   primary: { backgroundColor: '#2f7d4f', paddingHorizontal: 32, minHeight: 52, borderRadius: 14, alignItems: 'center', justifyContent: 'center', marginTop: 12 },
   primaryText: { color: '#fff', fontSize: 18, fontWeight: '700' },
+  account: { alignSelf: 'stretch', backgroundColor: '#FFFDF8', borderRadius: 18, padding: 14, gap: 10, marginBottom: 12, borderWidth: 1, borderColor: '#E6DFD0' },
+  accountRow: { flexDirection: 'row', alignItems: 'center', gap: 10 },
+  avatar: { width: 36, height: 36, borderRadius: 18 },
+  accountTitle: { fontSize: 15, fontWeight: '800', color: '#1E2721' },
+  linkBtn: { minHeight: 36, justifyContent: 'center' },
+  link: { color: '#2f7d4f', fontSize: 15, fontWeight: '700' },
+  danger: { color: '#C0392B' },
+  google: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 10, backgroundColor: '#fff', borderWidth: 1, borderColor: '#dadce0', borderRadius: 14, minHeight: 52 },
+  googleG: { fontSize: 20, fontWeight: '900', color: '#4285F4' },
+  googleText: { fontSize: 17, fontWeight: '700', color: '#1f1f1f' },
   footer: { fontSize: 12, color: '#7A7F76', textAlign: 'center', marginTop: 8 },
 });

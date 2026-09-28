@@ -35,7 +35,9 @@
           "microphonePermission": false,
           "recordAudioAndroid": false
         }
-      ]
+      ],
+      "expo-web-browser",
+      "expo-secure-store"
     ],
     "scheme": "producescanner",
     "extra": {
