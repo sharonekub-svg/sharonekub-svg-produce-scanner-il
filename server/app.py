@@ -101,6 +101,30 @@ def storage_tip_he(produce: str | None) -> str | None:
     return f"{c['tip_he']} {eth}" if eth else c["tip_he"]
 
 
+def touch_tip_he(produce: str | None) -> str | None:
+    """General hand check for this produce type (texture can't be measured from a photo)."""
+    return (CARE["produce"].get(produce or "") or {}).get("touch_he")
+
+
+def surface_he(d: dict) -> str | None:
+    """Skin appearance in words, derived only from the freshness/spoilage heads (no new claims)."""
+    sp = d.get("visual_spoilage") or {}
+    fr = d.get("freshness") or {}
+    spl = sp.get("label") if sp.get("available") else None
+    frl = fr.get("label") if fr.get("available") else None
+    if spl is None and frl is None:
+        return None
+    if spl == "severe" or frl == "spoiled":
+        return "סימני ריקבון נראים בקליפה"
+    if spl == "defects":
+        return "פגמים נראים בקליפה"
+    if spl == "mild" or frl in ("declining", "not_fresh"):
+        return "כתמים קלים או סימני התייבשות"
+    if spl in (None, "none") and frl in (None, "fresh"):
+        return "קליפה נקייה, בלי פגמים נראים"
+    return None
+
+
 @app.get("/")
 def root(request: Request):
     # Browsers get the scan page (docs/mobile.md: web fallback until the iOS build); programs get JSON.
@@ -185,5 +209,8 @@ async def scan(image: UploadFile = File(...), image2: UploadFile | None = File(N
     top = np.argsort(-probs["produce"])[:3]
     top3 = [{"produce": e.tax.produce[int(i)], "he": e.tax.produce_meta[e.tax.produce[int(i)]]["he"],
              "prob": round(float(probs["produce"][i]), 4)} for i in top]
-    return {"model_id": e.bundle["model_id"], **res.to_dict(), "angles": angles, "top3": top3,
-            "storage_tip_he": storage_tip_he(res.produce) if res.status == "ok" else None}
+    d, ok = res.to_dict(), res.status == "ok"
+    return {"model_id": e.bundle["model_id"], **d, "angles": angles, "top3": top3,
+            "storage_tip_he": storage_tip_he(res.produce) if ok else None,
+            "surface_he": surface_he(d) if ok else None,
+            "touch_tip_he": touch_tip_he(res.produce) if ok else None}

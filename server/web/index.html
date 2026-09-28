@@ -173,6 +173,7 @@ button { font:inherit; color:inherit; cursor:pointer; border:0; background:none;
 .row small { display:block; font-size:12px; color:var(--muted); line-height:1.2; }
 .row b { font-size:15px; }
 .row .val { flex:1; }
+.row .touch { display:block; font-size:14px; color:var(--ink-2); line-height:1.45; margin-top:2px; }
 .row .chip { font-size:12px; font-weight:800; padding:3px 9px; border-radius:10px; direction:ltr; }
 .action { display:flex; gap:10px; align-items:center; border-radius:16px; padding:14px; font-weight:800; font-size:17px; margin-top:14px; }
 .t-ok { background:var(--green-bg); color:#1F5A34; } .t-mid { background:var(--mid-bg); color:#7A5200; } .t-bad { background:var(--bad-bg); color:#8E1F17; }
@@ -257,6 +258,7 @@ details .body { padding:0 14px 12px; color:var(--ink-2); font-size:15px; }
   <symbol id="i-drop" viewBox="0 0 24 24"><path d="M12 3.5c3 4 6 7.2 6 10.5a6 6 0 0 1-12 0c0-3.3 3-6.5 6-10.5z"/></symbol>
   <symbol id="i-leaf" viewBox="0 0 24 24"><path d="M5 19c0-8 5-13 14-14-1 9-6 14-14 14z"/><path d="M5 19l7-7"/></symbol>
   <symbol id="i-lens" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="m16 16 4 4"/></symbol>
+  <symbol id="i-hand" viewBox="0 0 24 24"><path d="M8 12V5.5a1.5 1.5 0 0 1 3 0V11"/><path d="M11 10V4.5a1.5 1.5 0 0 1 3 0V11"/><path d="M14 10.5V6a1.5 1.5 0 0 1 3 0v7c0 4-2.5 7-6 7-2.5 0-4-1.2-5.5-3.5L3.8 13.6a1.5 1.5 0 0 1 2.4-1.8L8 14"/></symbol>
 </defs></svg>
 
 <div class="app">
@@ -379,7 +381,7 @@ const STATE = { unsure: ['🤔', 'לא בטוחים'], retake: ['📷', 'צרי�
 const HEADS = {
   ripeness: ['בשילות', 'i-leaf', { unripe: 'mid', partially_ripe: 'good', ripe: 'ok', overripe: 'mid' }],
   freshness: ['טריות', 'i-drop', { fresh: 'ok', declining: 'mid', spoiled: 'bad', not_fresh: 'bad' }],
-  visual_spoilage: ['פגמים בקליפה', 'i-lens', { none: 'ok', mild: 'mid', severe: 'bad', defects: 'bad' }] };
+  visual_spoilage: ['מראה הקליפה', 'i-lens', { none: 'ok', mild: 'mid', severe: 'bad', defects: 'bad' }] };
 const TONE = { ok: ['var(--ok)', 'var(--green-bg)'], good: ['var(--good)', 'var(--green-bg)'], mid: ['var(--mid)', 'var(--mid-bg)'],
   weak: ['var(--weak)', 'var(--mid-bg)'], bad: ['var(--bad)', 'var(--bad-bg)'], none: ['var(--gray)', 'var(--paper-2)'] };
 
@@ -479,8 +481,10 @@ function rows(r) {
     const h = r[k]; if (!h || !h.available) continue;
     const [fg, bg] = TONE[tones[h.label] || 'none'];
     out.push(`<div class="row"><span class="ic" style="background:${bg};color:${fg}"><svg class="ico"><use href="#${icon}"/></svg></span>
-      <div class="val"><small>${title}</small><b>${h.label ? esc(h.label_he) : 'לא ודאי'}</b></div>${h.prob != null && h.label ? `<span class="chip" style="background:${bg};color:${fg}">${pct5(h.prob)}</span>` : ''}</div>`);
+      <div class="val"><small>${title}</small><b>${k === 'visual_spoilage' && r.surface_he ? esc(r.surface_he) : h.label ? esc(h.label_he) : 'לא ודאי'}</b></div>${h.prob != null && h.label ? `<span class="chip" style="background:${bg};color:${fg}">${pct5(h.prob)}</span>` : ''}</div>`);
   }
+  if (r.touch_tip_he) out.push(`<div class="row"><span class="ic" style="background:var(--paper-2);color:var(--ink-2)"><svg class="ico"><use href="#i-hand"/></svg></span>
+      <div class="val"><small>מרקם – לבדוק ביד</small><span class="touch">${esc(r.touch_tip_he)}</span><small style="margin-top:4px">עצה כללית לסוג הפרי, לא מדידה מהתמונה</small></div></div>`);
   return out.join('');
 }
 function stageText(r) {
@@ -613,7 +617,7 @@ async function thumbOf(url, n) {
   } catch { return ''; }
 }
 const KEEP = ['status', 'produce', 'produce_he', 'emoji', 'produce_confidence', 'score', 'score_reason_he', 'recommendation', 'recommendation_he',
-  'ripeness', 'freshness', 'visual_spoilage', 'explanation_he', 'top3', 'storage_tip_he', 'disclaimer_he', 'model_id'];
+  'ripeness', 'freshness', 'visual_spoilage', 'explanation_he', 'top3', 'storage_tip_he', 'surface_he', 'touch_tip_he', 'disclaimer_he', 'model_id'];
 function addHistory(r, img) {
   const h = loadHist(); h.unshift({ id: Date.now(), t: Date.now(), img, r: Object.fromEntries(KEEP.map(k => [k, r[k]])) });
   saveHist(h.slice(0, HMAX)); $('hdot').hidden = false;
