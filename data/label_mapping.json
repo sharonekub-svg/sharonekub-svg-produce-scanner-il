@@ -1136,6 +1136,107 @@
           }
         }
       ]
+    },
+    "fruit_inspection_6ps": {
+      "adapter": "path_rules",
+      "verified_against_download": true,
+      "verified_note": "Mendeley 6ps7gtp2wg v1 (CC BY 4.0), Pachon Suescun, Pinzon Arenas, Jimenez-Moreno (Colombia). FRUIT-16K/<F|S>_<Fruit>/<n>.jpg, 224 px phone photos on kitchen surfaces, 1000 per class. Visual audit 2026-09-28: consecutive numbers are the same fruit (runs of ~20-40), so group = class + hundreds block of the number. 'Lemon' here is the green Tahiti lime (Colombian 'limon') -> mapped to lime. Lulo and tamarillo are not in the taxonomy -> excluded. S_ = 'non-fresh or spoiled' -> freshness declining|spoiled, defects mild|severe.",
+      "exclude_patterns": [
+        "_Lulo/",
+        "_Tamarillo/"
+      ],
+      "split_by_metadata_group": true,
+      "group_pattern": "(?P<group>[FS]_[A-Za-z]+/\\d*?)\\d{1,2}\\.jpg$",
+      "rules": [
+        {
+          "pattern": "_Banana/",
+          "labels": {
+            "produce": "banana"
+          }
+        },
+        {
+          "pattern": "_Lemon/",
+          "labels": {
+            "produce": "lime"
+          }
+        },
+        {
+          "pattern": "_Mango/",
+          "labels": {
+            "produce": "mango"
+          }
+        },
+        {
+          "pattern": "_Orange/",
+          "labels": {
+            "produce": "orange"
+          }
+        },
+        {
+          "pattern": "_Strawberry/",
+          "labels": {
+            "produce": "strawberry"
+          }
+        },
+        {
+          "pattern": "_Tomato/",
+          "labels": {
+            "produce": "tomato"
+          }
+        },
+        {
+          "pattern": "(^|/)F_",
+          "labels": {
+            "freshness": "fresh",
+            "visual_spoilage": "none"
+          }
+        },
+        {
+          "pattern": "(^|/)S_",
+          "labels": {
+            "freshness": [
+              "declining",
+              "spoiled"
+            ],
+            "visual_spoilage": [
+              "mild",
+              "severe"
+            ]
+          }
+        }
+      ]
+    },
+    "lemon_varieties": {
+      "adapter": "path_rules",
+      "verified_against_download": true,
+      "verified_note": "Mendeley mygrsk3vyb v2 (CC BY 4.0), Mujahidul Islam. Only 'Original Image.zip' (1,956 originals; augmented copies not used). Background-removed studio shots, Original Image/{Rotten Lemon, Fresh Lemon/<variety>}/<Name>_<n>.png. Visual audit 2026-09-28: mostly green South-Asian varieties (Israeli lemons are yellow), so quality-only aux (produce loss masked). Group = folder + hundreds block of n (repeat shots of one fruit are consecutive).",
+      "split_by_metadata_group": true,
+      "group_pattern": "(?P<group>[^/]+/[^/]+_\\d*?)\\d{1,2}\\.png$",
+      "rules": [
+        {
+          "pattern": "(Fresh|Rotten) Lemon",
+          "labels": {
+            "produce": "lemon"
+          }
+        },
+        {
+          "pattern": "Fresh Lemon/",
+          "labels": {
+            "freshness": "fresh",
+            "visual_spoilage": "none"
+          }
+        },
+        {
+          "pattern": "Rotten Lemon/",
+          "labels": {
+            "freshness": "spoiled",
+            "visual_spoilage": [
+              "mild",
+              "severe"
+            ]
+          }
+        }
+      ]
     }
   }
 }
