@@ -98,10 +98,14 @@ def test_web_page_and_care_copy():
     from server import app as srv
     c = TestClient(srv.app)
     page = c.get("/", headers={"accept": "text/html"})
-    assert page.status_code == 200 and "סרוק פרי" in page.text and "/v1/scan" in page.text
+    # Browsers get the app's own web build (scripts/build_app_preview.sh), in Hebrew RTL.
+    assert page.status_code == 200 and 'dir="rtl"' in page.text and "/_expo/static/js/web/" in page.text
     assert c.get("/", headers={"accept": "application/json"}).json()["service"] == "produce-scanner inference API"
-    for path in re.findall(r'(?:href|src)="(/web/[^"$]+)"', page.text) + ["/web/samples/" + f for f in ("banana.jpg", "apple_rotten.jpg", "pomegranate.jpg")]:
+    for path in re.findall(r'(?:href|src)="(/[^"$]+)"', page.text):
         assert c.get(path).status_code == 200, path
+    for route in srv.APP_ROUTES:
+        assert c.get(f"/{route}").text == page.text, route
+    assert c.get("/web/index.html").status_code == 200  # older hand-made page kept for reference
     sw = c.get("/sw.js")
-    assert sw.status_code == 200 and "javascript" in sw.headers["content-type"] and "/v1/" in sw.text
+    assert sw.status_code == 200 and "javascript" in sw.headers["content-type"] and "unregister" in sw.text
     assert srv.storage_tip_he("banana").startswith("בטמפרטורת החדר")

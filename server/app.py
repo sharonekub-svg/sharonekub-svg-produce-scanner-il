@@ -125,25 +125,38 @@ def surface_he(d: dict) -> str | None:
     return None
 
 
+# The phone app is the product. Browsers get the app's own web build (scripts/build_app_preview.sh) as a
+# preview of the phone screens; scans from it go to /v1/analyze here. The older hand-made page stays at /web/index.html.
+PREVIEW = WEB / "preview"
+APP_ROUTES = ("history", "info", "result", "welcome", "signin", "credits")
+
+
+def _preview_page() -> HTMLResponse:
+    return HTMLResponse((PREVIEW / "index.html").read_text(encoding="utf-8"), headers={"Cache-Control": "no-cache"})
+
+
 @app.get("/")
 def root(request: Request):
-    # Browsers get the scan page (docs/mobile.md: web fallback until the iOS build); programs get JSON.
+    # Browsers get the app preview; programs get JSON.
     if "text/html" in request.headers.get("accept", ""):
-        return HTMLResponse((WEB / "index.html").read_text(encoding="utf-8"))
+        return _preview_page()
     return {"service": "produce-scanner inference API", "endpoints": ["/healthz", "/v1/bundle", "POST /v1/analyze", "POST /v1/scan"],
             "note": "Visual assessment only; not a food-safety guarantee."}
 
 
-SW_JS = """// Offline shell only: the page and its icons. Scans (/v1/*) always go to the network.
-const C = 'shell-v1', SHELL = ['/web/manifest.webmanifest', '/web/icon-192.png', '/web/favicon.png'];
-self.addEventListener('install', e => { e.waitUntil(caches.open(C).then(c => c.addAll(SHELL))); self.skipWaiting(); });
-self.addEventListener('activate', e => { e.waitUntil(caches.keys().then(ks => Promise.all(ks.filter(k => k !== C).map(k => caches.delete(k))))); self.clients.claim(); });
-self.addEventListener('fetch', e => {
-  const u = new URL(e.request.url);
-  if (e.request.method !== 'GET' || u.origin !== location.origin || u.pathname.startsWith('/v1/')) return;
-  e.respondWith(fetch(e.request).then(r => { const cp = r.clone(); caches.open(C).then(c => c.put(e.request, cp)); return r; })
-    .catch(() => caches.match(e.request)));
-});
+for _r in APP_ROUTES:  # client-side routes of the app (expo-router, single-page web output)
+    app.add_api_route(f"/{_r}", lambda: _preview_page(), methods=["GET"], include_in_schema=False)
+
+
+@app.get("/favicon.ico", include_in_schema=False)
+def favicon():
+    return Response((PREVIEW / "favicon.ico").read_bytes(), media_type="image/x-icon")
+
+
+# The old page registered a service worker; this version removes it and its cache from returning browsers.
+SW_JS = """self.addEventListener('install', () => self.skipWaiting());
+self.addEventListener('activate', e => e.waitUntil(caches.keys().then(ks => Promise.all(ks.map(k => caches.delete(k))))
+  .then(() => self.registration.unregister()).then(() => self.clients.matchAll()).then(cs => cs.forEach(c => c.navigate(c.url)))));
 """
 
 
@@ -152,6 +165,8 @@ def service_worker():
     return Response(SW_JS, media_type="application/javascript", headers={"Cache-Control": "no-cache"})
 
 
+app.mount("/_expo", StaticFiles(directory=PREVIEW / "_expo"), name="preview_js")
+app.mount("/assets", StaticFiles(directory=PREVIEW / "assets"), name="preview_assets")
 app.mount("/web", StaticFiles(directory=WEB), name="web")
 
 

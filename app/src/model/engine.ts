@@ -2,9 +2,11 @@
 // inference location never touches UI code.
 //   native : on-device Core ML via modules/produce-model (preferred)
 //   remote : OUR self-hosted server (server/app.py) — fallback, never a third-party AI API
+//            (also the web preview of the app, served by that same server: same origin)
 import Constants from 'expo-constants';
 import { ImageManipulator, SaveFormat } from 'expo-image-manipulator';
 import { requireOptionalNativeModule } from 'expo';
+import { Platform } from 'react-native';
 
 import bundledBundle from '../../assets/model/bundle.json';
 import { combineProbs } from './advice';
@@ -26,6 +28,7 @@ let bundle: Bundle = bundledBundle as unknown as Bundle;
 export const getBundle = () => bundle;
 
 export function inferenceMode(): Mode | null {
+  if (Platform.OS === 'web') return 'remote'; // web preview: the page is served by the inference server
   const wanted = extra.inference?.mode ?? 'native';
   if (wanted === 'native' && native?.isAvailable()) return 'native';
   if (extra.inference?.serverUrl) return 'remote';
@@ -33,12 +36,13 @@ export function inferenceMode(): Mode | null {
 }
 
 async function remoteAnalyze(uri: string): Promise<{ logits: Logits; quality: QualityStats }> {
-  const base = extra.inference!.serverUrl!.replace(/\/$/, '');
+  const base = Platform.OS === 'web' ? '' : extra.inference!.serverUrl!.replace(/\/$/, '');
   // Downscale before upload: less data, same model input (server centre-crops to 224).
   const ctx = ImageManipulator.manipulate(uri).resize({ width: 768 });
   const img = await (await ctx.renderAsync()).saveAsync({ compress: 0.85, format: SaveFormat.JPEG });
   const form = new FormData();
-  form.append('image', { uri: img.uri, name: 'scan.jpg', type: 'image/jpeg' } as unknown as Blob);
+  if (Platform.OS === 'web') form.append('image', await (await fetch(img.uri)).blob(), 'scan.jpg');
+  else form.append('image', { uri: img.uri, name: 'scan.jpg', type: 'image/jpeg' } as unknown as Blob);
   const res = await fetch(`${base}/v1/analyze`, { method: 'POST', body: form });
   if (!res.ok) throw new Error(`server ${res.status}`);
   const body = await res.json();

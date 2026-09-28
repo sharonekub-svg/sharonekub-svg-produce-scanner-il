@@ -23,6 +23,9 @@ export default function RootLayout() {
         <Stack.Screen name="index" />
         <Stack.Screen name="result" options={{ contentStyle: { backgroundColor: '#FAFAF7' } }} />
         <Stack.Screen name="history" options={{ contentStyle: { backgroundColor: '#F6F1E6' } }} />
+        <Stack.Screen name="info" options={{ contentStyle: { backgroundColor: '#F6F1E6' } }} />
+        <Stack.Screen name="welcome" options={{ animation: 'fade' }} />
+        <Stack.Screen name="signin" options={{ animation: 'fade', contentStyle: { backgroundColor: '#F6F1E6' } }} />
         <Stack.Screen name="credits" options={{ headerShown: true, title: 'קרדיט לנתונים', contentStyle: { backgroundColor: '#FAFAF7' } }} />
       </Stack>
     </>

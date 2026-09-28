@@ -3,7 +3,7 @@
 // Visually reviewed at 390×844 RTL for every state — see docs/ux-review.md.
 import { Link, router } from 'expo-router';
 import { useState } from 'react';
-import { Image, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Image, Pressable, ScrollView, Share, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { STORAGE_TIP_HE, TOUCH_HE, confidenceWord, surfaceHe, verdictHe } from '../model/advice';
@@ -78,6 +78,11 @@ export default function ResultScreen() {
   }
   const { result: r, top3 } = last.output;
   const fromHistory = Boolean(last.fromHistory);
+  const canDonate = !fromHistory && !last.sample && donationEnabled();
+  const onShare = () => {
+    const sc = r.score != null ? ` – ${r.score}/10 (${verdictHe(r.score)})` : '';
+    Share.share({ message: he.shareText(r.produce_he ?? '', sc) }).catch(() => {});
+  };
   const again = () => (fromHistory ? router.dismissTo('/') : router.back());
   const anotherAngle = () => { setPendingPrevious(last.output); router.back(); };
   const onFeedback = async (correct: boolean) => {
@@ -203,9 +208,16 @@ export default function ResultScreen() {
             </Pressable>
           </>
         ) : (
-          <Pressable accessibilityRole="button" style={styles.primary} onPress={again}>
-            <Text style={styles.primaryText}>{fromHistory ? he.newScan : ok ? he.scanAnother : he.tryAgain}</Text>
-          </Pressable>
+          <View style={styles.row}>
+            {ok ? (
+              <Pressable accessibilityRole="button" style={[styles.secondary, styles.flex]} onPress={onShare}>
+                <Text style={styles.secondaryText}>⤴ {he.share}</Text>
+              </Pressable>
+            ) : null}
+            <Pressable accessibilityRole="button" style={[styles.primary, styles.flex]} onPress={again}>
+              <Text style={styles.primaryText}>{fromHistory ? he.newScan : ok ? he.scanAnother : he.tryAgain}</Text>
+            </Pressable>
+          </View>
         )}
 
         {ok && !fromHistory && (
@@ -219,7 +231,7 @@ export default function ResultScreen() {
             )}
           </View>
         )}
-        {feedbackSent && !fromHistory && donationEnabled() ? (
+        {ok && canDonate ? (
           <View style={styles.donate}>
             {donate === 'idle' || donate === 'failed' ? (
               <>

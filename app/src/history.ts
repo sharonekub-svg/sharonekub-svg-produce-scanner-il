@@ -4,12 +4,15 @@
 // When signed in with Google (auth.ts), entries also sync with the account (cloud.ts) — shared with the web app.
 import { Directory, File, Paths } from 'expo-file-system';
 import { ImageManipulator, SaveFormat } from 'expo-image-manipulator';
+import { Platform } from 'react-native';
 
 import { getSession } from './auth';
 import { type CloudRow, cloudAdd, cloudClear, cloudList, cloudRemove } from './cloud';
 import type { ScanOutput } from './model/engine';
 
 export const HMAX = 30;
+const WEB = Platform.OS === 'web'; // web preview: browser storage, thumbnails as data URLs
+const WEB_KEY = 'app_history';
 
 export interface HistoryEntry {
   id: number;          // timestamp (ms), also the thumbnail file name
@@ -41,6 +44,7 @@ function indexFile(): File | null {
 export function loadHistory(): HistoryEntry[] {
   if (cache) return cache;
   try {
+    if (WEB) { cache = JSON.parse(globalThis.localStorage?.getItem(WEB_KEY) ?? '[]') as HistoryEntry[]; return cache; }
     const f = indexFile();
     cache = f && f.exists ? (JSON.parse(f.textSync()) as HistoryEntry[]) : [];
   } catch {
@@ -51,12 +55,18 @@ export function loadHistory(): HistoryEntry[] {
 
 function save(h: HistoryEntry[]) {
   cache = h;
-  try { indexFile()?.write(JSON.stringify(h)); } catch { /* history must never break scanning */ }
+  try {
+    if (WEB) {
+      for (let n = h.length; n >= 0; n--) { // drop the oldest entries if browser storage is full
+        try { globalThis.localStorage?.setItem(WEB_KEY, JSON.stringify(h.slice(0, n))); break; } catch { /* try fewer */ }
+      }
+    } else indexFile()?.write(JSON.stringify(h));
+  } catch { /* history must never break scanning */ }
   notify();
 }
 
 function deleteThumb(e: HistoryEntry) {
-  try { if (e.thumb) { const f = new File(e.thumb); if (f.exists) f.delete(); } } catch { /* ignore */ }
+  try { if (e.thumb && !e.thumb.startsWith('data:')) { const f = new File(e.thumb); if (f.exists) f.delete(); } } catch { /* ignore */ }
 }
 
 /** Add a finished scan (only status "ok"). Never throws. */
@@ -65,8 +75,12 @@ export async function addToHistory(photoUri: string, output: ScanOutput): Promis
   const id = Date.now();
   let thumb: string | null = null;
   try {
-    const d = dir();
-    if (d) {
+    const d = WEB ? null : dir();
+    if (WEB) {
+      const img = await (await ImageManipulator.manipulate(photoUri).resize({ width: 360 }).renderAsync())
+        .saveAsync({ compress: 0.72, format: SaveFormat.JPEG, base64: true });
+      thumb = img.base64 ? `data:image/jpeg;base64,${img.base64}` : null;
+    } else if (d) {
       const img = await (await ImageManipulator.manipulate(photoUri).resize({ width: 360 }).renderAsync())
         .saveAsync({ compress: 0.72, format: SaveFormat.JPEG });
       const dest = new File(d, `${id}.jpg`);
@@ -101,7 +115,7 @@ async function toCloud(e: HistoryEntry): Promise<CloudRow> {
   let thumb: string | null = null;
   try {
     if (e.thumb) {
-      const url = `data:image/jpeg;base64,${await new File(e.thumb).base64()}`;
+      const url = e.thumb.startsWith('data:') ? e.thumb : `data:image/jpeg;base64,${await new File(e.thumb).base64()}`;
       thumb = url.length <= THUMB_MAX ? url : null;
     }
   } catch { thumb = null; }
@@ -114,7 +128,7 @@ function fromCloud(row: CloudRow): HistoryEntry {
   const m = /^data:image\/jpeg;base64,(.+)$/.exec(row.thumb ?? '');
   if (m) {
     try {
-      const d = dir();
+      const d = WEB ? null : dir();
       if (d) { const f = new File(d, `${row.t}.jpg`); f.write(m[1], { encoding: 'base64' }); thumb = f.uri; }
       else thumb = row.thumb; // no device file system: a data URL still displays
     } catch { thumb = null; }
