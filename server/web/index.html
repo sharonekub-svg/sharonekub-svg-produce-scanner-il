@@ -197,6 +197,16 @@ details .body { padding:0 14px 12px; color:var(--ink-2); font-size:15px; }
 .donate b { color:var(--ink); font-size:15px; }
 .donate .btn { min-height:44px; font-size:15px; }
 .donate .row2 { display:flex; gap:8px; }
+#gate { position:fixed; inset:0; z-index:60; background:var(--paper); display:flex; flex-direction:column; align-items:center; justify-content:center; padding:24px 20px; text-align:center; gap:14px; }
+#gate img.logo { width:84px; height:84px; border-radius:22px; box-shadow:0 10px 26px rgba(40,30,10,.15); }
+#gate h1 { font-family:var(--serif); font-size:34px; line-height:1.1; margin:6px 0 0; }
+#gate p { color:var(--ink-2); margin:0; max-width:32ch; font-size:16px; }
+#gate .gbtn { background:#fff; color:#1f1f1f; border:1px solid #dadce0; max-width:340px; margin-top:10px; }
+#gate .gbtn svg { width:20px; height:20px; }
+#gate .skipg { color:var(--muted); font-size:15px; text-decoration:underline; padding:10px; }
+#gate .small { max-width:34ch; }
+.acct { display:flex; align-items:center; gap:10px; }
+.acct img { width:36px; height:36px; border-radius:50%; }
 
 /* history */
 .hsum { display:flex; gap:8px; margin:4px 0 14px; flex-wrap:wrap; }
@@ -312,6 +322,16 @@ details .body { padding:0 14px 12px; color:var(--ink-2); font-size:15px; }
 
   <div class="scrim" id="scrim"></div>
   <section class="sheet" id="sheet" role="dialog" aria-modal="true"><div class="handle"></div><div id="sheetBody"></div></section>
+
+  <!-- ============ sign-in (only when Google sign-in is enabled in Supabase) ============ -->
+  <div id="gate" hidden>
+    <img class="logo" src="/web/icon-192.png" alt="">
+    <h1>ברוכים הבאים ל<em style="color:var(--green-2)">סורק פירות</em></h1>
+    <p>התחברו כדי לשמור את הסריקות שלכם בחשבון – ולראות אותן מכל מכשיר.</p>
+    <button class="btn gbtn" id="gGo"><svg viewBox="0 0 48 48"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.7 29.2 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.4-.4-3.5z"/><path fill="#FF3D00" d="m6.3 14.7 6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 35.1 26.7 36 24 36c-5.2 0-9.6-3.3-11.3-7.9l-6.5 5C9.5 39.6 16.2 44 24 44z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.2-2.2 4.2-4.1 5.6l6.2 5.2C37 39.2 44 34 44 24c0-1.3-.1-2.4-.4-3.5z"/></svg>התחברות עם Google</button>
+    <button class="skipg" id="gSkip">המשך בלי חשבון</button>
+    <p class="small">נשמרים רק השם, האימייל והסריקות שלכם (תוצאה ותמונה מוקטנת). אפשר למחוק את החשבון בכל רגע מתוך "איך זה עובד".</p>
+  </div>
 
   <!-- ============ onboarding (first visit) ============ -->
   <div id="onb" hidden>
@@ -603,7 +623,80 @@ async function shareResult(r) {
   } catch {}
 }
 
-/* ---------- history (this device only) ---------- */
+/* ---------- Google sign-in (Supabase Auth, PKCE; server/supabase/migrations/004_scan_history.sql) ----------
+   Optional account: history is synced to public.scan_history (owner-only RLS). Shown only when Google is enabled. */
+const AKEY = 'sb_sess';
+let session = null, googleOn = false;
+try { session = JSON.parse(store.get(AKEY) || 'null'); } catch {}
+const b64url = buf => btoa(String.fromCharCode(...new Uint8Array(buf))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+async function signIn() {
+  const ver = b64url(crypto.getRandomValues(new Uint8Array(32)));
+  try { sessionStorage.setItem('pkce', ver); } catch {}
+  const ch = b64url(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(ver)));
+  location.href = `${FEEDBACK.url}/auth/v1/authorize?provider=google&redirect_to=${encodeURIComponent(location.origin + '/')}&code_challenge=${ch}&code_challenge_method=s256`;
+}
+function setSession(j) {
+  session = j ? { access_token: j.access_token, refresh_token: j.refresh_token, expires_at: Date.now() / 1000 + (j.expires_in || 3600), user: j.user } : null;
+  if (session) store.set(AKEY, JSON.stringify(session)); else try { localStorage.removeItem(AKEY); } catch {}
+}
+async function tokenCall(grant, body) {
+  const r = await fetch(`${FEEDBACK.url}/auth/v1/token?grant_type=${grant}`, { method: 'POST', headers: { apikey: FEEDBACK.key, 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+  if (!r.ok) throw new Error(r.status); return r.json();
+}
+async function finishSignIn() {
+  const q = new URLSearchParams(location.search), code = q.get('code');
+  if (!code && !q.get('error')) return;
+  history.replaceState(null, '', location.pathname);
+  let ver = null; try { ver = sessionStorage.getItem('pkce'); sessionStorage.removeItem('pkce'); } catch {}
+  if (!code || !ver) { toast('ההתחברות לא הושלמה'); return; }
+  try { setSession(await tokenCall('pkce', { auth_code: code, code_verifier: ver })); toast('התחברתם בהצלחה'); }
+  catch { toast('ההתחברות לא הצליחה. אפשר לנסות שוב.'); }
+}
+async function authHeaders() {
+  if (!session) return null;
+  if (session.expires_at - 60 < Date.now() / 1000) {
+    try { setSession(await tokenCall('refresh_token', { refresh_token: session.refresh_token })); } catch { setSession(null); return null; }
+  }
+  return { apikey: FEEDBACK.key, Authorization: `Bearer ${session.access_token}` };
+}
+async function signOut() {
+  const h = await authHeaders(); setSession(null);
+  if (h) fetch(`${FEEDBACK.url}/auth/v1/logout`, { method: 'POST', headers: h }).catch(() => {});
+}
+async function deleteAccount() {
+  if (!confirm('למחוק את החשבון ואת כל הסריקות השמורות בו? אי אפשר לבטל.')) return;
+  const h = await authHeaders(); if (!h) return;
+  const r = await fetch(`${FEEDBACK.url}/rest/v1/rpc/delete_my_account`, { method: 'POST', headers: { ...h, 'Content-Type': 'application/json' }, body: '{}' }).catch(() => null);
+  if (r?.ok) { setSession(null); toast('החשבון נמחק'); closeSheet(); } else toast('המחיקה לא הצליחה. נסו שוב.');
+}
+const userName = () => session?.user?.user_metadata?.full_name || session?.user?.email || '';
+async function cloud(method, query = '', body) {
+  const h = await authHeaders(); if (!h) return null;
+  try {
+    const r = await fetch(`${FEEDBACK.url}/rest/v1/scan_history${query}`, { method, headers: { ...h, 'Content-Type': 'application/json', Prefer: 'return=minimal' }, body: body && JSON.stringify(body) });
+    return r.ok ? (method === 'GET' ? r.json() : true) : null;
+  } catch { return null; }
+}
+async function syncHistory() {
+  // merge: cloud rows into this device, and this device's rows up to the cloud
+  const rows = await cloud('GET', '?select=t,result,thumb&order=t.desc&limit=100'); if (!rows) return;
+  const local = loadHist(), have = new Set(local.map(e => e.id)), inCloud = new Set(rows.map(x => x.t));
+  const up = local.filter(e => !inCloud.has(e.id)).map(e => ({ t: e.id, result: e.r, thumb: e.img || null }));
+  if (up.length) await cloud('POST', '', up.slice(0, 8)); // insert rate limit: 10 rows/min per client
+  const merged = local.concat(rows.filter(x => !have.has(x.t)).map(x => ({ id: x.t, t: x.t, img: x.thumb, r: x.result }))).sort((a, b) => b.t - a.t);
+  saveHist(merged.slice(0, HMAX));
+  if ($('history').classList.contains('open')) renderHistory();
+}
+async function initAuth() {
+  await finishSignIn();
+  try { googleOn = !!(await (await fetch(`${FEEDBACK.url}/auth/v1/settings`, { headers: { apikey: FEEDBACK.key } })).json()).external?.google; } catch {}
+  if (session) syncHistory();
+  return googleOn && !session && store.get('guest') !== '1';
+}
+$('gGo').onclick = signIn;
+$('gSkip').onclick = () => { store.set('guest', '1'); $('gate').hidden = true; if (!store.get('onb')) showOnboarding(); };
+
+/* ---------- history (this device; also the account when signed in) ---------- */
 const HKEY = 'hist2', HMAX = 30;
 const loadHist = () => { try { return JSON.parse(store.get(HKEY) || '[]'); } catch { return []; } };
 const saveHist = h => { for (let n = h.length; n >= 0; n--) if (store.set(HKEY, JSON.stringify(h.slice(0, n)))) return; };
@@ -621,6 +714,7 @@ const KEEP = ['status', 'produce', 'produce_he', 'emoji', 'produce_confidence', 
 function addHistory(r, img) {
   const h = loadHist(); h.unshift({ id: Date.now(), t: Date.now(), img, r: Object.fromEntries(KEEP.map(k => [k, r[k]])) });
   saveHist(h.slice(0, HMAX)); $('hdot').hidden = false;
+  if (session) cloud('POST', '', { t: h[0].id, result: h[0].r, thumb: img || null });
 }
 const when = t => new Date(t).toLocaleString('he-IL', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
 function renderHistory() {
@@ -640,14 +734,14 @@ function renderHistory() {
       ${e.r.score != null ? `<span class="sc">${e.r.score}</span>` : ''}
       <button class="del" data-del="1" aria-label="מחיקת הסריקה"><svg class="ico"><use href="#i-trash"/></svg></button></li>`;
   }
-  $('hBody').innerHTML = s + `</ul><p class="small" style="text-align:center;margin-top:14px">נשמר רק במכשיר הזה.</p>`;
+  $('hBody').innerHTML = s + `</ul><p class="small" style="text-align:center;margin-top:14px">${session ? 'נשמר בחשבון שלכם – זמין מכל מכשיר.' : 'נשמר רק במכשיר הזה.'}</p>`;
   document.querySelectorAll('.hitem').forEach(li => li.onclick = ev => {
     const id = +li.dataset.id;
-    if (ev.target.closest('[data-del]')) { saveHist(loadHist().filter(e => e.id !== id)); renderHistory(); return; }
+    if (ev.target.closest('[data-del]')) { saveHist(loadHist().filter(e => e.id !== id)); if (session) cloud('DELETE', `?t=eq.${id}`); renderHistory(); return; }
     const e = loadHist().find(x => x.id === id); if (e) showResult(e.r, e.img || '/web/icon-192.png', true);
   });
 }
-function showHistory() { if (busy) return; $('hdot').hidden = true; renderHistory(); openPage('history'); }
+function showHistory() { if (busy) return; $('hdot').hidden = true; renderHistory(); openPage('history'); if (session) syncHistory(); }
 
 /* ---------- samples + info ---------- */
 function showSamples() {
@@ -668,11 +762,17 @@ async function showInfo() {
     <div class="card"><b>דירוג איכות זמין עכשיו ל:</b><div class="chips">${rated.map(m => `<span>${esc(m.emoji)} ${esc(m.he)}</span>`).join('') || '<span>טוען…</span>'}</div>
       <p class="small" style="margin:8px 0 0">כל פרי מקבל דירוג רק אחרי שעבר מבחן דיוק על תמונות שהמודל לא ראה.${n ? ` שאר הסוגים (המודל מזהה ${n} סוגים) – זיהוי בלבד, עד שיעברו את המבחן.` : ''}</p></div>
     <div class="card"><b>מה תמונה לא יכולה לדעת</b><ul class="why"><li>מה קורה בתוך הפרי (ריקבון פנימי, מכה טרייה).</li><li>מתיקות, ובשילות של פירות שצבעם לא משתנה (הדרים, אבטיח, אבוקדו ירוק).</li><li>אם המזון בטוח לאכילה – זו הערכה חזותית בלבד.</li></ul></div>
-    <div class="card"><b>פרטיות</b><br>התמונה נשלחת לשרת שלנו לבדיקה ולא נשמרת שם, אלא אם בחרתם במפורש לשתף אותה לאימון המודל. ההיסטוריה נשמרת רק במכשיר שלכם. בלי הרשמה, בלי פרסומות, בלי שירות בינה מלאכותית חיצוני.</div>
+    ${session ? `<div class="card"><div class="acct">${session.user?.user_metadata?.avatar_url ? `<img src="${esc(session.user.user_metadata.avatar_url)}" alt="" referrerpolicy="no-referrer">` : ''}<div><b>מחוברים</b><br><span class="small">${esc(userName())}</span></div></div>
+      <div class="stack" style="margin-top:10px"><button class="btn line" id="aOut">התנתקות</button><button class="btn line" id="aDel" style="color:var(--bad);border-color:var(--bad)">מחיקת החשבון וכל הסריקות</button></div></div>`
+      : googleOn ? `<div class="card"><b>חשבון</b><br>התחברו כדי לשמור את הסריקות בחשבון ולראות אותן מכל מכשיר.<div class="stack" style="margin-top:10px"><button class="btn line" id="aIn">התחברות עם Google</button></div></div>` : ''}
+    <div class="card"><b>פרטיות</b><br>התמונה נשלחת לשרת שלנו לבדיקה ולא נשמרת שם, אלא אם בחרתם במפורש לשתף אותה לאימון המודל. ${session ? 'הסריקות (תוצאה ותמונה מוקטנת) נשמרות בחשבון שלכם, ורק אתם רואים אותן.' : 'ההיסטוריה נשמרת רק במכשיר שלכם.'} ההתחברות לא חובה. בלי פרסומות, בלי שירות בינה מלאכותית חיצוני.</div>
     <p class="small">המודל אומן על מאגרי תמונות פתוחים ברישיון מתאים (CC BY 4.0 / MIT)${bundle?.training_datasets ? ': ' + esc(bundle.training_datasets.join(', ')) : ''}. גרסה: ${esc(bundle?.model_id || '')}</p>
     <p class="small">תמונות הדוגמה: בננות – Grocery Store Dataset (Klasson et al., MIT); תפוח ורימון – Fresh and Rotten Fruits dataset, Mendeley Data (CC BY 4.0).</p>
     <div class="stack"><button class="btn line" id="replay">הצגת ההדרכה שוב</button><button class="btn green" id="closeI">הבנתי</button></div></div>`);
   $('closeI').onclick = () => closeSheet();
+  if ($('aOut')) $('aOut').onclick = async () => { await signOut(); toast('התנתקתם'); closeSheet(); };
+  if ($('aDel')) $('aDel').onclick = deleteAccount;
+  if ($('aIn')) $('aIn').onclick = signIn;
   $('replay').onclick = () => { closeSheet(); showOnboarding(); };
 }
 
@@ -715,12 +815,15 @@ $('sampleBtn').onclick = showSamples; $('infoBtn').onclick = showInfo; $('histBt
 $('again').onclick = () => { firstAngle = null; closePage('history'); reset(); };
 $('rBack').onclick = () => { if ($('history').classList.contains('open')) { closePage('result'); busy = false; } else reset(); };
 $('hBack').onclick = () => closePage('history');
-$('hClear').onclick = () => { if (confirm('למחוק את כל הסריקות השמורות?')) { saveHist([]); renderHistory(); } };
+$('hClear').onclick = () => { if (confirm('למחוק את כל הסריקות השמורות?')) { saveHist([]); if (session) cloud('DELETE', '?t=gte.0'); renderHistory(); } };
 $('scrim').onclick = () => { if (!$('stage').classList.contains('analyzing')) reset(); };
 document.addEventListener('keydown', e => { if (e.key !== 'Escape') return; if ($('result').classList.contains('open')) $('rBack').click(); else if ($('history').classList.contains('open')) closePage('history'); else reset(); });
 fetch('/v1/bundle').then(r => r.json()).then(b => bundle = b).catch(() => {});
-if (!store.get('onb')) showOnboarding();
-else if (store.get('cam') === 'ok') startCamera();
+initAuth().then(gate => {
+  if (gate) { $('gate').hidden = false; return; }
+  if (!store.get('onb')) showOnboarding();
+  else if (store.get('cam') === 'ok') startCamera();
+});
 if ('serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js').catch(() => {});
 </script>
 </body>
