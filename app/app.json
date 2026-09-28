@@ -25,7 +25,10 @@
       "blockedPermissions": [
         "android.permission.RECORD_AUDIO",
         "android.permission.READ_EXTERNAL_STORAGE",
-        "android.permission.WRITE_EXTERNAL_STORAGE"
+        "android.permission.WRITE_EXTERNAL_STORAGE",
+        "android.permission.SYSTEM_ALERT_WINDOW",
+        "android.permission.USE_BIOMETRIC",
+        "android.permission.USE_FINGERPRINT"
       ]
     },
     "web": {
@@ -49,7 +52,6 @@
         "expo-image-picker",
         {
           "photosPermission": "האפליקציה פותחת את הגלריה רק כשבוחרים תמונה של פרי לבדיקה.",
-          "cameraPermission": false,
           "microphonePermission": false
         }
       ]

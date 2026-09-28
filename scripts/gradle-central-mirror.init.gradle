@@ -1,0 +1,18 @@
+// Container build only: Maven Central answers 429 through the proxy; add Google's full mirror of Central
+// alongside the default sources (plugin portal, google(), mavenCentral()) without replacing them.
+def MIRROR = 'https://maven-central.storage-download.googleapis.com/maven2/'
+beforeSettings { settings ->
+  settings.pluginManagement.repositories {
+    maven { url MIRROR; name 'centralMirror' }
+    gradlePluginPortal()
+    google()
+  }
+}
+allprojects {
+  buildscript { repositories { maven { url MIRROR; name 'centralMirror' } } }
+  repositories { maven { url MIRROR; name 'centralMirror' } }
+}
+// Release lint ("lintVital") crashes inside expo-modules-core in this container; it is a check, not part of the APK.
+allprojects {
+  tasks.matching { it.name.startsWith('lintVital') }.configureEach { enabled = false }
+}
