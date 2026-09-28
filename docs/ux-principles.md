@@ -78,24 +78,42 @@ Steps to a result: **2 taps** (open, "סרוק פרי"). In the worst case: 3 (p
 ## Web version (Vercel), same architecture
 
 Until the iOS build exists, the API root serves `server/web/index.html`: the same journey in a phone browser, installable as a PWA (manifest, icons, offline shell via `/sw.js`; scans always go to the network).
-- **Welcome = camera screen.** One question ("מה מצב הפרי?"), three trust facts, and the big "סרוק פרי" pill. The first press asks for the camera just-in-time (Yuka, Seek). Returning users go straight to the live viewfinder. Without a camera, the phone's own camera sheet opens.
-- **Live guidance (Seek):** a pill above the viewfinder checks brightness, sharpness and glare every 450 ms. It uses the same thresholds as the server, so a bad photo is caught before the tap.
-- **Analysing:** flash on capture, the frozen frame, a scan line sweeping the viewfinder, and "בודק…". Controls are dimmed.
-- **Result sheet (Yuka + Vivino):** photo + name + confidence in words. Then the **score ring 1–10** with a verdict word (מצוין / טוב / סביר / חלש / לא מומלץ) and one-line reason. Then the action, toned green/amber/red, then "מה בדקנו בתמונה" scales (ripeness, freshness, defects) and the general storage tip. "למה?" and "מה עוד זה יכול להיות?" (top 3) are collapsed. The disclaimer is always present. A sticky "סרוק פרי נוסף" sits beside 👍/👎 (Supabase feedback).
-- **Unsure / retake / not produce / offline:** the user's photo with a status badge, one sentence, and one button. Unsure offers "צלמו מזווית נוספת"; the server combines both photos (`image2`).
-- **Samples (Google Lens "try it"):** three licensed photos let someone see the full result without fruit at hand.
-- **History ("הסריקות שלי", Yuka/PictureThis):** the last 20 results as thumbnail + name + score dot, stored only on this device (localStorage), clearable.
-- **Share (Vivino):** one button on the result: the Web Share sheet, or copy to clipboard with a toast. It shares name, score, verdict and the "visual only" line.
-- **Motion:** the score ring fills and the number counts up. The welcome icon floats gently. All motion is off under reduced-motion. Icons are line SVGs, not emoji.
-- **"איך זה עובד":** the three steps, which fruits have a validated score (live from `/v1/bundle`), what a photo cannot know, privacy, and dataset credits.
 
-| Welcome | Live camera | Analysing | Result | Spoiled |
+**Visual language (v3, Sep 2026):** editorial. A serif display face (Frank Ruhl Libre) with one accent word per headline, warm paper background, deep green, gold and red accents, and soft tinted glows. The direction follows the ripeness-scanner reference screens the product owner supplied; the copy, name, icon and photos are ours.
+
+- **Onboarding (first visit only, 3 swipeable slides + skip):**
+  1. Scan: "מכוונים את המצלמה אל הפרי."
+  2. Score: "ציון, שלב והסבר."
+  3. Library: "כל סריקה נשמרת."
+
+  The mockups are live HTML built from the real model outputs on the bundled sample photos. "בואו נתחיל" asks for the camera just-in-time. The onboarding can be replayed from "איך זה עובד".
+- **Camera home:**
+  - live viewfinder with rounded corner brackets and "מקמו את הפרי בתוך המסגרת";
+  - live light/sharpness/glare pill, with the same thresholds as the server;
+  - bottom row: gallery · round shutter "סרוק פרי" · "הסריקות שלי";
+  - "✦ דוגמה" at the top.
+- **Analysing:** flash, frozen frame, gold scan line, "בודק…".
+- **Result page (full screen):**
+  - photo card with a glowing confidence badge (✦ %);
+  - name pill;
+  - big serif score **n/10**, verdict pill, colour bar, one-line reason;
+  - action card, then "פרטי הבדיקה" rows (בשילות / טריות / פגמים בקליפה, with icon and tone);
+  - storage tip; "למה?" / "מה עוד זה יכול להיות?" collapsed; disclaimer; 👍/👎;
+  - sticky **שיתוף** and **סריקה חדשה**.
+- **"הסריקות שלי" library:**
+  - the last 30 scans, stored on this device only, each saving its full result and photo thumbnail;
+  - each card has a tone-coloured border and glow, a thumbnail, name, stage dot, date and score;
+  - tapping a card reopens the full result; per-item delete; clear-all;
+  - a summary row counts total scans, how many are in good condition, and how many are not recommended.
+- **Unsure / retake / not produce / offline:** a bottom sheet with the user's photo, a status badge, one sentence, and one primary button. "Unsure" offers "צלמו מזווית נוספת" (combined with `image2`).
+
+| Onboarding 1 | Onboarding 2 | Onboarding 3 | Camera | Result |
 |---|---|---|---|---|
-| ![](img/ux/web_welcome.jpg) | ![](img/ux/web_camera.jpg) | ![](img/ux/web_analysing.jpg) | ![](img/ux/web_banana.jpg) | ![](img/ux/web_rotten.jpg) |
+| ![](img/ux/web_onboarding_1.jpg) | ![](img/ux/web_onboarding_2.jpg) | ![](img/ux/web_onboarding_3.jpg) | ![](img/ux/web_camera.jpg) | ![](img/ux/web_banana.jpg) |
 
-| Unsure | Samples | History | How it works |
+| Spoiled | Library | Unsure | How it works |
 |---|---|---|---|
-| ![](img/ux/web_unsure.jpg) | ![](img/ux/web_samples.jpg) | ![](img/ux/web_history.jpg) | ![](img/ux/web_info.jpg) |
+| ![](img/ux/web_rotten.jpg) | ![](img/ux/web_history.jpg) | ![](img/ux/web_unsure.jpg) | ![](img/ux/web_info.jpg) |
 
 ## What we adopted, and from where
 

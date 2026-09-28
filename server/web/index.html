@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#0e1512">
+<meta name="theme-color" content="#2E5A3B">
 <meta name="description" content="צלמו פרי או ירק וקבלו זיהוי, ציון איכות חזותי מ-1 עד 10 והמלצה – בעברית.">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -13,282 +13,380 @@
 <link rel="apple-touch-icon" href="/web/apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@700;900&family=Heebo:wght@400;500;700;800&display=swap" rel="stylesheet">
 <title>סורק פירות וירקות</title>
 <!--
-  UX source of truth: docs/ux-principles.md + docs/competitor-ux-research.md (§6–7).
-  Camera is home · one primary action "סרוק פרי" · answer first · score + verdict word (Yuka) ·
-  honest live photo-quality guidance (Seek) · first scan can use a sample (PictureThis) ·
-  installable (FreshPick) · visual-only, never "safe" · calm motion · RTL-native · Heebo.
+  UX source of truth: docs/ux-principles.md + docs/competitor-ux-research.md.
+  Editorial style (serif display + warm paper + deep green), 3-step onboarding, camera home,
+  full-page result (photo · confidence badge · score + stage pill + bar · analysis rows · share),
+  library of every scan (on-device). Own copy and assets; visual-only, never "safe".
 -->
 <style>
 :root {
-  --brand:#1B6E45; --brand-2:#2FA36B; --brand-ink:#0F3D27;
-  --ink:#121814; --ink-2:#3A433D; --muted:#6B736D; --line:#E7EAE4; --bg:#F5F6F1; --card:#fff;
-  --ok:#1E9E5A; --ok-bg:#E4F4EA; --good:#5AA33C; --mid:#E3A21A; --mid-bg:#FFF3DC; --weak:#E4702A; --bad:#D2382F; --bad-bg:#FDE6E3;
-  --cam:#0e1512;
-  --r-lg:24px; --r-md:16px; --r-sm:12px;
+  --paper:#F6F1E6; --paper-2:#EFE8DA; --card:#FFFDF8; --ink:#1E2721; --ink-2:#3C463F; --muted:#7A7F76; --line:#E6DFD0;
+  --green:#2E5A3B; --green-2:#3F7A50; --green-bg:#E3EFE3; --gold:#E2C274; --gold-ink:#6B5217;
+  --ok:#2F8F55; --good:#5E9E3E; --mid:#D99A1E; --mid-bg:#FBF0D8; --weak:#DE6A2C; --bad:#CF3B30; --bad-bg:#FBE4E0; --gray:#A4A69F;
+  --cam:#0f1512;
+  --serif:"Frank Ruhl Libre", "David", Georgia, serif;
   --safe-t: env(safe-area-inset-top, 0px); --safe-b: env(safe-area-inset-bottom, 0px);
-  --shadow: 0 10px 30px rgba(10,20,14,.18);
 }
 * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
 [hidden] { display:none !important; }
-html, body { margin:0; height:100%; background:var(--cam); color:var(--ink);
-  font-family:"Heebo", system-ui, -apple-system, "Segoe UI", Arial, sans-serif; font-size:16px; line-height:1.5;
-  -webkit-font-smoothing:antialiased; }
-button { font:inherit; color:inherit; cursor:pointer; border:0; background:none; }
-.sr { position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); }
+html, body { margin:0; height:100%; background:var(--cam); color:var(--ink); overflow:hidden;
+  font-family:"Heebo", system-ui, -apple-system, "Segoe UI", Arial, sans-serif; font-size:16px; line-height:1.5; -webkit-font-smoothing:antialiased; }
+button { font:inherit; color:inherit; cursor:pointer; border:0; background:none; padding:0; }
+.ico { width:22px; height:22px; fill:none; stroke:currentColor; stroke-width:1.9; stroke-linecap:round; stroke-linejoin:round; flex:none; }
+.nw { white-space:nowrap; }
+.app { position:fixed; inset:0; overflow:hidden; }
+@media (min-width: 560px) { .app { left:50%; width:430px; transform:translateX(-50%); box-shadow:0 0 0 1px #222; } }
 
-/* ---------- Camera (home) ---------- */
-#stage { position:fixed; inset:0; overflow:hidden; background:radial-gradient(120% 80% at 50% 30%, #1d2a23 0%, var(--cam) 70%); }
-@media (min-width: 560px) { #stage { left:50%; width:430px; transform:translateX(-50%); border-inline:1px solid #222; } }
+/* ---------- shared editorial pieces ---------- */
+.kicker { font-size:13px; font-weight:800; letter-spacing:2px; color:var(--gold); }
+.tag { display:inline-block; align-self:flex-start; font-size:12px; font-weight:800; letter-spacing:1.5px; padding:5px 12px; border-radius:14px; color:#fff; background:var(--green); }
+.tag.red { background:var(--bad); }
+.display { font-family:var(--serif); font-weight:900; font-size:44px; line-height:1.05; letter-spacing:-.5px; margin:14px 0 10px; }
+.display em { font-style:italic; }
+.lede { font-size:17px; color:var(--ink-2); margin:0; max-width:30ch; }
+.btn { min-height:54px; border-radius:16px; font-size:17px; font-weight:800; display:flex; align-items:center; justify-content:center; gap:8px; width:100%; }
+.btn.green { background:var(--green); color:#fff; box-shadow:0 8px 20px rgba(46,90,59,.28); }
+.btn.line { background:var(--card); color:var(--green); border:1.5px solid var(--green); }
+.pill { display:inline-flex; align-items:center; gap:6px; border-radius:999px; padding:5px 12px; font-weight:700; font-size:14px; white-space:nowrap; }
+
+/* phone mockups (onboarding) */
+.phone { width:212px; height:410px; border-radius:36px; background:var(--paper); border:7px solid #151a17; position:relative; overflow:hidden;
+  box-shadow:0 30px 60px rgba(0,0,0,.28); flex:none; }
+.phone::before { content:""; position:absolute; top:6px; left:50%; transform:translateX(-50%); width:70px; height:18px; border-radius:10px; background:#151a17; z-index:3; }
+.brk { position:absolute; width:26px; height:26px; border:3px solid currentColor; }
+.brk.a { top:0; right:0; border-left:0; border-bottom:0; } .brk.b { top:0; left:0; border-right:0; border-bottom:0; }
+.brk.c { bottom:0; right:0; border-left:0; border-top:0; } .brk.d { bottom:0; left:0; border-right:0; border-top:0; }
+.float { position:absolute; z-index:4; background:#fff; border-radius:16px; box-shadow:0 12px 28px rgba(0,0,0,.16); padding:8px 12px;
+  display:flex; align-items:center; gap:10px; font-size:12px; color:var(--muted); line-height:1.2; white-space:nowrap; }
+.float b { display:block; color:var(--ink); font-size:15px; }
+.float .sq { width:34px; height:34px; border-radius:10px; display:grid; place-items:center; font-weight:900; font-size:15px; }
+
+/* ---------- onboarding ---------- */
+#onb { position:absolute; inset:0; z-index:30; background:var(--paper); display:flex; flex-direction:column; }
+#onb .track { flex:1; display:flex; overflow-x:auto; overflow-y:hidden; scroll-snap-type:x mandatory; scrollbar-width:none; direction:ltr; }
+#onb .track::-webkit-scrollbar { display:none; }
+.slide { flex:0 0 100%; scroll-snap-align:start; direction:rtl; padding:calc(70px + var(--safe-t)) 26px 0; position:relative; overflow:hidden; display:flex; flex-direction:column; }
+.slide.dark { background:var(--green); color:#F6F1E6; }
+.slide.dark .lede { color:rgba(246,241,230,.8); }
+.slide.dark .display em { color:var(--gold); }
+.slide .stage-art { flex:1; display:flex; align-items:center; justify-content:center; position:relative; min-height:300px; padding:14px 0 6px; }
+.slide .display em.r { color:var(--bad); } .slide .display em.g { color:var(--green-2); }
+#onb .foot { padding:14px 22px calc(16px + var(--safe-b)); display:flex; align-items:center; gap:14px; background:var(--paper); }
+#onb .dots { display:flex; gap:6px; flex:1; }
+#onb .dots i { width:8px; height:8px; border-radius:4px; background:#CFC7B6; transition:.25s; }
+#onb .dots i.on { width:24px; background:var(--green); }
+#onb .next { width:auto; padding:0 26px; }
+#onb .skip { position:absolute; top:calc(16px + var(--safe-t)); left:18px; z-index:5; font-size:15px; font-weight:700; opacity:.8; padding:8px; }
+.slide .brand { position:absolute; top:calc(18px + var(--safe-t)); right:24px; display:flex; align-items:center; gap:8px; font-weight:800; font-size:16px; z-index:5; }
+.slide .brand img { width:30px; height:30px; border-radius:9px; }
+
+/* ---------- camera ---------- */
+#stage { position:absolute; inset:0; overflow:hidden; background:radial-gradient(120% 80% at 50% 30%, #1f2c24 0%, var(--cam) 70%); }
 #video, #still { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; }
 #still { display:none; }
 .flash { position:absolute; inset:0; background:#fff; opacity:0; pointer-events:none; }
 .flash.on { animation:flash .28s ease-out; }
 @keyframes flash { 0% { opacity:.85 } 100% { opacity:0 } }
-
 .top { position:absolute; top:calc(12px + var(--safe-t)); inset-inline:14px; display:flex; align-items:center; justify-content:space-between; z-index:3; }
-.brand { display:flex; align-items:center; gap:8px; color:#fff; font-weight:800; font-size:17px; letter-spacing:-.2px;
-  text-shadow:0 1px 6px rgba(0,0,0,.4); }
-.brand img { width:28px; height:28px; border-radius:8px; }
-.iconbtn { width:44px; height:44px; border-radius:22px; display:grid; place-items:center; color:#fff;
-  background:rgba(0,0,0,.28); backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px); font-size:18px; font-weight:700; }
-
-.guide { position:absolute; top:calc(66px + var(--safe-t)); left:50%; transform:translateX(-50%); z-index:3;
-  display:flex; align-items:center; gap:8px; padding:8px 14px; border-radius:20px; white-space:nowrap;
-  background:rgba(0,0,0,.42); color:#fff; font-size:15px; font-weight:500; backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px);
-  transition:background .25s; }
-.guide .dot { width:9px; height:9px; border-radius:5px; background:#bbb; }
-.guide.ok .dot { background:#46d27f; } .guide.warn .dot { background:#ffb020; }
-
-.viewfinder { position:absolute; left:50%; top:46%; width:min(74vw, 320px); aspect-ratio:1; transform:translate(-50%,-50%); pointer-events:none; }
-.corner { position:absolute; width:46px; height:46px; border:4px solid rgba(255,255,255,.95); }
-.corner.tl { top:0; left:0; border-right:0; border-bottom:0; border-radius:26px 0 0 0; }
-.corner.tr { top:0; right:0; border-left:0; border-bottom:0; border-radius:0 26px 0 0; }
-.corner.bl { bottom:0; left:0; border-right:0; border-top:0; border-radius:0 0 0 26px; }
-.corner.br { bottom:0; right:0; border-left:0; border-top:0; border-radius:0 0 26px 0; }
-.scanline { position:absolute; inset-inline:8%; height:3px; top:10%; border-radius:3px; opacity:0;
-  background:linear-gradient(90deg, transparent, #7CF0AE, transparent); box-shadow:0 0 18px #46d27f; }
-.analyzing .scanline { opacity:1; animation:sweep 1.1s ease-in-out infinite alternate; }
-@keyframes sweep { from { top:10% } to { top:88% } }
-.checking { position:absolute; left:50%; top:calc(46% + min(37vw,160px) + 18px); transform:translateX(-50%);
-  background:rgba(0,0,0,.6); color:#fff; padding:8px 18px; border-radius:20px; font-weight:700; display:none; z-index:3; }
-.analyzing .checking { display:block; }
-.analyzing .controls { opacity:.45; pointer-events:none; transition:opacity .2s; }
-
-.welcome { position:absolute; left:50%; top:46%; transform:translate(-50%,-50%); width:min(80vw, 340px); text-align:center; color:#fff; z-index:2; }
-.welcome img { width:84px; height:84px; border-radius:22px; box-shadow:0 12px 30px rgba(0,0,0,.35); }
-.welcome h1 { font-size:28px; font-weight:900; margin:14px 0 6px; letter-spacing:-.4px; }
-.welcome p { margin:0; color:rgba(255,255,255,.85); font-size:16px; }
-.welcome .facts { display:flex; justify-content:center; gap:14px; margin-top:14px; font-size:13px; color:rgba(255,255,255,.75); }
-
-.bottom { position:absolute; inset-inline:0; bottom:0; padding:18px 18px calc(16px + var(--safe-b)); z-index:3;
-  background:linear-gradient(to top, rgba(0,0,0,.66), rgba(0,0,0,0)); display:flex; flex-direction:column; align-items:center; gap:12px; }
-.controls { width:100%; display:grid; grid-template-columns:1fr auto 1fr; align-items:center; }
-.side { justify-self:center; display:flex; flex-direction:column; align-items:center; gap:4px; color:#fff; font-size:12px; opacity:.95; }
-.side .iconbtn { width:48px; height:48px; border-radius:24px; font-size:20px; }
-.scan { height:68px; padding:0 30px; border-radius:34px; background:#fff; color:var(--brand-ink);
-  font-size:21px; font-weight:900; display:flex; align-items:center; gap:10px; box-shadow:0 8px 24px rgba(0,0,0,.35);
-  transition:transform .12s ease; }
-.scan .ring { width:30px; height:30px; border-radius:15px; background:var(--brand); box-shadow:0 0 0 4px #D7F0E1; }
-.scan:active { transform:scale(.95); }
-.scan[disabled] { opacity:.7; }
-.trust { color:rgba(255,255,255,.78); font-size:12px; text-align:center; }
-input[type=file] { display:none; }
-
-/* ---------- Sheets ---------- */
-.scrim { position:fixed; inset:0; background:rgba(0,0,0,.35); opacity:0; pointer-events:none; transition:opacity .25s; z-index:9; }
-.scrim.on { opacity:1; pointer-events:auto; }
-.sheet { position:fixed; inset-inline:0; bottom:0; z-index:10; max-height:90vh; overflow:auto; background:var(--bg);
-  border-radius:var(--r-lg) var(--r-lg) 0 0; transform:translateY(105%); transition:transform .32s cubic-bezier(.2,.8,.2,1);
-  padding:10px 16px calc(16px + var(--safe-b)); box-shadow:0 -10px 40px rgba(0,0,0,.35); overscroll-behavior:contain; }
-@media (min-width: 560px) { .sheet { left:50%; width:430px; transform:translate(-50%,105%); } .sheet.open { transform:translate(-50%,0) !important; } }
-.sheet.open { transform:translateY(0); }
-.handle { width:42px; height:5px; border-radius:3px; background:#CDD2CB; margin:0 auto 10px; }
-
-.card { background:var(--card); border-radius:var(--r-md); padding:14px; margin-top:10px; border:1px solid var(--line); }
-.head { display:flex; align-items:center; gap:12px; }
-.thumb { width:58px; height:58px; border-radius:16px; object-fit:cover; background:#ddd; flex:none; }
-.name { font-size:26px; font-weight:900; line-height:1.1; letter-spacing:-.3px; }
-.conf { color:var(--muted); font-size:14px; margin-top:2px; }
-
-.score { display:flex; align-items:center; gap:16px; }
-.gauge { width:92px; height:92px; flex:none; position:relative; }
-.gauge svg { width:100%; height:100%; transform:rotate(-90deg); }
-.gauge .num { position:absolute; inset:0; display:grid; place-items:center; direction:ltr; }
-.gauge .num b { font-size:34px; font-weight:900; line-height:1; }
-.gauge .num small { font-size:12px; color:var(--muted); display:block; text-align:center; margin-top:-2px; }
-.verdict { font-size:24px; font-weight:900; line-height:1.15; }
-.reason { color:var(--ink-2); margin-top:4px; }
-.label-sm { color:var(--muted); font-size:13px; font-weight:500; }
-
-.action { display:flex; gap:10px; align-items:flex-start; border-radius:var(--r-md); padding:14px; margin-top:10px; font-size:19px; font-weight:800; line-height:1.35; }
-.action .ic { font-size:22px; line-height:1.2; }
-.t-ok { background:var(--ok-bg); color:#12603A; } .t-mid { background:var(--mid-bg); color:#8A5300; } .t-bad { background:var(--bad-bg); color:#9B1C1C; }
-
-h3 { font-size:15px; margin:0 0 8px; color:var(--ink-2); font-weight:800; }
-.scale { margin-top:10px; }
-.scale .shd { display:flex; justify-content:space-between; align-items:baseline; font-size:14px; }
-.scale .shd b { font-size:15px; }
-.bar { position:relative; display:flex; gap:3px; margin-top:6px; direction:rtl; }
-.seg { flex:1; height:8px; border-radius:4px; opacity:.28; }
-.seg.on { opacity:1; }
-.ticks { display:flex; gap:3px; margin-top:4px; }
-.ticks span { flex:1; text-align:center; font-size:11px; color:var(--muted); }
-.ticks span.on { color:var(--ink); font-weight:700; }
-
-.tip { background:#EEF6EF; border:0; }
-.tip b { display:block; margin-bottom:2px; }
-.disc { color:var(--muted); font-size:12.5px; margin-top:12px; text-align:center; }
-details { margin-top:10px; background:var(--card); border:1px solid var(--line); border-radius:var(--r-md); padding:0 14px; }
-summary { list-style:none; min-height:48px; display:flex; align-items:center; justify-content:space-between; font-weight:700; cursor:pointer; }
-summary::-webkit-details-marker { display:none; }
-summary::after { content:"‹"; font-size:22px; color:var(--muted); transition:transform .2s; }
-details[open] summary::after { transform:rotate(-90deg); }
-details .body { padding-bottom:12px; }
-.alt { display:flex; align-items:center; gap:10px; margin:6px 0; font-size:15px; }
-.alt .track { flex:1; height:6px; border-radius:3px; background:#E9ECE6; overflow:hidden; }
-.alt .fill { height:100%; background:var(--brand-2); border-radius:3px; }
-.alt .pct { width:40px; text-align:left; color:var(--muted); font-size:13px; direction:ltr; }
-ul.why { margin:0; padding-inline-start:18px; color:var(--ink-2); }
-
-.actions { position:sticky; bottom:calc(-16px - var(--safe-b)); background:linear-gradient(to top, var(--bg) 70%, rgba(245,246,241,0)); padding:14px 0 calc(4px + var(--safe-b)); margin-top:6px; }
-.primary { width:100%; min-height:56px; border-radius:var(--r-md); background:var(--brand); color:#fff; font-size:18px; font-weight:800; }
-.secondary { width:100%; min-height:50px; border-radius:var(--r-md); background:#fff; border:1.5px solid var(--brand); color:var(--brand); font-size:17px; font-weight:700; margin-top:10px; }
-.fb { display:flex; justify-content:center; align-items:center; gap:6px; margin-top:8px; color:var(--muted); font-size:14px; }
-.fb button { width:44px; height:44px; border-radius:22px; font-size:22px; }
-.fb button:active { background:#e9ece6; }
-
-.state { text-align:center; padding:6px 4px 0; }
-.state .big { font-size:46px; }
-.state .pic { position:relative; display:inline-block; margin-bottom:10px; }
-.state .pic img { width:84px; height:84px; border-radius:22px; object-fit:cover; display:block; box-shadow:0 6px 18px rgba(0,0,0,.15); }
-.state .pic .badge { position:absolute; bottom:-8px; inset-inline-start:-10px; width:40px; height:40px; border-radius:50%; background:#fff; display:grid; place-items:center; font-size:22px; box-shadow:0 2px 8px rgba(0,0,0,.18); }
-.nw { white-space:nowrap; }
-.state h2 { font-size:24px; font-weight:900; margin:4px 0 6px; }
-.state p { color:var(--ink-2); font-size:17px; margin:0 auto; max-width:320px; }
-
-.samples { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-top:12px; }
-.samples button { border-radius:var(--r-md); overflow:hidden; background:#fff; border:1px solid var(--line); padding:0; text-align:center; }
-.samples img { width:100%; aspect-ratio:1; object-fit:cover; display:block; }
-.samples span { display:block; padding:6px 4px; font-size:14px; font-weight:700; }
-.info h2 { font-size:22px; font-weight:900; margin:4px 0 10px; }
-.info li { margin:4px 0; }
-.pills { display:flex; flex-wrap:wrap; gap:6px; margin-top:6px; }
-.pill { background:var(--ok-bg); color:#12603A; border-radius:14px; padding:4px 10px; font-size:14px; font-weight:700; }
-.small { color:var(--muted); font-size:13px; }
-.ico { width:22px; height:22px; fill:none; stroke:currentColor; stroke-width:1.9; stroke-linecap:round; stroke-linejoin:round; }
-.side .ico { width:24px; height:24px; }
+.brand-s { display:flex; align-items:center; gap:8px; color:#fff; font-weight:800; font-size:16px; text-shadow:0 1px 6px rgba(0,0,0,.4); }
+.brand-s img { width:28px; height:28px; border-radius:8px; }
+.glass { width:42px; height:42px; border-radius:21px; display:grid; place-items:center; color:#fff; background:rgba(0,0,0,.3);
+  backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px); position:relative; }
+.glass.wide { width:auto; padding:0 14px; gap:6px; display:flex; align-items:center; font-size:14px; font-weight:700; }
 .tbtns { display:flex; gap:8px; }
-.iconbtn { position:relative; }
-.hdot { position:absolute; top:9px; inset-inline-end:9px; width:8px; height:8px; border-radius:50%; background:var(--brand-2); box-shadow:0 0 0 2px rgba(0,0,0,.35); }
-.welcome .rated { margin-top:18px; display:inline-flex; align-items:center; gap:8px; padding:7px 12px; border-radius:18px;
-  background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.12); color:rgba(255,255,255,.85); font-size:13px; }
-.welcome .rated #ratedList { font-size:18px; letter-spacing:2px; }
-.welcome img { animation:float 5s ease-in-out infinite; }
-@keyframes float { 50% { transform:translateY(-5px); } }
-.share { margin-inline-start:auto; width:40px; height:40px; border-radius:20px; display:grid; place-items:center; color:var(--brand); background:var(--ok-bg); flex:none; }
-.share .ico { width:20px; height:20px; }
-.hist { list-style:none; margin:10px 0 0; padding:0; display:grid; gap:8px; }
-.hist li { display:flex; align-items:center; gap:12px; background:var(--card); border:1px solid var(--line); border-radius:var(--r-md); padding:8px 10px; }
-.hist img { width:48px; height:48px; border-radius:12px; object-fit:cover; background:#ddd; flex:none; }
-.hist .t { flex:1; min-width:0; }
-.hist .t b { display:block; font-size:16px; }
-.hist .t span { color:var(--muted); font-size:13px; }
-.hist .sc { width:44px; height:44px; border-radius:50%; display:grid; place-items:center; font-weight:900; font-size:18px; color:#fff; flex:none; }
-.hist .sc.none { background:#E9ECE6; color:var(--muted); font-size:15px; }
-.empty { text-align:center; color:var(--muted); padding:26px 8px; }
-.empty .big { font-size:42px; }
-.toast { position:fixed; left:50%; bottom:calc(24px + var(--safe-b)); transform:translate(-50%, 20px); opacity:0; z-index:50; background:#111; color:#fff;
+.guide { position:absolute; top:calc(66px + var(--safe-t)); left:50%; transform:translateX(-50%); z-index:3; display:flex; align-items:center; gap:8px;
+  padding:8px 14px; border-radius:20px; white-space:nowrap; background:rgba(0,0,0,.42); color:#fff; font-size:14px; font-weight:500;
+  backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px); transition:background .2s; }
+.guide .dot { width:9px; height:9px; border-radius:50%; background:#8a8; }
+.guide.ok .dot { background:#4ADE80; } .guide.warn { background:rgba(150,92,0,.72); } .guide.warn .dot { background:#FFD166; }
+.viewfinder { position:absolute; left:50%; top:45%; width:min(74vw, 310px); aspect-ratio:1; transform:translate(-50%,-50%); z-index:2; pointer-events:none; color:#fff; }
+.viewfinder .brk { width:44px; height:44px; border-width:4px; }
+.viewfinder .brk.a { border-top-right-radius:22px; } .viewfinder .brk.b { border-top-left-radius:22px; }
+.viewfinder .brk.c { border-bottom-right-radius:22px; } .viewfinder .brk.d { border-bottom-left-radius:22px; }
+.hint { position:absolute; left:0; right:0; top:calc(100% + 14px); text-align:center; font-size:13px; color:rgba(255,255,255,.85); text-shadow:0 1px 4px rgba(0,0,0,.6); }
+.scanline { position:absolute; inset-inline:8%; height:3px; top:10%; border-radius:2px; opacity:0;
+  background:linear-gradient(90deg, transparent, var(--gold), transparent); box-shadow:0 0 16px var(--gold); }
+.analyzing .scanline { opacity:1; animation:sweep 1.1s ease-in-out infinite alternate; }
+@keyframes sweep { to { top:88%; } }
+.checking { display:none; position:absolute; left:50%; top:calc(45% + min(37vw, 155px) + 40px); transform:translateX(-50%); z-index:3; background:rgba(0,0,0,.55);
+  color:#fff; padding:9px 18px; border-radius:20px; font-weight:700; }
+.analyzing .checking { display:block; } .analyzing .hint { display:none; }
+.welcome { position:absolute; left:50%; top:44%; transform:translate(-50%,-50%); width:min(82vw, 340px); text-align:center; color:#fff; z-index:2; }
+.welcome img { width:78px; height:78px; border-radius:22px; box-shadow:0 12px 30px rgba(0,0,0,.35); }
+.welcome h1 { font-family:var(--serif); font-size:36px; font-weight:900; margin:14px 0 6px; line-height:1.1; }
+.welcome h1 em { color:var(--gold); }
+.welcome p { margin:0; color:rgba(255,255,255,.82); font-size:15px; }
+.bottom { position:absolute; left:0; right:0; bottom:0; z-index:3; padding:26px 22px calc(14px + var(--safe-b));
+  background:linear-gradient(to top, rgba(0,0,0,.62), rgba(0,0,0,0)); }
+.controls { display:flex; align-items:flex-start; justify-content:space-between; }
+.side { display:flex; flex-direction:column; align-items:center; gap:5px; color:#fff; font-size:12px; width:74px; padding-top:14px; }
+.side .glass { width:52px; height:52px; border-radius:26px; }
+.shutter { width:84px; height:84px; border-radius:50%; border:4px solid rgba(255,255,255,.95); display:grid; place-items:center; }
+.shutter::after { content:""; width:66px; height:66px; border-radius:50%; background:#fff; transition:transform .12s; }
+.shutter:active::after { transform:scale(.9); }
+.shutter-l { text-align:center; color:#fff; font-weight:800; font-size:15px; margin-top:6px; }
+.analyzing .controls { opacity:.45; pointer-events:none; }
+.hdot { position:absolute; top:9px; inset-inline-end:9px; width:10px; height:10px; border-radius:50%; background:var(--gold); box-shadow:0 0 0 2px rgba(0,0,0,.35); }
+
+/* ---------- full pages (result, history) ---------- */
+.page { position:absolute; inset:0; z-index:20; background:var(--paper); display:flex; flex-direction:column; transform:translateY(100%);
+  transition:transform .38s cubic-bezier(.2,.8,.2,1), visibility 0s .38s; visibility:hidden; }
+.page.open { transform:none; visibility:visible; transition:transform .38s cubic-bezier(.2,.8,.2,1); }
+#history { transform:translateX(-100%); } #history.open { transform:none; }
+#history.open ~ #result.open { z-index:21; }
+.bar-top { display:flex; align-items:center; gap:10px; padding:calc(12px + var(--safe-t)) 16px 8px; }
+.bar-top h2 { flex:1; margin:0; text-align:center; font-size:17px; font-weight:800; }
+.rnd { width:42px; height:42px; border-radius:21px; display:grid; place-items:center; background:var(--card); border:1px solid var(--line); color:var(--ink); }
+.scroll { flex:1; overflow-y:auto; padding:6px 18px 18px; -webkit-overflow-scrolling:touch; }
+.bar-bottom { display:flex; gap:10px; padding:12px 18px calc(12px + var(--safe-b)); background:var(--paper); box-shadow:0 -10px 20px var(--paper); }
+.bar-bottom .btn { flex:1; }
+
+/* result */
+.photo { position:relative; border-radius:26px; overflow:hidden; aspect-ratio:4/3; background:#ddd; box-shadow:0 14px 30px rgba(40,30,10,.14); }
+.photo img { width:100%; height:100%; object-fit:cover; display:block; }
+.conf-badge { position:absolute; bottom:36px; inset-inline-end:14px; width:64px; height:64px; border-radius:50%; background:rgba(255,255,255,.93);
+  display:grid; place-items:center; text-align:center; color:var(--green); font-weight:800; font-size:14px; line-height:1;
+  box-shadow:0 0 0 4px rgba(79,190,120,.35), 0 0 24px rgba(79,190,120,.55); direction:ltr; }
+.conf-badge span { display:block; font-size:16px; margin-bottom:2px; }
+.conf-badge.lo { color:var(--mid); box-shadow:0 0 0 4px rgba(217,154,30,.35), 0 0 24px rgba(217,154,30,.5); }
+.rcard { background:var(--card); border-radius:22px; padding:16px; margin-top:-26px; position:relative; z-index:2; margin-inline:8px; box-shadow:0 10px 26px rgba(40,30,10,.1); }
+.rhead { display:flex; align-items:center; justify-content:space-between; gap:8px; }
+.namepill { background:var(--green-bg); color:var(--green); font-size:19px; font-weight:800; padding:6px 14px; border-radius:14px; box-shadow:0 0 18px rgba(79,190,120,.3); white-space:nowrap; }
+.conf-t { font-size:13px; color:var(--muted); }
+.score-row { display:flex; align-items:center; gap:12px; margin-top:12px; flex-wrap:wrap; }
+.big { font-family:var(--serif); font-weight:900; font-size:52px; line-height:1; direction:ltr; }
+.big small { font-family:"Heebo"; font-size:16px; color:var(--muted); font-weight:500; }
+.stagepill { font-size:14px; font-weight:800; padding:4px 12px; border-radius:12px; }
+.meter { height:8px; border-radius:4px; background:var(--paper-2); overflow:hidden; margin-top:12px; }
+.meter i { display:block; height:100%; border-radius:4px; width:0; transition:width .9s cubic-bezier(.2,.8,.2,1); }
+.reason { margin:10px 0 0; color:var(--ink-2); font-size:15px; }
+.sec-h { font-size:15px; font-weight:800; margin:22px 4px 8px; }
+.rows { display:grid; gap:8px; }
+.row { display:flex; align-items:center; gap:12px; background:var(--card); border-radius:16px; padding:10px 12px; box-shadow:0 2px 8px rgba(40,30,10,.05); }
+.row .ic { width:40px; height:40px; border-radius:50%; display:grid; place-items:center; flex:none; }
+.row .ic .ico { width:20px; height:20px; }
+.row small { display:block; font-size:12px; color:var(--muted); line-height:1.2; }
+.row b { font-size:15px; }
+.row .val { flex:1; }
+.row .chip { font-size:12px; font-weight:800; padding:3px 9px; border-radius:10px; direction:ltr; }
+.action { display:flex; gap:10px; align-items:center; border-radius:16px; padding:14px; font-weight:800; font-size:17px; margin-top:14px; }
+.t-ok { background:var(--green-bg); color:#1F5A34; } .t-mid { background:var(--mid-bg); color:#7A5200; } .t-bad { background:var(--bad-bg); color:#8E1F17; }
+.tip { background:#F1EADA; border-radius:16px; padding:12px 14px; margin-top:12px; font-size:15px; color:var(--ink-2); }
+.tip b { display:block; color:var(--ink); margin-bottom:2px; }
+details { background:var(--card); border-radius:16px; margin-top:10px; box-shadow:0 2px 8px rgba(40,30,10,.05); }
+summary { list-style:none; padding:13px 14px; font-weight:800; display:flex; justify-content:space-between; cursor:pointer; }
+summary::-webkit-details-marker { display:none; }
+summary::after { content:"+"; color:var(--muted); font-size:20px; line-height:1; }
+details[open] summary::after { content:"–"; }
+details .body { padding:0 14px 12px; color:var(--ink-2); font-size:15px; }
+.why { margin:0; padding-inline-start:18px; }
+.alt { display:flex; align-items:center; gap:8px; margin:6px 0; font-size:14px; }
+.alt .track { flex:1; height:6px; background:var(--paper-2); border-radius:3px; overflow:hidden; }
+.alt .fill { height:100%; background:var(--green-2); }
+.alt .pct { width:40px; text-align:start; color:var(--muted); direction:ltr; }
+.disc { color:var(--muted); font-size:13px; text-align:center; margin:16px 6px 4px; }
+.fb { display:flex; align-items:center; justify-content:center; gap:14px; color:var(--muted); font-size:14px; margin-top:6px; }
+.fb button { font-size:22px; }
+
+/* history */
+.hsum { display:flex; gap:8px; margin:4px 0 14px; flex-wrap:wrap; }
+.hsum .pill { background:var(--card); border:1px solid var(--line); font-size:13px; }
+.hlist { list-style:none; margin:0; padding:0; display:grid; gap:12px; }
+.hitem { display:flex; align-items:center; gap:12px; background:var(--card); border-radius:20px; padding:10px; border:1.5px solid var(--tone, var(--line));
+  box-shadow:0 6px 18px color-mix(in srgb, var(--tone, #000) 22%, transparent); cursor:pointer; }
+.hitem img { width:64px; height:64px; border-radius:14px; object-fit:cover; background:#ddd; flex:none; }
+.hitem .t { flex:1; min-width:0; }
+.hitem .t b { display:block; font-size:17px; }
+.hitem .st { font-size:13px; font-weight:700; color:var(--tone); display:flex; align-items:center; gap:6px; }
+.hitem .st::before { content:""; width:8px; height:8px; border-radius:50%; background:currentColor; }
+.hitem .d { font-size:12px; color:var(--muted); }
+.hitem .sc { font-family:var(--serif); font-weight:900; font-size:24px; color:var(--tone); width:34px; text-align:center; }
+.hitem .del { width:38px; height:38px; border-radius:19px; display:grid; place-items:center; color:#D0776D; }
+.empty { text-align:center; color:var(--muted); padding:50px 16px; }
+.empty .display { font-size:34px; color:var(--ink); }
+
+/* ---------- bottom sheet (states, info, samples) ---------- */
+.scrim { position:absolute; inset:0; z-index:24; background:rgba(0,0,0,.35); opacity:0; pointer-events:none; transition:opacity .25s; }
+.scrim.on { opacity:1; pointer-events:auto; }
+.sheet { position:absolute; left:0; right:0; bottom:0; z-index:25; max-height:88%; overflow-y:auto; background:var(--paper); border-radius:26px 26px 0 0;
+  padding:10px 18px calc(16px + var(--safe-b)); transform:translateY(105%); transition:transform .32s cubic-bezier(.2,.8,.2,1), visibility 0s .32s; visibility:hidden; }
+.sheet.open { transform:none; visibility:visible; transition:transform .32s cubic-bezier(.2,.8,.2,1); }
+.handle { width:42px; height:5px; border-radius:3px; background:#D4CCBB; margin:0 auto 10px; }
+.state { text-align:center; padding:6px 4px 4px; }
+.state .pic { position:relative; display:inline-block; margin-bottom:10px; }
+.state .pic img { width:88px; height:88px; border-radius:24px; object-fit:cover; display:block; box-shadow:0 8px 20px rgba(0,0,0,.15); }
+.state .pic .badge { position:absolute; bottom:-8px; inset-inline-start:-10px; width:40px; height:40px; border-radius:50%; background:#fff; display:grid; place-items:center; font-size:22px; box-shadow:0 2px 8px rgba(0,0,0,.18); }
+.state .emo { font-size:46px; }
+.state h2 { font-family:var(--serif); font-size:30px; margin:6px 0 4px; }
+.state p { margin:0 0 14px; color:var(--ink-2); }
+.stack { display:grid; gap:10px; }
+.info h2 { font-family:var(--serif); font-size:32px; margin:4px 0 10px; }
+.info .card { background:var(--card); border-radius:18px; padding:14px; margin-bottom:10px; }
+.chips { display:flex; flex-wrap:wrap; gap:6px; margin-top:8px; }
+.chips span { background:var(--green-bg); color:var(--green); border-radius:12px; padding:4px 10px; font-weight:700; font-size:14px; }
+.small { color:var(--muted); font-size:13px; }
+.samples { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin:12px 0 14px; }
+.samples button { background:var(--card); border-radius:18px; overflow:hidden; box-shadow:0 4px 12px rgba(40,30,10,.08); text-align:center; }
+.samples img { width:100%; aspect-ratio:1; object-fit:cover; display:block; }
+.samples span { display:block; padding:8px 4px; font-weight:800; font-size:14px; }
+.toast { position:absolute; left:50%; bottom:calc(96px + var(--safe-b)); transform:translate(-50%, 20px); opacity:0; z-index:40; background:#1E2721; color:#fff;
   padding:10px 16px; border-radius:20px; font-size:14px; white-space:nowrap; transition:.25s; pointer-events:none; }
 .toast.on { opacity:1; transform:translate(-50%, 0); }
-@media (prefers-reduced-motion: reduce) { .welcome img { animation:none; } }
-@media (prefers-reduced-motion: reduce) { .sheet, .scrim, .scan, .guide { transition:none; } .analyzing .scanline { animation:none; top:50%; } .flash.on { animation:none; } }
+@media (prefers-reduced-motion: reduce) { .page, .sheet, .scrim, .meter i { transition:none !important; } .analyzing .scanline { animation:none; top:50%; } .flash.on { animation:none; } }
+@media (max-height: 740px) { .display { font-size:36px; } .slide .phone { transform:scale(.82); } }
 </style>
 </head>
 <body>
-<svg width="0" height="0" style="position:absolute" aria-hidden="true">
-  <defs>
-    <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v5"/><circle cx="12" cy="7.8" r=".6" fill="currentColor"/></symbol>
-    <symbol id="i-hist" viewBox="0 0 24 24"><path d="M3.5 12a8.5 8.5 0 1 0 2.5-6"/><path d="M3 4v4h4"/><path d="M12 8v4.2l3 1.8"/></symbol>
-    <symbol id="i-img" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="3"/><circle cx="9" cy="10" r="1.8"/><path d="m4 18 5.5-5.5 4 4L16 14l4 4"/></symbol>
-    <symbol id="i-spark" viewBox="0 0 24 24"><path d="M12 3.5 13.8 9l5.7 1.9-5.7 1.9L12 18.5l-1.8-5.7L4.5 10.9 10.2 9z"/><path d="M19 3v3M17.5 4.5h3"/></symbol>
-    <symbol id="i-share" viewBox="0 0 24 24"><path d="M12 15V3.5"/><path d="m7.5 8 4.5-4.5L16.5 8"/><path d="M5 12.5V18a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-5.5"/></symbol>
-  </defs>
-</svg>
-<div id="stage">
-  <video id="video" playsinline muted autoplay></video>
-  <img id="still" alt="">
-  <div class="flash" id="flash"></div>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v5"/><circle cx="12" cy="7.8" r=".6" fill="currentColor"/></symbol>
+  <symbol id="i-hist" viewBox="0 0 24 24"><path d="M3.5 12a8.5 8.5 0 1 0 2.5-6"/><path d="M3 4v4h4"/><path d="M12 8v4.2l3 1.8"/></symbol>
+  <symbol id="i-img" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="3"/><circle cx="9" cy="10" r="1.8"/><path d="m4 18 5.5-5.5 4 4L16 14l4 4"/></symbol>
+  <symbol id="i-spark" viewBox="0 0 24 24"><path d="M12 3.5 13.8 9l5.7 1.9-5.7 1.9L12 18.5l-1.8-5.7L4.5 10.9 10.2 9z"/></symbol>
+  <symbol id="i-share" viewBox="0 0 24 24"><path d="M12 15V3.5"/><path d="m7.5 8 4.5-4.5L16.5 8"/><path d="M5 12.5V18a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-5.5"/></symbol>
+  <symbol id="i-back" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></symbol>
+  <symbol id="i-trash" viewBox="0 0 24 24"><path d="M4 7h16"/><path d="M9 7V4.5h6V7"/><path d="M6.5 7l1 12.5a1.5 1.5 0 0 0 1.5 1.5h6a1.5 1.5 0 0 0 1.5-1.5l1-12.5"/><path d="M10 11v6M14 11v6"/></symbol>
+  <symbol id="i-drop" viewBox="0 0 24 24"><path d="M12 3.5c3 4 6 7.2 6 10.5a6 6 0 0 1-12 0c0-3.3 3-6.5 6-10.5z"/></symbol>
+  <symbol id="i-leaf" viewBox="0 0 24 24"><path d="M5 19c0-8 5-13 14-14-1 9-6 14-14 14z"/><path d="M5 19l7-7"/></symbol>
+  <symbol id="i-lens" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="m16 16 4 4"/></symbol>
+</defs></svg>
 
-  <div class="top">
-    <div class="brand"><img src="/web/icon-192.png" alt="">סורק פירות</div>
-    <div class="tbtns"><button class="iconbtn" id="histBtn" aria-label="הסריקות שלי"><svg class="ico"><use href="#i-hist"/></svg><span class="hdot" id="hdot" hidden></span></button>
-    <button class="iconbtn" id="infoBtn" aria-label="איך זה עובד"><svg class="ico"><use href="#i-info"/></svg></button></div>
-  </div>
-
-  <div class="guide" id="guide" hidden><span class="dot"></span><span id="guideText">כוונו אל פרי אחד</span></div>
-
-  <div class="welcome" id="welcome">
-    <img src="/web/icon-192.png" alt="">
-    <h1>מה מצב הפרי?</h1>
-    <p>צלמו פרי או ירק – וקבלו זיהוי, ציון איכות <span class="nw">מ-1 עד 10</span> והמלצה מה לעשות איתו.</p>
-    <div class="facts"><span>⚡ תוך שניות</span><span>🔒 בלי הרשמה</span><span>🇮🇱 בעברית</span></div>
-    <div class="rated" id="rated" hidden><span class="lbl">ציון איכות זמין ל:</span><span id="ratedList"></span></div>
-  </div>
-
-  <div class="viewfinder" id="vf" hidden>
-    <div class="corner tl"></div><div class="corner tr"></div><div class="corner bl"></div><div class="corner br"></div>
-    <div class="scanline"></div>
-  </div>
-  <div class="checking" role="status">בודק…</div>
-
-  <div class="bottom">
-    <div class="controls">
-      <div class="side"><button class="iconbtn" id="galBtn" aria-label="בחירת תמונה מהגלריה"><svg class="ico"><use href="#i-img"/></svg></button><span>גלריה</span></div>
-      <button class="scan" id="scan"><span class="ring" aria-hidden="true"></span>סרוק פרי</button>
-      <div class="side"><button class="iconbtn" id="sampleBtn" aria-label="תמונות לדוגמה"><svg class="ico"><use href="#i-spark"/></svg></button><span>דוגמה</span></div>
+<div class="app">
+  <!-- ============ camera (home) ============ -->
+  <div id="stage">
+    <video id="video" playsinline muted autoplay></video>
+    <img id="still" alt="">
+    <div class="flash" id="flash"></div>
+    <div class="top">
+      <div class="brand-s"><img src="/web/icon-192.png" alt="">סורק פירות</div>
+      <div class="tbtns">
+        <button class="glass wide" id="sampleBtn"><svg class="ico" style="width:18px;height:18px"><use href="#i-spark"/></svg>דוגמה</button>
+        <button class="glass" id="infoBtn" aria-label="איך זה עובד"><svg class="ico"><use href="#i-info"/></svg></button>
+      </div>
     </div>
-    <div class="trust">הערכה חזותית בלבד · התמונה לא נשמרת בשרת</div>
+    <div class="guide" id="guide" hidden><span class="dot"></span><span id="guideText">כוונו אל פרי אחד</span></div>
+    <div class="welcome" id="welcome">
+      <img src="/web/icon-192.png" alt="">
+      <h1>מה מצב <em>הפרי?</em></h1>
+      <p>לחצו על הכפתור, אשרו מצלמה – וכוונו אל פרי אחד.</p>
+    </div>
+    <div class="viewfinder" id="vf" hidden>
+      <i class="brk a"></i><i class="brk b"></i><i class="brk c"></i><i class="brk d"></i>
+      <div class="scanline"></div>
+      <div class="hint">מקמו את הפרי בתוך המסגרת</div>
+    </div>
+    <div class="checking" role="status">בודק…</div>
+    <div class="bottom">
+      <div class="controls">
+        <div class="side"><button class="glass" id="galBtn" aria-label="בחירת תמונה מהגלריה"><svg class="ico"><use href="#i-img"/></svg></button><span>גלריה</span></div>
+        <div><button class="shutter" id="scan" aria-label="סרוק פרי"></button><div class="shutter-l">סרוק פרי</div></div>
+        <div class="side"><button class="glass" id="histBtn" aria-label="הסריקות שלי"><svg class="ico"><use href="#i-hist"/></svg><span class="hdot" id="hdot" hidden></span></button><span>הסריקות שלי</span></div>
+      </div>
+    </div>
+    <input id="gal" type="file" accept="image/*" hidden>
+    <input id="cam" type="file" accept="image/*" capture="environment" hidden>
   </div>
-  <input id="gal" type="file" accept="image/*">
-  <input id="cam" type="file" accept="image/*" capture="environment">
-</div>
 
-<div class="scrim" id="scrim"></div>
-<section class="sheet" id="sheet" role="dialog" aria-modal="true" aria-labelledby="sheetTitle"><div class="handle"></div><div id="sheetBody"></div></section>
+  <!-- ============ history page ============ -->
+  <section class="page" id="history" role="dialog" aria-modal="true" aria-labelledby="hTitle">
+    <div class="bar-top"><button class="rnd" id="hBack" aria-label="חזרה"><svg class="ico"><use href="#i-back"/></svg></button><h2 id="hTitle">הסריקות שלי</h2><button class="rnd" id="hClear" aria-label="מחיקת הכול"><svg class="ico"><use href="#i-trash"/></svg></button></div>
+    <div class="scroll" id="hBody"></div>
+  </section>
+
+  <!-- ============ result page ============ -->
+  <section class="page" id="result" role="dialog" aria-modal="true" aria-labelledby="rTitle">
+    <div class="bar-top"><button class="rnd" id="rBack" aria-label="חזרה"><svg class="ico"><use href="#i-back"/></svg></button><h2 id="rTitle">תוצאת סריקה</h2><button class="rnd" id="rShare" aria-label="שיתוף"><svg class="ico"><use href="#i-share"/></svg></button></div>
+    <div class="scroll" id="rBody"></div>
+    <div class="bar-bottom"><button class="btn line" id="rShare2"><svg class="ico"><use href="#i-share"/></svg>שיתוף</button><button class="btn green" id="again">סריקה חדשה</button></div>
+  </section>
+
+  <div class="scrim" id="scrim"></div>
+  <section class="sheet" id="sheet" role="dialog" aria-modal="true"><div class="handle"></div><div id="sheetBody"></div></section>
+
+  <!-- ============ onboarding (first visit) ============ -->
+  <div id="onb" hidden>
+    <div class="track" id="track">
+      <section class="slide dark" aria-label="שלב 1 מתוך 3">
+        <div class="brand"><img src="/web/icon-192.png" alt="">סורק פירות</div>
+        <div class="kicker">שלב 01 · צילום</div>
+        <div class="display">מכוונים את המצלמה אל <em>הפרי.</em></div>
+        <p class="lede">תמונה אחת, תשובה תוך שניות. בלי הרשמה.</p>
+        <div class="stage-art">
+          <div style="position:relative;color:var(--gold);padding:18px">
+            <i class="brk a"></i><i class="brk b"></i><i class="brk c"></i><i class="brk d"></i>
+            <div class="phone" style="transform:rotate(-4deg)">
+              <img src="/web/samples/pomegranate.jpg" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover">
+              <div style="position:absolute;left:20%;right:20%;top:28%;aspect-ratio:1;color:#fff"><i class="brk a" style="width:18px;height:18px"></i><i class="brk b" style="width:18px;height:18px"></i><i class="brk c" style="width:18px;height:18px"></i><i class="brk d" style="width:18px;height:18px"></i></div>
+              <div style="position:absolute;bottom:18px;left:0;right:0;display:flex;justify-content:space-around;align-items:center">
+                <span class="glass" style="width:30px;height:30px"><svg class="ico" style="width:15px;height:15px"><use href="#i-img"/></svg></span>
+                <span style="width:46px;height:46px;border-radius:50%;border:3px solid #fff;display:grid;place-items:center"><span style="width:36px;height:36px;border-radius:50%;background:#fff"></span></span>
+                <span class="glass" style="width:30px;height:30px"><svg class="ico" style="width:15px;height:15px"><use href="#i-hist"/></svg></span>
+              </div>
+            </div>
+            <span class="pill" style="position:absolute;top:2px;left:-10px;background:var(--gold);color:var(--gold-ink);transform:rotate(4deg);box-shadow:0 8px 18px rgba(0,0,0,.2)">⚡ תוצאה תוך שניות</span>
+          </div>
+        </div>
+      </section>
+      <section class="slide" aria-label="שלב 2 מתוך 3">
+        <span class="tag">ציון איכות</span>
+        <div class="display">ציון, שלב <em class="r">והסבר.</em></div>
+        <p class="lede">בשילות, טריות ופגמים – מה שרואים בתמונה, בציון מ-1 עד 10.</p>
+        <div class="stage-art">
+          <div style="position:relative">
+            <div class="phone" id="mockResult"></div>
+            <div class="float" style="top:44px;right:-64px"><span class="sq" style="background:var(--bad-bg);color:var(--bad)">!</span><div>שלב<b>נראה מקולקל</b></div></div>
+            <div class="float" style="bottom:96px;left:-66px"><span class="sq" style="background:var(--green-bg);color:var(--green)">✓</span><div>ביטחון בזיהוי<b>גבוה</b></div></div>
+          </div>
+        </div>
+      </section>
+      <section class="slide" aria-label="שלב 3 מתוך 3">
+        <span class="tag red">הסריקות שלי</span>
+        <div class="display">כל סריקה <em class="r">נשמרת.</em></div>
+        <p class="lede">חוזרים לתוצאות, קונים חכם יותר, זורקים פחות. נשמר רק אצלכם.</p>
+        <div class="stage-art">
+          <div style="position:relative">
+            <div class="phone" id="mockHist"></div>
+            <span class="pill" style="position:absolute;top:-14px;right:-30px;background:var(--green);color:#fff;transform:rotate(-3deg);box-shadow:0 8px 18px rgba(0,0,0,.2)">🍌 בננה · בשלה</span>
+            <span class="pill" style="position:absolute;bottom:40px;left:-40px;background:var(--bad);color:#fff;transform:rotate(3deg);box-shadow:0 8px 18px rgba(0,0,0,.2)">🍎 תפוח · לא מומלץ</span>
+          </div>
+        </div>
+      </section>
+    </div>
+    <button class="skip" id="skip">דלגו</button>
+    <div class="foot"><div class="dots" id="dots"><i class="on"></i><i></i><i></i></div><button class="btn green next" id="next">הבא</button></div>
+  </div>
+  <div class="toast" id="toast" role="status"></div>
+</div>
 
 <script>
 /* ---------- config ---------- */
 const FEEDBACK = { url: 'https://ucaahtdudyicliqwpvcu.supabase.co', key: 'sb_publishable__v13t2xj7oECaVCNfIiVMw_E-af0P8k' };
 // Same thresholds as the server's photo-quality gate (ml/inference/quality.py DEFAULTS), used for live guidance only.
 const Q = { minLuma: 40, maxLuma: 235, minLap: 30, maxClip: 0.35, size: 256 };
-const SAMPLES = [
-  { file: 'banana.jpg', he: 'בננות' }, { file: 'apple_rotten.jpg', he: 'תפוח' }, { file: 'pomegranate.jpg', he: 'רימון' } ];
-const ACTION = {
-  eat_now: ['t-ok', '✅'], eat_soon: ['t-mid', '⏳'], overripe: ['t-mid', '🍌'], wait: ['t-mid', '🕒'], wait_little: ['t-mid', '🕒'],
+const SAMPLES = [{ file: 'banana.jpg', he: 'בננות' }, { file: 'apple_rotten.jpg', he: 'תפוח' }, { file: 'pomegranate.jpg', he: 'רימון' }];
+const ACTION = { eat_now: ['t-ok', '✅'], eat_soon: ['t-mid', '⏳'], overripe: ['t-mid', '🍌'], wait: ['t-mid', '🕒'], wait_little: ['t-mid', '🕒'],
   check_defects: ['t-bad', '🔎'], discard: ['t-bad', '⚠️'] };
-const STATE = { unsure: ['🤔', 'לא בטוח'], retake: ['📷', 'צריך צילום נוסף'], not_produce: ['🔍', 'לא זוהה פרי או ירק'] };
-// Scales: order and colour per head (labels come from the server in Hebrew).
-const SCALES = {
-  ripeness: { title: 'בשילות', stops: [['unripe', 'לא בשל', '#9CC86A'], ['partially_ripe', 'כמעט', '#C7C94A'], ['ripe', 'בשל', '#2FA36B'], ['overripe', 'בשל מאוד', '#E3A21A']] },
-  freshness: { title: 'טריות', stops: [['fresh', 'טרי', '#2FA36B'], ['declining', 'פחות טרי', '#E3A21A'], ['spoiled', 'מקולקל', '#D2382F']] },
-  freshness_c: { title: 'טריות', stops: [['fresh', 'טרי', '#2FA36B'], ['not_fresh', 'לא טרי', '#D2382F']] },
-  visual_spoilage: { title: 'פגמים בקליפה', stops: [['none', 'אין', '#2FA36B'], ['mild', 'קלים', '#E3A21A'], ['severe', 'חמורים', '#D2382F']] },
-  visual_spoilage_c: { title: 'פגמים בקליפה', stops: [['none', 'אין', '#2FA36B'], ['defects', 'נראים פגמים', '#D2382F']] },
-};
+const STATE = { unsure: ['🤔', 'לא בטוחים'], retake: ['📷', 'צריך צילום נוסף'], not_produce: ['🔍', 'לא זוהה פרי או ירק'] };
+// Analysis rows: head → [title, icon, label → tone]
+const HEADS = {
+  ripeness: ['בשילות', 'i-leaf', { unripe: 'mid', partially_ripe: 'good', ripe: 'ok', overripe: 'mid' }],
+  freshness: ['טריות', 'i-drop', { fresh: 'ok', declining: 'mid', spoiled: 'bad', not_fresh: 'bad' }],
+  visual_spoilage: ['פגמים בקליפה', 'i-lens', { none: 'ok', mild: 'mid', severe: 'bad', defects: 'bad' }] };
+const TONE = { ok: ['var(--ok)', 'var(--green-bg)'], good: ['var(--good)', 'var(--green-bg)'], mid: ['var(--mid)', 'var(--mid-bg)'],
+  weak: ['var(--weak)', 'var(--mid-bg)'], bad: ['var(--bad)', 'var(--bad-bg)'], none: ['var(--gray)', 'var(--paper-2)'] };
 
 /* ---------- helpers ---------- */
 const $ = id => document.getElementById(id);
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const pct5 = p => `${Math.round(p * 20) * 5}%`;
-const confText = p => p == null ? '' : `${p >= 0.85 ? 'ביטחון גבוה' : p >= 0.7 ? 'ביטחון בינוני' : 'ביטחון נמוך'} בזיהוי · ${pct5(p)}`;
-const verdict = s => s >= 9 ? ['מצוין', 'var(--ok)'] : s >= 7 ? ['טוב', 'var(--good)'] : s >= 5 ? ['סביר', 'var(--mid)'] : s >= 3 ? ['חלש', 'var(--weak)'] : ['לא מומלץ', 'var(--bad)'];
-const store = { get(k) { try { return localStorage.getItem(k); } catch { return null; } }, set(k, v) { try { localStorage.setItem(k, v); } catch {} } };
+const confWord = p => p >= 0.85 ? 'גבוה' : p >= 0.7 ? 'בינוני' : 'נמוך';
+const verdict = s => s >= 9 ? ['מצוין', 'ok'] : s >= 7 ? ['טוב', 'good'] : s >= 5 ? ['סביר', 'mid'] : s >= 3 ? ['חלש', 'weak'] : ['לא מומלץ', 'bad'];
+const toneOf = r => r.score == null ? 'none' : verdict(r.score)[1];
+const store = { get(k) { try { return localStorage.getItem(k); } catch { return null; } }, set(k, v) { try { localStorage.setItem(k, v); return true; } catch { return false; } } };
 const buzz = ms => { try { navigator.vibrate && navigator.vibrate(ms); } catch {} };
 const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
-
 let stream = null, busy = false, last = null, lastBlob = null, firstAngle = null, photoUrl = null, qualityTimer = null, bundle = null;
 
 /* ---------- camera ---------- */
@@ -304,8 +402,6 @@ function showLive() {
   $('welcome').hidden = true; $('vf').hidden = false; $('guide').hidden = false;
   clearInterval(qualityTimer); qualityTimer = setInterval(liveQuality, 450);
 }
-
-// Live photo-quality guidance (Seek-style, but honest: light and focus only, same thresholds as the server).
 const qc = document.createElement('canvas'), qx = qc.getContext('2d', { willReadFrequently: true });
 function liveQuality() {
   const v = $('video'); if (!stream || busy || !v.videoWidth) return;
@@ -315,8 +411,7 @@ function liveQuality() {
   let sum = 0, clip = 0;
   for (let i = 0, j = 0; i < d.length; i += 4, j++) { const y = 0.299 * d[i] + 0.587 * d[i + 1] + 0.114 * d[i + 2]; g[j] = y; sum += y; if (y <= 3 || y >= 252) clip++; }
   let ls = 0, lq = 0, n = 0;
-  for (let y = 1; y < h - 1; y++) for (let x = 1; x < w - 1; x++) {
-    const k = y * w + x, l = g[k - w] + g[k + w] + g[k - 1] + g[k + 1] - 4 * g[k]; ls += l; lq += l * l; n++; }
+  for (let y = 1; y < h - 1; y++) for (let x = 1; x < w - 1; x++) { const k = y * w + x, l = g[k - w] + g[k + w] + g[k - 1] + g[k + 1] - 4 * g[k]; ls += l; lq += l * l; n++; }
   const mean = sum / (w * h), lap = n ? lq / n - (ls / n) ** 2 : 0, cf = clip / (w * h);
   let cls = 'ok', txt = 'נראה טוב – אפשר לסרוק';
   if (mean < Q.minLuma) { cls = 'warn'; txt = 'חשוך מדי – התקרבו לאור'; }
@@ -324,10 +419,8 @@ function liveQuality() {
   else if (lap < Q.minLap) { cls = 'warn'; txt = 'מטושטש – החזיקו יציב והתקרבו'; }
   $('guide').className = 'guide ' + cls; $('guideText').textContent = txt;
 }
-
 function frameBlob() {
-  const v = $('video'), c = document.createElement('canvas');
-  const s = Math.min(1, 1024 / Math.max(v.videoWidth, v.videoHeight));
+  const v = $('video'), c = document.createElement('canvas'), s = Math.min(1, 1024 / Math.max(v.videoWidth, v.videoHeight));
   c.width = Math.round(v.videoWidth * s); c.height = Math.round(v.videoHeight * s);
   c.getContext('2d').drawImage(v, 0, 0, c.width, c.height);
   return new Promise(r => c.toBlob(r, 'image/jpeg', 0.9));
@@ -336,15 +429,11 @@ function frameBlob() {
 /* ---------- scan flow ---------- */
 async function onScan() {
   if (busy) return;
-  if (!stream) {                       // just-in-time camera permission (Yuka); fall back to the native camera
-    if (store.get('cam') !== 'no' && await startCamera()) return;
-    $('cam').click(); return;
-  }
+  if (!stream) { if (store.get('cam') !== 'no' && await startCamera()) return; $('cam').click(); return; }
   buzz(8);
   if (!reduceMotion) { $('flash').classList.remove('on'); void $('flash').offsetWidth; $('flash').classList.add('on'); }
   analyze(await frameBlob());
 }
-
 async function analyze(blob) {
   if (busy) return;
   busy = true; lastBlob = blob;
@@ -358,204 +447,211 @@ async function analyze(blob) {
     if (firstAngle) { fd.append('image', firstAngle); fd.append('image2', blob); } else fd.append('image', blob);
     const res = await fetch('/v1/scan', { method: 'POST', body: fd });
     if (!res.ok) throw new Error(res.status);
-    last = await res.json(); firstAngle = null; buzz(12); renderResult(last);
+    last = await res.json(); firstAngle = null; buzz(12);
+    if (last.status === 'ok') { showResult(last, photoUrl); addHistory(last, await thumbOf(photoUrl, 360)); }
+    else renderState(last);
   } catch { firstAngle = null; renderError(); }
   finally { $('stage').classList.remove('analyzing'); }
 }
-
 function reset() {
-  closeSheet(); busy = false;
+  closeSheet(); closePage('result'); busy = false;
   $('still').style.display = 'none';
-  if (stream) { $('guide').hidden = false; $('vf').hidden = false; }
-  else { $('vf').hidden = true; $('welcome').hidden = false; }
+  if (stream) { $('guide').hidden = false; $('vf').hidden = false; } else { $('vf').hidden = true; $('welcome').hidden = false; }
   if (firstAngle) { $('guide').hidden = false; $('guide').className = 'guide'; $('guideText').textContent = 'צלמו את אותו הפרי מצד אחר'; }
 }
 
-/* ---------- sheet ---------- */
-function openSheet(html, title) {
-  $('sheetBody').innerHTML = html; $('sheet').classList.add('open'); $('scrim').classList.add('on');
-  $('sheet').setAttribute('aria-label', title || ''); $('sheet').scrollTop = 0;
-}
+/* ---------- pages + sheet ---------- */
+function openPage(id) { $(id).classList.add('open'); $(id).querySelector('.scroll').scrollTop = 0; }
+function closePage(id) { $(id).classList.remove('open'); }
+function openSheet(html) { $('sheetBody').innerHTML = html; $('sheet').classList.add('open'); $('scrim').classList.add('on'); $('sheet').scrollTop = 0; }
 function closeSheet(resume = true) { $('sheet').classList.remove('open'); $('scrim').classList.remove('on'); if (resume) busy = false; }
 
-function gauge(score) {
-  const r = 38, c = 2 * Math.PI * r;
-  if (score == null) return `<div class="gauge" aria-hidden="true"><svg viewBox="0 0 92 92"><circle cx="46" cy="46" r="${r}" fill="none" stroke="#E3E7E0" stroke-width="9" stroke-dasharray="4 6"/></svg><div class="num"><b style="color:#9aa39c">—</b></div></div>`;
-  const [, col] = verdict(score), off = c * (1 - score / 10);
-  return `<div class="gauge" role="img" aria-label="ציון ${score} מתוך 10"><svg viewBox="0 0 92 92"><circle cx="46" cy="46" r="${r}" fill="none" stroke="#E9ECE6" stroke-width="9"/>
-    <circle class="arc" cx="46" cy="46" r="${r}" fill="none" stroke="${col}" stroke-width="9" stroke-linecap="round" stroke-dasharray="${c}" stroke-dashoffset="${reduceMotion ? off : c}" data-off="${off}" style="transition:stroke-dashoffset .9s cubic-bezier(.2,.8,.2,1)"/></svg>
-    <div class="num"><div><b style="color:${col}" data-to="${score}">${reduceMotion ? score : 0}</b><small>מתוך 10</small></div></div></div>`;
+/* ---------- result page ---------- */
+function rows(r) {
+  const out = [];
+  for (const [k, [title, icon, tones]] of Object.entries(HEADS)) {
+    const h = r[k]; if (!h || !h.available) continue;
+    const [fg, bg] = TONE[tones[h.label] || 'none'];
+    out.push(`<div class="row"><span class="ic" style="background:${bg};color:${fg}"><svg class="ico"><use href="#${icon}"/></svg></span>
+      <div class="val"><small>${title}</small><b>${h.label ? esc(h.label_he) : 'לא ודאי'}</b></div>${h.prob != null && h.label ? `<span class="chip" style="background:${bg};color:${fg}">${pct5(h.prob)}</span>` : ''}</div>`);
+  }
+  return out.join('');
 }
-
-function scale(key, head) {
-  if (!head || !head.available) return '';
-  const coarse = ['not_fresh', 'defects'].includes(head.label) || (key !== 'ripeness' && head.label === (key === 'freshness' ? 'fresh' : 'none') && last && last._coarse?.[key]);
-  const def = SCALES[coarse ? key + '_c' : key]; if (!def) return '';
-  const idx = def.stops.findIndex(s => s[0] === head.label);
-  const segs = def.stops.map((s, i) => `<div class="seg ${i === idx ? 'on' : ''}" style="background:${s[2]}"></div>`).join('');
-  const ticks = def.stops.map((s, i) => `<span class="${i === idx ? 'on' : ''}">${s[1]}</span>`).join('');
-  const value = idx >= 0 ? esc(head.label_he) : 'לא ודאי';
-  return `<div class="scale"><div class="shd"><span>${def.title}</span><b>${value}</b></div><div class="bar">${segs}</div><div class="ticks">${ticks}</div></div>`;
+function stageText(r) {
+  if (r.score == null) return 'זיהוי בלבד';
+  for (const k of ['ripeness', 'freshness', 'visual_spoilage']) if (r[k]?.available && r[k].label) return r[k].label_he;
+  return verdict(r.score)[0];
 }
-
-function renderResult(r) {
-  if (r.status !== 'ok') return renderState(r);
-  // Which quality heads are coarse (good vs defects) for this produce: from the bundle, if loaded.
-  const sup = bundle?.supported_heads?.[r.produce] || [];
-  r._coarse = { freshness: sup.includes('freshness~coarse') && !sup.includes('freshness'),
-                visual_spoilage: sup.includes('visual_spoilage~coarse') && !sup.includes('visual_spoilage') };
+function showResult(r, img, fromHistory = false) {
   last = r;
-  const assessed = r.recommendation && r.recommendation !== 'inspect';
-  let h = `<div class="head"><img class="thumb" src="${photoUrl}" alt=""><div><div class="name" id="sheetTitle">${esc(r.emoji)} ${esc(r.produce_he)}</div>
-           <div class="conf">${confText(r.produce_confidence)}</div></div>
-           <button class="share" id="share" aria-label="שיתוף התוצאה"><svg class="ico"><use href="#i-share"/></svg></button></div>`;
-  // 1. Score + verdict (Yuka): the number, a word, and one line of why.
+  const assessed = r.recommendation && r.recommendation !== 'inspect', [fg, bg] = TONE[toneOf(r)], c = r.produce_confidence ?? 0;
+  let h = `<div class="photo"><img src="${img}" alt="">
+      <div class="conf-badge ${c < 0.85 ? 'lo' : ''}" title="ביטחון בזיהוי"><div><span>✦</span>${pct5(c)}</div></div></div>
+    <div class="rcard"><div class="rhead"><span class="namepill">${esc(r.emoji)} ${esc(r.produce_he)}</span><span class="conf-t">ביטחון ${confWord(c)} בזיהוי</span></div>`;
   if (r.score != null) {
-    const [word, col] = verdict(r.score);
-    h += `<div class="card score">${gauge(r.score)}<div><div class="label-sm">ציון איכות חזותי</div>
-          <div class="verdict" style="color:${col}">${word}</div><div class="reason">${esc(r.score_reason_he)}</div></div></div>`;
+    h += `<div class="score-row"><span class="big" style="color:${fg}"><span data-to="${r.score}">${reduceMotion || fromHistory ? r.score : 0}</span><small>/10</small></span>
+        <span class="stagepill" style="background:${bg};color:${fg}">${verdict(r.score)[0]}</span></div>
+      <div class="meter"><i style="background:${fg}" data-w="${r.score * 10}%"></i></div><p class="reason">${esc(r.score_reason_he)}</p>`;
   } else {
-    h += `<div class="card score">${gauge(null)}<div><div class="label-sm">ציון איכות חזותי</div>
-          <div class="verdict" style="color:var(--muted);font-size:19px">אין עדיין דירוג לסוג הזה</div>
-          <div class="reason small">${esc(r.score_reason_he)}</div></div></div>`;
+    h += `<div class="score-row"><span class="big" style="color:var(--gray)">–<small>/10</small></span><span class="stagepill" style="background:var(--paper-2);color:var(--muted)">אין עדיין דירוג לסוג הזה</span></div>
+      <p class="reason">${esc(r.score_reason_he)}</p>`;
   }
-  // 2. What to do (the useful action).
-  if (assessed) {
-    const [tone, ic] = ACTION[r.recommendation] || ['t-mid', '•'];
-    h += `<div class="action ${tone}"><span class="ic">${ic}</span><span>${esc(r.recommendation_he)}</span></div>`;
-  }
-  // 3. What we checked: scales.
-  const scales = scale('ripeness', r.ripeness) + scale('freshness', r.freshness) + scale('visual_spoilage', r.visual_spoilage);
-  if (scales) h += `<div class="card"><h3>מה בדקנו בתמונה</h3>${scales}</div>`;
-  // 4. How to keep it.
-  if (r.storage_tip_he && !['discard', 'check_defects'].includes(r.recommendation))
-    h += `<div class="card tip"><b>💡 איך לשמור (כללי)</b>${esc(r.storage_tip_he)}</div>`;
-  // 5. Detail, collapsed.
-  if (assessed && r.explanation_he?.length)
-    h += `<details><summary>למה?</summary><div class="body"><ul class="why">${r.explanation_he.map(e => `<li>${esc(e)}</li>`).join('')}</ul></div></details>`;
-  if (r.top3?.length)
-    h += `<details><summary>מה עוד זה יכול להיות?</summary><div class="body">${r.top3.map(t => `<div class="alt"><span style="width:84px">${esc(t.he)}</span><div class="track"><div class="fill" style="width:${Math.round(t.prob * 100)}%"></div></div><span class="pct">${pct5(t.prob)}</span></div>`).join('')}</div></details>`;
-  h += `<div class="disc">&#x200F;ⓘ ${esc(r.disclaimer_he)}</div>
-        <div class="actions"><button class="primary" id="again">סרוק פרי נוסף</button>
-        <div class="fb" id="fb"><span>הזיהוי נכון?</span><button aria-label="כן" data-v="1">👍</button><button aria-label="לא" data-v="0">👎</button></div></div>`;
-  openSheet(h, r.produce_he);
-  requestAnimationFrame(() => requestAnimationFrame(() => document.querySelectorAll('.arc').forEach(a => a.style.strokeDashoffset = a.dataset.off)));
-  document.querySelectorAll('.num b[data-to]').forEach(countUp);
-  $('share').onclick = () => shareResult(r);
-  addHistory(r);
-  $('again').onclick = () => { firstAngle = null; reset(); };
+  h += `</div>`;
+  if (assessed) { const [tone, ic] = ACTION[r.recommendation] || ['t-mid', '•']; h += `<div class="action ${tone}"><span>${ic}</span><span>${esc(r.recommendation_he)}</span></div>`; }
+  const rr = rows(r);
+  if (rr) h += `<div class="sec-h">פרטי הבדיקה</div><div class="rows">${rr}</div>`;
+  if (r.storage_tip_he && !['discard', 'check_defects'].includes(r.recommendation)) h += `<div class="tip"><b>💡 איך לשמור (כללי)</b>${esc(r.storage_tip_he)}</div>`;
+  if (assessed && r.explanation_he?.length) h += `<details><summary>למה?</summary><div class="body"><ul class="why">${r.explanation_he.map(e => `<li>${esc(e)}</li>`).join('')}</ul></div></details>`;
+  if (r.top3?.length) h += `<details><summary>מה עוד זה יכול להיות?</summary><div class="body">${r.top3.map(x => `<div class="alt"><span style="width:84px">${esc(x.he)}</span><div class="track"><div class="fill" style="width:${Math.round(x.prob * 100)}%"></div></div><span class="pct">${pct5(x.prob)}</span></div>`).join('')}</div></details>`;
+  h += `<div class="disc">ⓘ ${esc(r.disclaimer_he)}</div>`;
+  if (!fromHistory) h += `<div class="fb" id="fb"><span>הזיהוי נכון?</span><button aria-label="כן" data-v="1">👍</button><button aria-label="לא" data-v="0">👎</button></div>`;
+  $('rBody').innerHTML = h; openPage('result');
+  $('again').textContent = fromHistory ? 'לסריקה חדשה' : 'סריקה חדשה';
+  requestAnimationFrame(() => requestAnimationFrame(() => document.querySelectorAll('#rBody .meter i').forEach(i => i.style.width = i.dataset.w)));
+  if (!fromHistory && !reduceMotion) document.querySelectorAll('#rBody [data-to]').forEach(countUp);
   document.querySelectorAll('#fb button').forEach(b => b.onclick = () => sendFeedback(b.dataset.v === '1'));
+  $('rShare').onclick = $('rShare2').onclick = () => shareResult(r);
 }
-
+function countUp(el) {
+  const to = +el.dataset.to, t0 = performance.now(), d = 850;
+  const step = t => { const k = Math.min(1, (t - t0) / d); el.textContent = Math.round(to * (1 - Math.pow(1 - k, 3))); if (k < 1) requestAnimationFrame(step); };
+  requestAnimationFrame(step);
+}
 function renderState(r) {
   const [ic, title] = STATE[r.status] || ['•', ''];
-  let h = `<div class="state">${photoUrl ? `<div class="pic"><img src="${photoUrl}" alt=""><span class="badge">${ic}</span></div>` : `<div class="big">${ic}</div>`}<h2 id="sheetTitle">${title}</h2><p>${esc(r.message_he)}</p></div><div class="actions">`;
-  if (r.status === 'unsure' && (r.angles || 1) < 2) {
-    h += `<button class="primary" id="angle">צלמו מזווית נוספת</button><button class="secondary" id="again">נסו שוב מההתחלה</button>`;
-  } else {
-    h += `<button class="primary" id="again">נסו שוב</button>`;
-  }
-  openSheet(h + '</div>', title);
-  $('again').onclick = () => { firstAngle = null; reset(); };
+  let h = `<div class="state">${photoUrl ? `<div class="pic"><img src="${photoUrl}" alt=""><span class="badge">${ic}</span></div>` : `<div class="emo">${ic}</div>`}
+    <h2>${title}</h2><p>${esc(r.message_he)}</p></div><div class="stack">`;
+  h += r.status === 'unsure' && (r.angles || 1) < 2
+    ? `<button class="btn green" id="angle">צלמו מזווית נוספת</button><button class="btn line" id="againS">נסו שוב מההתחלה</button>`
+    : `<button class="btn green" id="againS">נסו שוב</button>`;
+  openSheet(h + '</div>');
+  $('againS').onclick = () => { firstAngle = null; reset(); };
   if ($('angle')) $('angle').onclick = () => { firstAngle = lastBlob; reset(); };
 }
 function renderError() {
-  openSheet(`<div class="state"><div class="big">📶</div><h2>משהו השתבש</h2><p>לא הצלחנו לבדוק את התמונה. בדקו את החיבור לאינטרנט ונסו שוב.</p></div>
-    <div class="actions"><button class="primary" id="again">נסו שוב</button></div>`, 'שגיאה');
-  $('again').onclick = () => reset();
+  openSheet(`<div class="state"><div class="emo">📶</div><h2>משהו השתבש</h2><p>לא הצלחנו לבדוק את התמונה. בדקו את החיבור לאינטרנט ונסו שוב.</p></div>
+    <div class="stack"><button class="btn green" id="againS">נסו שוב</button></div>`);
+  $('againS').onclick = () => reset();
 }
-
 async function sendFeedback(correct) {
   $('fb').innerHTML = '<span>תודה! המשוב עוזר לשפר את הדירוג.</span>';
   try {
-    await fetch(`${FEEDBACK.url}/rest/v1/scan_feedback`, { method: 'POST',
-      headers: { apikey: FEEDBACK.key, 'Content-Type': 'application/json', Prefer: 'return=minimal' },
-      body: JSON.stringify({ model_id: last.model_id, status: last.status, produce: last.produce,
-                             confidence: last.produce_confidence, correct, app_version: 'web' }) });
+    await fetch(`${FEEDBACK.url}/rest/v1/scan_feedback`, { method: 'POST', headers: { apikey: FEEDBACK.key, 'Content-Type': 'application/json', Prefer: 'return=minimal' },
+      body: JSON.stringify({ model_id: last.model_id, status: last.status, produce: last.produce, confidence: last.produce_confidence, correct, app_version: 'web' }) });
   } catch {}
 }
+function toast(msg) { const t = $('toast'); t.textContent = msg; t.classList.add('on'); clearTimeout(t._h); t._h = setTimeout(() => t.classList.remove('on'), 2200); }
+async function shareResult(r) {
+  const sc = r.score != null ? ` – ${r.score}/10 (${verdict(r.score)[0]})` : '';
+  const text = `${r.emoji || ''} ${r.produce_he}${sc}. ${r.recommendation_he || ''}\nהערכה חזותית בלבד.`;
+  try {
+    if (navigator.share) { await navigator.share({ title: 'סורק פירות', text, url: location.origin }); return; }
+    await navigator.clipboard.writeText(`${text}\n${location.origin}`); toast('הועתק – אפשר להדביק ולשתף');
+  } catch {}
+}
+
+/* ---------- history (this device only) ---------- */
+const HKEY = 'hist2', HMAX = 30;
+const loadHist = () => { try { return JSON.parse(store.get(HKEY) || '[]'); } catch { return []; } };
+const saveHist = h => { for (let n = h.length; n >= 0; n--) if (store.set(HKEY, JSON.stringify(h.slice(0, n)))) return; };
+async function thumbOf(url, n) {
+  try {
+    const im = new Image(); im.src = url; await im.decode();
+    const W = im.naturalWidth, H = im.naturalHeight, cw = Math.min(W, H * 4 / 3), ch = cw * 3 / 4;
+    const c = document.createElement('canvas'); c.width = n; c.height = Math.round(n * 3 / 4);
+    c.getContext('2d').drawImage(im, (W - cw) / 2, (H - ch) / 2, cw, ch, 0, 0, c.width, c.height);
+    return c.toDataURL('image/jpeg', 0.72);
+  } catch { return ''; }
+}
+const KEEP = ['status', 'produce', 'produce_he', 'emoji', 'produce_confidence', 'score', 'score_reason_he', 'recommendation', 'recommendation_he',
+  'ripeness', 'freshness', 'visual_spoilage', 'explanation_he', 'top3', 'storage_tip_he', 'disclaimer_he', 'model_id'];
+function addHistory(r, img) {
+  const h = loadHist(); h.unshift({ id: Date.now(), t: Date.now(), img, r: Object.fromEntries(KEEP.map(k => [k, r[k]])) });
+  saveHist(h.slice(0, HMAX)); $('hdot').hidden = false;
+}
+const when = t => new Date(t).toLocaleString('he-IL', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
+function renderHistory() {
+  const h = loadHist();
+  if (!h.length) {
+    $('hBody').innerHTML = `<div class="empty"><div style="font-size:54px">🧺</div><div class="display">עוד אין <em style="color:var(--green-2)">סריקות.</em></div>
+      כל פרי שתסרקו יופיע כאן – עם התמונה, הציון והתאריך.<div style="margin-top:22px"><button class="btn green" id="hScan">לסריקה הראשונה</button></div></div>`;
+    $('hScan').onclick = () => closePage('history'); $('hClear').style.visibility = 'hidden'; return;
+  }
+  $('hClear').style.visibility = 'visible';
+  const scored = h.filter(e => e.r.score != null), good = scored.filter(e => e.r.score >= 7).length, bad = scored.filter(e => e.r.score <= 3).length;
+  let s = `<div class="hsum"><span class="pill">${h.length} סריקות</span>${scored.length ? `<span class="pill" style="color:var(--ok)">● ${good} במצב טוב</span><span class="pill" style="color:var(--bad)">● ${bad} לא מומלצים</span>` : ''}</div><ul class="hlist">`;
+  for (const e of h) {
+    const [fg] = TONE[toneOf(e.r)];
+    s += `<li class="hitem" data-id="${e.id}" style="--tone:${fg}"><img src="${e.img || '/web/icon-192.png'}" alt="">
+      <div class="t"><b>${esc(e.r.emoji)} ${esc(e.r.produce_he)}</b><div class="st">${esc(stageText(e.r))}</div><div class="d">${esc(when(e.t))}</div></div>
+      ${e.r.score != null ? `<span class="sc">${e.r.score}</span>` : ''}
+      <button class="del" data-del="1" aria-label="מחיקת הסריקה"><svg class="ico"><use href="#i-trash"/></svg></button></li>`;
+  }
+  $('hBody').innerHTML = s + `</ul><p class="small" style="text-align:center;margin-top:14px">נשמר רק במכשיר הזה.</p>`;
+  document.querySelectorAll('.hitem').forEach(li => li.onclick = ev => {
+    const id = +li.dataset.id;
+    if (ev.target.closest('[data-del]')) { saveHist(loadHist().filter(e => e.id !== id)); renderHistory(); return; }
+    const e = loadHist().find(x => x.id === id); if (e) showResult(e.r, e.img || '/web/icon-192.png', true);
+  });
+}
+function showHistory() { if (busy) return; $('hdot').hidden = true; renderHistory(); openPage('history'); }
 
 /* ---------- samples + info ---------- */
 function showSamples() {
   if (busy) return;
-  openSheet(`<div class="info"><h2 id="sheetTitle">נסו תמונה לדוגמה</h2><p class="small">אין פרי בהישג יד? בחרו תמונה ותראו איך זה עובד.</p>
+  openSheet(`<div class="info"><h2>נסו <em style="color:var(--green-2)">דוגמה</em></h2><p class="small" style="margin:0">אין פרי בהישג יד? בחרו תמונה ותראו איך זה עובד.</p>
     <div class="samples">${SAMPLES.map(s => `<button data-f="${s.file}"><img src="/web/samples/${s.file}" alt=""><span>${s.he}</span></button>`).join('')}</div>
-    <div class="actions"><button class="secondary" id="close">חזרה למצלמה</button></div></div>`, 'דוגמאות');
-  document.querySelectorAll('.samples button').forEach(b => b.onclick = async () => {
-    closeSheet(); const blob = await (await fetch('/web/samples/' + b.dataset.f)).blob(); analyze(blob); });
-  $('close').onclick = () => closeSheet();
+    <button class="btn line" id="closeS">חזרה למצלמה</button></div>`);
+  document.querySelectorAll('.samples button').forEach(b => b.onclick = async () => { closeSheet(); analyze(await (await fetch('/web/samples/' + b.dataset.f)).blob()); });
+  $('closeS').onclick = () => closeSheet();
 }
 async function showInfo() {
   if (busy) return;
   try { bundle = bundle || await (await fetch('/v1/bundle')).json(); } catch {}
   const rated = bundle ? Object.keys(bundle.supported_heads || {}).map(p => bundle.produce_meta?.[p]).filter(Boolean) : [];
   const n = bundle ? Object.values(bundle.produce_meta || {}).filter(m => !m.is_negative_class && m.he !== 'אחר').length : null;
-  openSheet(`<div class="info"><h2 id="sheetTitle">איך זה עובד</h2>
+  openSheet(`<div class="info"><h2>איך זה <em style="color:var(--green-2)">עובד</em></h2>
     <div class="card"><b>1. מצלמים</b> פרי או ירק אחד, מקרוב ובאור טוב.<br><b>2. המודל שלנו</b> מזהה מה זה ובודק את המראה: צבע, כתמים, ריקבון.<br><b>3. מקבלים</b> ציון <span class="nw">מ-1 עד 10</span>, המלצה וטיפ אחסון.</div>
-    <div class="card"><b>דירוג איכות זמין עכשיו ל:</b><div class="pills">${rated.map(m => `<span class="pill">${esc(m.emoji)} ${esc(m.he)}</span>`).join('') || '<span class="small">טוען…</span>'}</div>
-    <p class="small" style="margin:8px 0 0">כל פרי קיבל דירוג רק אחרי שעבר מבחן דיוק על תמונות שהמודל לא ראה.${n ? ` שאר הסוגים (המודל מזהה ${n} סוגים) – זיהוי בלבד, עד שיעברו את המבחן.` : ''}</p></div>
+    <div class="card"><b>דירוג איכות זמין עכשיו ל:</b><div class="chips">${rated.map(m => `<span>${esc(m.emoji)} ${esc(m.he)}</span>`).join('') || '<span>טוען…</span>'}</div>
+      <p class="small" style="margin:8px 0 0">כל פרי מקבל דירוג רק אחרי שעבר מבחן דיוק על תמונות שהמודל לא ראה.${n ? ` שאר הסוגים (המודל מזהה ${n} סוגים) – זיהוי בלבד, עד שיעברו את המבחן.` : ''}</p></div>
     <div class="card"><b>מה תמונה לא יכולה לדעת</b><ul class="why"><li>מה קורה בתוך הפרי (ריקבון פנימי, מכה טרייה).</li><li>מתיקות, ובשילות של פירות שצבעם לא משתנה (הדרים, אבטיח, אבוקדו ירוק).</li><li>אם המזון בטוח לאכילה – זו הערכה חזותית בלבד.</li></ul></div>
-    <div class="card"><b>פרטיות</b><br>התמונה נשלחת לשרת שלנו לבדיקה ולא נשמרת. בלי הרשמה, בלי פרסומות, בלי שירות בינה מלאכותית חיצוני.</div>
+    <div class="card"><b>פרטיות</b><br>התמונה נשלחת לשרת שלנו לבדיקה ולא נשמרת שם. ההיסטוריה נשמרת רק במכשיר שלכם. בלי הרשמה, בלי פרסומות, בלי שירות בינה מלאכותית חיצוני.</div>
     <p class="small">המודל אומן על מאגרי תמונות פתוחים ברישיון מתאים (CC BY 4.0 / MIT)${bundle?.training_datasets ? ': ' + esc(bundle.training_datasets.join(', ')) : ''}. גרסה: ${esc(bundle?.model_id || '')}</p>
     <p class="small">תמונות הדוגמה: בננות – Grocery Store Dataset (Klasson et al., MIT); תפוח ורימון – Fresh and Rotten Fruits dataset, Mendeley Data (CC BY 4.0).</p>
-    <div class="actions"><button class="primary" id="close">הבנתי</button></div></div>`, 'איך זה עובד');
-  $('close').onclick = () => closeSheet();
+    <div class="stack"><button class="btn line" id="replay">הצגת ההדרכה שוב</button><button class="btn green" id="closeI">הבנתי</button></div></div>`);
+  $('closeI').onclick = () => closeSheet();
+  $('replay').onclick = () => { closeSheet(); showOnboarding(); };
 }
 
-/* ---------- delight: count-up, share, history (on this device only) ---------- */
-function countUp(el) {
-  const to = +el.dataset.to; if (reduceMotion) { el.textContent = to; return; }
-  const t0 = performance.now(), d = 850;
-  const step = t => { const k = Math.min(1, (t - t0) / d); el.textContent = Math.round(to * (1 - Math.pow(1 - k, 3))); if (k < 1) requestAnimationFrame(step); };
-  requestAnimationFrame(step);
+/* ---------- onboarding ---------- */
+function mockups() {
+  // What the shipped model actually returns for the bundled sample photos (not invented numbers).
+  const row = (i, a, b) => `<div class="row" style="padding:6px;margin-top:6px;gap:8px;border-radius:10px"><span class="ic" style="width:24px;height:24px;background:var(--bad-bg);color:var(--bad)"><svg class="ico" style="width:13px;height:13px"><use href="#${i}"/></svg></span><div><small style="font-size:9px">${a}</small><b style="font-size:11px">${b}</b></div></div>`;
+  $('mockResult').innerHTML = `<div style="padding:30px 10px 0">
+    <div style="position:relative;border-radius:14px;overflow:hidden;aspect-ratio:4/3"><img src="/web/samples/apple_rotten.jpg" alt="" style="width:100%;height:100%;object-fit:cover">
+      <div class="conf-badge" style="width:40px;height:40px;font-size:9px;bottom:6px;inset-inline-end:6px"><div><span style="font-size:10px">✦</span>100%</div></div></div>
+    <div style="margin-top:10px"><span class="namepill" style="font-size:12px;padding:3px 9px">🍎 תפוח</span></div>
+    <div style="display:flex;align-items:center;gap:6px;margin-top:8px"><span class="big" style="font-size:28px;color:var(--bad)">1<small style="font-size:10px">/10</small></span><span class="stagepill" style="font-size:10px;background:var(--bad-bg);color:var(--bad)">לא מומלץ</span></div>
+    <div class="meter" style="height:5px;margin-top:6px"><i style="width:10%;background:var(--bad)"></i></div>
+    ${row('i-drop', 'טריות', 'מקולקל')}${row('i-lens', 'פגמים בקליפה', 'נראים פגמים')}
+    <div style="display:flex;gap:6px;margin-top:10px"><span class="btn line" style="min-height:28px;font-size:10px;border-radius:9px">שיתוף</span><span class="btn green" style="min-height:28px;font-size:10px;border-radius:9px;box-shadow:none">סריקה חדשה</span></div></div>`;
+  const items = [['banana.jpg', '🍌 בננה', 'בשלה', 'var(--good)', 8], ['apple_rotten.jpg', '🍎 תפוח', 'לא מומלץ', 'var(--bad)', 1], ['pomegranate.jpg', '🔴 רימון', 'טרי', 'var(--ok)', 10]];
+  $('mockHist').innerHTML = `<div style="padding:32px 10px 0"><div style="text-align:center;font-weight:800;font-size:12px;margin-bottom:10px">הסריקות שלי</div>
+    ${items.map(([f, n, st, c, sc]) => `<div class="hitem" style="--tone:${c};padding:6px;gap:8px;border-radius:13px;margin-bottom:9px"><img src="/web/samples/${f}" alt="" style="width:40px;height:40px;border-radius:9px">
+      <div class="t"><b style="font-size:12px">${n}</b><div class="st" style="font-size:10px">${st}</div></div><span class="sc" style="font-size:16px;width:22px">${sc}</span></div>`).join('')}</div>`;
 }
-function toast(msg) {
-  let t = document.querySelector('.toast'); if (!t) { t = document.createElement('div'); t.className = 'toast'; t.setAttribute('role', 'status'); document.body.appendChild(t); }
-  t.textContent = msg; t.classList.add('on'); clearTimeout(t._h); t._h = setTimeout(() => t.classList.remove('on'), 2200);
+function showOnboarding() { mockups(); $('onb').hidden = false; $('track').scrollLeft = 0; onbSync(); }
+function onbIndex() { const t = $('track'); return Math.round(Math.abs(t.scrollLeft) / t.clientWidth); }
+function onbSync() {
+  const i = onbIndex();
+  document.querySelectorAll('#dots i').forEach((d, k) => d.classList.toggle('on', k === i));
+  $('next').textContent = i === 2 ? 'בואו נתחיל' : 'הבא';
+  $('skip').style.color = i === 0 ? '#F6F1E6' : 'var(--ink)';
 }
-async function shareResult(r) {
-  const sc = r.score != null ? ` – ציון ${r.score}/10 (${verdict(r.score)[0]})` : '';
-  const text = `${r.emoji || ''} ${r.produce_he}${sc}. ${r.recommendation_he || ''}\nהערכה חזותית בלבד.`;
-  const data = { title: 'סורק פירות', text, url: location.origin };
-  try {
-    if (navigator.share) { await navigator.share(data); return; }
-    await navigator.clipboard.writeText(`${text}\n${location.origin}`); toast('הועתק – אפשר להדביק ולשתף');
-  } catch {}
-}
-const HKEY = 'hist', HMAX = 20;
-const loadHist = () => { try { return JSON.parse(store.get(HKEY) || '[]'); } catch { return []; } };
-async function thumbOf(url) {
-  try {
-    const im = new Image(); im.src = url; await im.decode();
-    const c = document.createElement('canvas'), n = 96, s = Math.min(im.naturalWidth, im.naturalHeight);
-    c.width = c.height = n; c.getContext('2d').drawImage(im, (im.naturalWidth - s) / 2, (im.naturalHeight - s) / 2, s, s, 0, 0, n, n);
-    return c.toDataURL('image/jpeg', 0.7);
-  } catch { return ''; }
-}
-async function addHistory(r) {
-  const h = loadHist();
-  h.unshift({ t: Date.now(), he: r.produce_he, emoji: r.emoji, score: r.score ?? null, rec: r.recommendation_he || '', img: await thumbOf(photoUrl) });
-  store.set(HKEY, JSON.stringify(h.slice(0, HMAX))); $('hdot').hidden = false;
-}
-const ago = t => { const m = Math.round((Date.now() - t) / 60000);
-  return m < 1 ? 'עכשיו' : m < 60 ? `לפני ${m} דק׳` : m < 1440 ? `לפני ${Math.round(m / 60)} שע׳` : new Date(t).toLocaleDateString('he-IL', { day: 'numeric', month: 'short' }); };
-function showHistory() {
-  if (busy) return; $('hdot').hidden = true;
-  const h = loadHist();
-  const list = h.length ? `<ul class="hist">${h.map(e => `<li><img src="${e.img || '/web/icon-192.png'}" alt="">
-      <div class="t"><b>${esc(e.emoji)} ${esc(e.he)}</b><span>${esc(ago(e.t))}${e.rec ? ' · ' + esc(e.rec) : ''}</span></div>
-      ${e.score != null ? `<span class="sc" style="background:${verdict(e.score)[1]}">${e.score}</span>` : '<span class="sc none">—</span>'}</li>`).join('')}</ul>
-      <p class="small" style="margin-top:10px">נשמר רק במכשיר הזה.</p>`
-    : `<div class="empty"><div class="big">🧺</div>עוד לא סרקתם כלום.<br>הסריקות האחרונות יופיעו כאן.</div>`;
-  openSheet(`<div class="info"><h2 id="sheetTitle">הסריקות שלי</h2>${list}
-    <div class="actions">${h.length ? '<button class="secondary" id="clearH">ניקוי ההיסטוריה</button>' : ''}<button class="primary" id="close">חזרה למצלמה</button></div></div>`, 'הסריקות שלי');
-  $('close').onclick = () => closeSheet();
-  if ($('clearH')) $('clearH').onclick = () => { store.set(HKEY, '[]'); showHistory(); };
-}
-function showRated(b) {
-  const em = Object.keys(b.supported_heads || {}).map(p => b.produce_meta?.[p]?.emoji).filter(Boolean);
-  if (em.length) { $('ratedList').textContent = em.join(''); $('rated').hidden = false; }
-}
+function onbDone() { store.set('onb', '1'); $('onb').hidden = true; onScan(); }
+$('track').addEventListener('scroll', () => requestAnimationFrame(onbSync), { passive: true });
+$('next').onclick = () => { const i = onbIndex(); if (i >= 2) return onbDone(); const t = $('track'); t.scrollTo({ left: t.clientWidth * (i + 1), behavior: reduceMotion ? 'auto' : 'smooth' }); };
+$('skip').onclick = () => { store.set('onb', '1'); $('onb').hidden = true; };
 
 /* ---------- wiring ---------- */
 function fromFile(e) { const f = e.target.files[0]; e.target.value = ''; if (f) analyze(f); }
@@ -563,11 +659,15 @@ $('scan').onclick = onScan;
 $('galBtn').onclick = () => $('gal').click();
 $('gal').onchange = fromFile; $('cam').onchange = fromFile;
 $('sampleBtn').onclick = showSamples; $('infoBtn').onclick = showInfo; $('histBtn').onclick = showHistory;
+$('again').onclick = () => { firstAngle = null; closePage('history'); reset(); };
+$('rBack').onclick = () => { if ($('history').classList.contains('open')) { closePage('result'); busy = false; } else reset(); };
+$('hBack').onclick = () => closePage('history');
+$('hClear').onclick = () => { if (confirm('למחוק את כל הסריקות השמורות?')) { saveHist([]); renderHistory(); } };
 $('scrim').onclick = () => { if (!$('stage').classList.contains('analyzing')) reset(); };
-document.addEventListener('keydown', e => { if (e.key === 'Escape') reset(); });
-fetch('/v1/bundle').then(r => r.json()).then(b => { bundle = b; showRated(b); }).catch(() => {});
-// Returning users who allowed the camera go straight to the live viewfinder (principle 1); others see the welcome.
-if (store.get('cam') === 'ok') startCamera();
+document.addEventListener('keydown', e => { if (e.key !== 'Escape') return; if ($('result').classList.contains('open')) $('rBack').click(); else if ($('history').classList.contains('open')) closePage('history'); else reset(); });
+fetch('/v1/bundle').then(r => r.json()).then(b => bundle = b).catch(() => {});
+if (!store.get('onb')) showOnboarding();
+else if (store.get('cam') === 'ok') startCamera();
 if ('serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js').catch(() => {});
 </script>
 </body>
