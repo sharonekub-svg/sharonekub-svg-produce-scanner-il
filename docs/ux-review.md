@@ -13,6 +13,18 @@ Demo photo: Grocery Store Dataset (MIT, Klasson et al. 2019).
 |---|---|---|---|
 | ![](img/ux/spoiled.jpg) | ![](img/ux/unsure.jpg) | ![](img/ux/retake.jpg) | ![](img/ux/other.jpg) |
 
+## Result screen redesign (2026-09-28, model v0.7-dev)
+
+Same layout as the web result page: square photo with the confidence ring, name pill + fruit bubble,
+score /10 with a one-word verdict and bar, and "פרטי הניתוח" rows. New rows: **מראה הקליפה** (skin
+appearance in words, derived only from the freshness/spoilage heads) and **מרקם – לבדוק ביד** (general
+hand check per type, labelled as not measured from the photo). Rendered the same way (temporary demo
+route fed with real server outputs, RTL set on the document because react-native-web ignores forceRTL).
+
+| Spoiled apple | Banana: details rows |
+|---|---|
+| ![](img/ux/v07_spoiled.jpg) | ![](img/ux/v07_details.jpg) |
+
 ## Problems found by rendering, and fixes
 
 | # | Problem (first render) | Fix |

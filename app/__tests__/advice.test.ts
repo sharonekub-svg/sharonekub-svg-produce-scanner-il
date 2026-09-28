@@ -1,6 +1,6 @@
-import { expect, test } from '@jest/globals';
+import { describe, expect, it, test } from '@jest/globals';
 import bundle from '../assets/model/bundle.json';
-import { STORAGE_TIP_HE, combineProbs, confidenceWord } from '../src/model/advice';
+import { STORAGE_TIP_HE, TOUCH_HE, combineProbs, confidenceWord, surfaceHe } from '../src/model/advice';
 
 test('every target produce in the shipped bundle has a storage tip', () => {
   const meta = (bundle as any).produce_meta as Record<string, { is_negative_class?: boolean }>;
@@ -26,4 +26,23 @@ test('combining two angles: agreement sharpens, disagreement stays uncertain', (
   expect(agree[0]).toBeGreaterThan(0.6);
   const disagree = combineProbs(a, [0.1, 0.8, 0.1]);
   expect(Math.max(...disagree)).toBeLessThan(0.7);
+});
+
+describe('skin appearance + touch tip (same rules as server/app.py)', () => {
+  const h = (label: string | null) => ({ label, available: label != null });
+  it('derives the skin text from freshness/spoilage only', () => {
+    expect(surfaceHe(h('spoiled'), h('defects'))).toBe('סימני ריקבון נראים בקליפה');
+    expect(surfaceHe(h('fresh'), h('defects'))).toBe('פגמים נראים בקליפה');
+    expect(surfaceHe(h('declining'), h('none'))).toBe('כתמים קלים או סימני התייבשות');
+    expect(surfaceHe(h('fresh'), h('none'))).toBe('קליפה נקייה, בלי פגמים נראים');
+    expect(surfaceHe(h(null), h(null))).toBeNull();
+  });
+  it('has a hand-check tip for every produce type, never claiming "safe"', () => {
+    for (const [k, v] of Object.entries(TOUCH_HE)) {
+      expect(v.length).toBeGreaterThan(10);
+      expect(v).not.toContain('בטוח');
+      expect(k).toBeTruthy();
+    }
+    expect(Object.keys(TOUCH_HE)).toContain('strawberry');
+  });
 });

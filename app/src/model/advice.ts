@@ -2,7 +2,7 @@
 // sources in docs/research/food-quality.md. Generic advice, NOT a claim about the photographed item.
 import CARE from './produce_care.json';
 
-type Care = { fridge: string; chill_below_c: number | null; ethylene: { producer: boolean; sensitive: boolean }; tip_he: string };
+type Care = { fridge: string; chill_below_c: number | null; ethylene: { producer: boolean; sensitive: boolean }; tip_he: string; touch_he: string };
 const PRODUCE_CARE = CARE.produce as Record<string, Care>;
 export const CARE_GENERAL_HE = CARE.general_he;
 
@@ -13,6 +13,27 @@ export const STORAGE_TIP_HE: Record<string, string> = Object.fromEntries(
     return [k, eth ? `${c.tip_he} ${eth}` : c.tip_he];
   }),
 );
+
+/** General hand check per type ("texture": a photo can't measure it). Same text as the server's touch_tip_he. */
+export const TOUCH_HE: Record<string, string> = Object.fromEntries(Object.entries(PRODUCE_CARE).map(([k, c]) => [k, c.touch_he]));
+
+type HeadLike = { label: string | null; available: boolean } | null | undefined;
+/** Skin appearance in words, derived only from the freshness/spoilage heads (same rules as server/app.py surface_he). */
+export function surfaceHe(freshness: HeadLike, spoilage: HeadLike): string | null {
+  const sp = spoilage?.available ? spoilage.label : null;
+  const fr = freshness?.available ? freshness.label : null;
+  if (sp == null && fr == null) return null;
+  if (sp === 'severe' || fr === 'spoiled') return 'סימני ריקבון נראים בקליפה';
+  if (sp === 'defects') return 'פגמים נראים בקליפה';
+  if (sp === 'mild' || fr === 'declining' || fr === 'not_fresh') return 'כתמים קלים או סימני התייבשות';
+  if ((sp == null || sp === 'none') && (fr == null || fr === 'fresh')) return 'קליפה נקייה, בלי פגמים נראים';
+  return null;
+}
+
+/** Score in one word + tone (same bands as the web app). */
+export function verdictHe(score: number): string {
+  return score >= 9 ? 'מצוין' : score >= 7 ? 'טוב' : score >= 5 ? 'סביר' : score >= 3 ? 'חלש' : 'לא מומלץ';
+}
 
 /** Confidence in words first, calibrated number second (ux-principles.md #5). */
 export function confidenceWord(p: number | null | undefined): string {

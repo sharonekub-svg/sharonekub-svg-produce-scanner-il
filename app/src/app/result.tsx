@@ -6,7 +6,7 @@ import { useState } from 'react';
 import { Image, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { STORAGE_TIP_HE, confidenceWord } from '../model/advice';
+import { STORAGE_TIP_HE, TOUCH_HE, confidenceWord, surfaceHe, verdictHe } from '../model/advice';
 import { getBundle } from '../model/engine';
 import type { HeadResult } from '../model/types';
 import { donatePhoto, donationEnabled } from '../donation';
@@ -37,17 +37,24 @@ const STATUS_HEAD: Record<string, { icon: string; title: string }> = {
   not_produce: { icon: '🔍', title: he.notProduceTitle },
 };
 
-function Chip({ title, head }: { title: string; head: HeadResult | null }) {
-  const available = head?.available && head.label;
-  const c = CHIP[available ? head!.label! : 'unknown'];
+// One "analysis details" row: round icon, small title, value (same layout as the web result page).
+function Row({ icon, title, value, bg, note }: { icon: string; title: string; value: string; bg: string; note?: string }) {
   return (
-    <View style={styles.chipCol} accessible accessibilityLabel={`${title}: ${available ? head!.label_he : he.notAvailable}`}>
-      <Text style={styles.chipTitle}>{title}</Text>
-      <View style={[styles.chip, { backgroundColor: c.bg }]}>
-        <Text style={styles.chipText}>{available ? `${c.dot} ${head!.label_he}` : he.notAvailable}</Text>
+    <View style={styles.row2} accessible accessibilityLabel={`${title}: ${value}`}>
+      <View style={[styles.rowIcon, { backgroundColor: bg }]}><Text style={styles.rowIconText}>{icon}</Text></View>
+      <View style={styles.flex1}>
+        <Text style={styles.rowTitle}>{title}</Text>
+        <Text style={note ? styles.body : styles.rowValue}>{value}</Text>
+        {note ? <Text style={styles.rowTitle}>{note}</Text> : null}
       </View>
     </View>
   );
+}
+
+function headRow(icon: string, title: string, head: HeadResult | null, value?: string | null) {
+  if (!head?.available) return null;
+  const c = CHIP[head.label ?? 'unknown'] ?? CHIP.unknown;
+  return <Row key={title} icon={icon} title={title} value={value ?? head.label_he ?? he.notAvailable} bg={c.bg} />;
 }
 
 function Disclosure({ label, open, onPress }: { label: string; open: boolean; onPress: () => void }) {
@@ -93,25 +100,41 @@ export default function ResultScreen() {
   return (
     <SafeAreaView style={styles.fill}>
       <ScrollView contentContainerStyle={styles.pad}>
-        <Image source={{ uri: last.photoUri }} style={styles.photo} accessibilityIgnoresInvertColors />
+        <View style={styles.photoWrap}>
+          <Image source={{ uri: last.photoUri }} style={styles.photo} accessibilityIgnoresInvertColors />
+          {ok && r.produce_confidence != null ? (
+            <View style={[styles.confRing, r.produce_confidence < 0.85 && styles.confRingLow]} accessible accessibilityLabel={`${he.confidence}: ${pct(r.produce_confidence)}`}>
+              <Text style={styles.confSpark}>✦</Text>
+              <Text style={styles.confText}>{pct(r.produce_confidence)}</Text>
+            </View>
+          ) : null}
+        </View>
 
         {ok ? (
           <View style={styles.card}>
             <View style={styles.identity}>
-              <Text style={styles.name}>{r.emoji} {r.produce_he}</Text>
-              <Text style={styles.muted}>{confidenceWord(r.produce_confidence)} ({pct(r.produce_confidence)})</Text>
+              <View style={styles.flex1}>
+                <View style={styles.namePill}><Text style={styles.name}>{r.produce_he}</Text></View>
+                <Text style={[styles.muted, styles.confWord]}>{confidenceWord(r.produce_confidence)} בזיהוי</Text>
+              </View>
+              <View style={[styles.fruitBubble, { backgroundColor: r.score != null ? scoreTone(r.score).bg : '#EFE8DA' }]}>
+                <Text style={styles.fruitEmoji}>{r.emoji}</Text>
+              </View>
             </View>
 
             {r.score != null ? (
-              <View style={styles.scoreRow} accessible accessibilityLabel={`${he.qualityScore}: ${r.score} ${he.outOf10}. ${r.score_reason_he ?? ''}`}>
-                <View style={[styles.scoreBadge, { backgroundColor: scoreTone(r.score).bg }]}>
-                  <Text style={[styles.scoreNum, { color: scoreTone(r.score).fg }]}>{r.score}</Text>
-                  <Text style={[styles.scoreOf, { color: scoreTone(r.score).fg }]}>/10</Text>
+              <View style={styles.scoreBlock} accessible accessibilityLabel={`${he.qualityScore}: ${r.score} ${he.outOf10}. ${r.score_reason_he ?? ''}`}>
+                <View style={styles.scoreRow}>
+                  <View style={styles.scoreBadge}>
+                    <Text style={[styles.scoreNum, { color: scoreTone(r.score).fg }]}>{r.score}</Text>
+                    <Text style={styles.scoreOf}>/10</Text>
+                  </View>
+                  <View style={[styles.stagePill, { backgroundColor: scoreTone(r.score).bg }]}>
+                    <Text style={[styles.stageText, { color: scoreTone(r.score).fg }]}>{verdictHe(r.score)}</Text>
+                  </View>
                 </View>
-                <View style={styles.flex1}>
-                  <Text style={styles.scoreTitle}>{he.qualityScore}</Text>
-                  <Text style={styles.body}>{r.score_reason_he}</Text>
-                </View>
+                <View style={styles.meter}><View style={[styles.meterFill, { width: `${r.score * 10}%`, backgroundColor: scoreTone(r.score).fg }]} /></View>
+                <Text style={styles.body}>{r.score_reason_he}</Text>
               </View>
             ) : null}
 
@@ -124,10 +147,14 @@ export default function ResultScreen() {
             )}
 
             {assessed ? (
-              <View style={styles.chips}>
-                {r.ripeness?.available ? <Chip title={he.ripeness} head={r.ripeness} /> : null}
-                {r.freshness?.available ? <Chip title={he.freshness} head={r.freshness} /> : null}
-                {r.visual_spoilage?.available ? <Chip title={he.spoilage} head={r.visual_spoilage} /> : null}
+              <View style={styles.details}>
+                <Text style={styles.sectionTitle}>{he.details}</Text>
+                {headRow('🌿', he.ripeness, r.ripeness)}
+                {headRow('💧', he.freshness, r.freshness)}
+                {headRow('🔍', he.skin, r.visual_spoilage, surfaceHe(r.freshness, r.visual_spoilage))}
+                {r.produce && TOUCH_HE[r.produce] ? (
+                  <Row icon="✋" title={he.touch} value={TOUCH_HE[r.produce]} bg="#EFE8DA" note={he.touchNote} />
+                ) : null}
               </View>
             ) : null}
 
@@ -225,25 +252,44 @@ export default function ResultScreen() {
 const styles = StyleSheet.create({
   fill: { flex: 1, backgroundColor: '#FAFAF7' },
   pad: { padding: 16, gap: 12 },
-  photo: { width: '100%', aspectRatio: 2, borderRadius: 16 },
+  photoWrap: { width: '68%', maxWidth: 280, alignSelf: 'center', marginBottom: 12 },
+  photo: { width: '100%', aspectRatio: 1, borderRadius: 24 },
+  confRing: { position: 'absolute', bottom: -18, end: -14, width: 64, height: 64, borderRadius: 32, backgroundColor: '#fff',
+    borderWidth: 4, borderColor: 'rgba(79,190,120,0.45)', alignItems: 'center', justifyContent: 'center',
+    shadowColor: '#4FBE78', shadowOpacity: 0.55, shadowRadius: 12, shadowOffset: { width: 0, height: 0 }, elevation: 6 },
+  confRingLow: { borderColor: 'rgba(217,154,30,0.45)', shadowColor: '#D99A1E' },
+  confSpark: { color: '#1f5c38', fontSize: 14, lineHeight: 16 },
+  confText: { color: '#1f5c38', fontSize: 14, fontWeight: '800' },
+  namePill: { alignSelf: 'flex-start', backgroundColor: '#E3F3E8', borderRadius: 14, paddingHorizontal: 14, paddingVertical: 4,
+    shadowColor: '#4FBE78', shadowOpacity: 0.3, shadowRadius: 9, shadowOffset: { width: 0, height: 0 } },
+  confWord: { marginTop: 6 },
+  fruitBubble: { width: 48, height: 48, borderRadius: 24, alignItems: 'center', justifyContent: 'center' },
+  fruitEmoji: { fontSize: 26 },
+  scoreBlock: { gap: 10 },
+  stagePill: { borderRadius: 12, paddingHorizontal: 12, paddingVertical: 4 },
+  stageText: { fontSize: 14, fontWeight: '800' },
+  meter: { height: 8, borderRadius: 4, backgroundColor: '#EFE8DA', overflow: 'hidden' },
+  meterFill: { height: '100%', borderRadius: 4 },
+  details: { gap: 8 },
+  sectionTitle: { fontSize: 15, fontWeight: '800' },
+  row2: { flexDirection: 'row', alignItems: 'center', gap: 12, backgroundColor: '#FFFDF8', borderRadius: 16, padding: 10,
+    borderWidth: 1, borderColor: '#EEE8DC' },
+  rowIcon: { width: 40, height: 40, borderRadius: 20, alignItems: 'center', justifyContent: 'center' },
+  rowIconText: { fontSize: 18 },
+  rowTitle: { fontSize: 12, color: '#6b6b66' },
+  rowValue: { fontSize: 15, fontWeight: '700' },
   card: { backgroundColor: '#fff', borderRadius: 18, padding: 18, gap: 12, borderWidth: 1, borderColor: '#E4E4DD' },
-  identity: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'baseline', flexWrap: 'wrap', gap: 6 },
-  name: { fontSize: 30, fontWeight: '800' },
+  identity: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', gap: 6 },
+  name: { fontSize: 22, fontWeight: '800', color: '#1f5c38' },
   muted: { color: '#6b6b66', fontSize: 14 },
   hero: { borderRadius: 14, paddingHorizontal: 14, paddingVertical: 12 },
   rec: { fontSize: 22, fontWeight: '800' },
   identifyOnly: { fontSize: 14, color: '#6b6b66' },
   scoreRow: { flexDirection: 'row', alignItems: 'center', gap: 12 },
-  scoreBadge: { flexDirection: 'row', direction: 'ltr', alignItems: 'baseline', borderRadius: 14, paddingHorizontal: 12, paddingVertical: 6 },
-  scoreNum: { fontSize: 34, fontWeight: '800' },
-  scoreOf: { fontSize: 16, fontWeight: '700' },
-  scoreTitle: { fontSize: 13, color: '#6b6b66' },
+  scoreBadge: { flexDirection: 'row', direction: 'ltr', alignItems: 'baseline' },
+  scoreNum: { fontSize: 52, fontWeight: '900', lineHeight: 56 },
+  scoreOf: { fontSize: 16, fontWeight: '500', color: '#6b6b66' },
   flex1: { flex: 1 },
-  chips: { flexDirection: 'row', gap: 12, flexWrap: 'wrap' },
-  chipCol: { gap: 4 },
-  chipTitle: { fontSize: 13, color: '#6b6b66' },
-  chip: { borderRadius: 14, paddingHorizontal: 12, paddingVertical: 7 },
-  chipText: { fontSize: 15 },
   tip: { backgroundColor: '#F3F7F2', borderRadius: 12, padding: 12, gap: 4 },
   tipTitle: { fontSize: 14, fontWeight: '700' },
   stateTitle: { fontSize: 24, fontWeight: '800' },
