@@ -7,7 +7,9 @@ Goal: the only dataset with Israeli produce, real conditions, **ground-truth** r
 | Source | What it gives | Labels | Status |
 |---|---|---|---|
 | **Own team (streams A and B below)** | Longitudinal ripeness series + the real-world test set | Ground truth: firmness, cut test, °Brix per `§4` | Ready to start: protocol, labeler (`tools/labeler`), validator (`scripts/validate_collection.py`) |
-| **In-app photo donation** (opt-in, per photo, consent v1) | Many real phones, kitchens and lighting conditions across Israel | Model prediction + user yes/no; **identity/quality labels must be added by our graders** (a photo alone never gives ripeness ground truth) | Live: `app/src/donation.ts`, bucket `scan-donations` (`server/supabase/migrations/003_photo_donations.sql`). Donated photos go to **train only after grading**, never into stream B. |
+| **In-app photo donation** (opt-in, per photo, consent v1) | Many real phones, kitchens and lighting conditions across Israel | Model prediction + user yes/no; **identity/quality labels must be added by our graders** (a photo alone never gives ripeness ground truth) | Live: `app/src/donation.ts` and the website (`server/web/index.html`, `donatePhoto`, app_version `web`), bucket `scan-donations` (`server/supabase/migrations/003_photo_donations.sql`). Donated photos go to **train only after grading**, never into stream B. |
+
+> Ingest rule: use only objects that have a `photo_donations` row. Object `af4019dc-3e1d-4e12-9627-bebbd50093ae.jpg` is a 2026-09-28 end-to-end test upload (row deleted; storage API delete needs the service key) — ignore it.
 | **Partners** (ask for photos of graded lots, or permission to shoot at their graders) | Graded fruit with measured maturity (dry matter for avocado, °Brix, firmness) | Instrument-measured | To contact: ARO/Volcani Institute (postharvest dept.), Hebrew University Faculty of Agriculture (Rehovot), Plants Production & Marketing Board (מועצת הצמחים), packing houses, supermarket produce QA |
 
 Donated photos keep `consent_version`, must pass the same QA (§5), and any photo showing people or documents is deleted during grading.

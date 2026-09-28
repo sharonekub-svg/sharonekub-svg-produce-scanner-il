@@ -190,6 +190,10 @@ details .body { padding:0 14px 12px; color:var(--ink-2); font-size:15px; }
 .disc { color:var(--muted); font-size:13px; text-align:center; margin:16px 6px 4px; }
 .fb { display:flex; align-items:center; justify-content:center; gap:14px; color:var(--muted); font-size:14px; margin-top:6px; }
 .fb button { font-size:22px; }
+.donate { background:var(--card); border-radius:16px; padding:14px; margin-top:12px; font-size:14px; color:var(--muted); display:flex; flex-direction:column; gap:10px; }
+.donate b { color:var(--ink); font-size:15px; }
+.donate .btn { min-height:44px; font-size:15px; }
+.donate .row2 { display:flex; gap:8px; }
 
 /* history */
 .hsum { display:flex; gap:8px; margin:4px 0 14px; flex-wrap:wrap; }
@@ -387,7 +391,7 @@ const toneOf = r => r.score == null ? 'none' : verdict(r.score)[1];
 const store = { get(k) { try { return localStorage.getItem(k); } catch { return null; } }, set(k, v) { try { localStorage.setItem(k, v); return true; } catch { return false; } } };
 const buzz = ms => { try { navigator.vibrate && navigator.vibrate(ms); } catch {} };
 const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
-let stream = null, busy = false, last = null, lastBlob = null, firstAngle = null, photoUrl = null, qualityTimer = null, bundle = null;
+let stream = null, busy = false, last = null, lastBlob = null, lastOwn = false, lastAnswer = null, firstAngle = null, photoUrl = null, qualityTimer = null, bundle = null;
 
 /* ---------- camera ---------- */
 async function startCamera() {
@@ -434,9 +438,9 @@ async function onScan() {
   if (!reduceMotion) { $('flash').classList.remove('on'); void $('flash').offsetWidth; $('flash').classList.add('on'); }
   analyze(await frameBlob());
 }
-async function analyze(blob) {
+async function analyze(blob, own = true) {
   if (busy) return;
-  busy = true; lastBlob = blob;
+  busy = true; lastBlob = blob; lastOwn = own; lastAnswer = null;
   if (photoUrl) URL.revokeObjectURL(photoUrl);
   photoUrl = URL.createObjectURL(blob);
   $('still').src = photoUrl; $('still').style.display = 'block';
@@ -505,12 +509,14 @@ function showResult(r, img, fromHistory = false) {
   if (r.top3?.length) h += `<details><summary>מה עוד זה יכול להיות?</summary><div class="body">${r.top3.map(x => `<div class="alt"><span style="width:84px">${esc(x.he)}</span><div class="track"><div class="fill" style="width:${Math.round(x.prob * 100)}%"></div></div><span class="pct">${pct5(x.prob)}</span></div>`).join('')}</div></details>`;
   h += `<div class="disc">ⓘ ${esc(r.disclaimer_he)}</div>`;
   if (!fromHistory) h += `<div class="fb" id="fb"><span>הזיהוי נכון?</span><button aria-label="כן" data-v="1">👍</button><button aria-label="לא" data-v="0">👎</button></div>`;
+  if (!fromHistory && lastOwn) h += `<div class="donate" id="don"></div>`;
   $('rBody').innerHTML = h; openPage('result');
   $('again').textContent = fromHistory ? 'לסריקה חדשה' : 'סריקה חדשה';
   requestAnimationFrame(() => requestAnimationFrame(() => document.querySelectorAll('#rBody .meter i').forEach(i => i.style.width = i.dataset.w)));
   if (!fromHistory && !reduceMotion) document.querySelectorAll('#rBody [data-to]').forEach(countUp);
   document.querySelectorAll('#fb button').forEach(b => b.onclick = () => sendFeedback(b.dataset.v === '1'));
   $('rShare').onclick = $('rShare2').onclick = () => shareResult(r);
+  if ($('don')) donateUI('ask');
 }
 function countUp(el) {
   const to = +el.dataset.to, t0 = performance.now(), d = 850;
@@ -534,11 +540,51 @@ function renderError() {
   $('againS').onclick = () => reset();
 }
 async function sendFeedback(correct) {
+  lastAnswer = correct;
   $('fb').innerHTML = '<span>תודה! המשוב עוזר לשפר את הדירוג.</span>';
   try {
     await fetch(`${FEEDBACK.url}/rest/v1/scan_feedback`, { method: 'POST', headers: { apikey: FEEDBACK.key, 'Content-Type': 'application/json', Prefer: 'return=minimal' },
       body: JSON.stringify({ model_id: last.model_id, status: last.status, produce: last.produce, confidence: last.produce_confidence, correct, app_version: 'web' }) });
   } catch {}
+}
+/* ---------- opt-in photo donation (server/supabase/migrations/003_photo_donations.sql) ----------
+   Only this photo, only after the user confirms the consent text. Re-encoded to <= 1024 px JPEG via canvas,
+   which drops EXIF (GPS, device). No user or device id is sent. Same consent text as the app (he.donateConsent). */
+const DONATE_CONSENT = 'התמונה תישמר ותשמש לאימון המודל על פירות וירקות בישראל. נשלחים רק התמונה (מוקטנת, בלי מיקום ובלי פרטי מכשיר) והזיהוי. אין שם, חשבון או מזהה – לכן אי אפשר לשייך אותה אליכם, וגם לא למחוק אותה בהמשך. לא לשתף תמונה שמופיעים בה אנשים או מסמכים.';
+function donateUI(st) {
+  const el = $('don'); if (!el) return;
+  if (st === 'ask' || st === 'failed')
+    el.innerHTML = `<b>${st === 'failed' ? 'השליחה לא הצליחה. אפשר לנסות שוב.' : 'רוצים לעזור ללמד את המודל פירות מישראל?'}</b>
+      <span>שתפו את התמונה הזאת, וכל תמונה משפרת את הדירוג לכולם. בחינם ובלי הרשמה.</span>
+      <button class="btn line" id="donGo">שיתוף התמונה</button>`;
+  else if (st === 'consent')
+    el.innerHTML = `<span>${DONATE_CONSENT}</span><div class="row2"><button class="btn green" id="donYes">מסכים/ה, לשתף</button><button class="btn line" id="donNo">ביטול</button></div>`;
+  else el.innerHTML = `<span>${st === 'sending' ? 'שולח…' : 'תודה! התמונה נשלחה.'}</span>`;
+  if ($('donGo')) $('donGo').onclick = () => donateUI('consent');
+  if ($('donNo')) $('donNo').onclick = () => donateUI('ask');
+  if ($('donYes')) $('donYes').onclick = async () => { donateUI('sending'); donateUI(await donatePhoto() ? 'sent' : 'failed'); };
+}
+function uuid4() {
+  if (crypto.randomUUID) return crypto.randomUUID();
+  const h = [...crypto.getRandomValues(new Uint8Array(16))].map(b => b.toString(16).padStart(2, '0')).join('').split('');
+  h[12] = '4'; h[16] = '89ab'[parseInt(h[16], 16) & 3]; const s = h.join('');
+  return `${s.slice(0, 8)}-${s.slice(8, 12)}-${s.slice(12, 16)}-${s.slice(16, 20)}-${s.slice(20)}`;
+}
+async function jpeg1024(blob) {
+  const bmp = await createImageBitmap(blob), k = Math.min(1, 1024 / bmp.width);
+  const c = document.createElement('canvas'); c.width = Math.round(bmp.width * k); c.height = Math.round(bmp.height * k);
+  c.getContext('2d').drawImage(bmp, 0, 0, c.width, c.height);
+  return new Promise(res => c.toBlob(res, 'image/jpeg', 0.85));
+}
+async function donatePhoto() {
+  try {
+    const img = await jpeg1024(lastBlob), name = `${uuid4()}.jpg`, auth = { apikey: FEEDBACK.key };
+    const reg = await fetch(`${FEEDBACK.url}/rest/v1/photo_donations`, { method: 'POST', headers: { ...auth, 'Content-Type': 'application/json', Prefer: 'return=minimal' },
+      body: JSON.stringify({ object_name: name, model_id: last.model_id, predicted: last.produce, correct: lastAnswer, consent_version: 'v1', app_version: 'web' }) });
+    if (!reg.ok) return false;
+    const up = await fetch(`${FEEDBACK.url}/storage/v1/object/scan-donations/${name}`, { method: 'POST', headers: { ...auth, 'Content-Type': 'image/jpeg' }, body: img });
+    return up.ok;
+  } catch { return false; } // donation must never break the scan flow
 }
 function toast(msg) { const t = $('toast'); t.textContent = msg; t.classList.add('on'); clearTimeout(t._h); t._h = setTimeout(() => t.classList.remove('on'), 2200); }
 async function shareResult(r) {
@@ -602,7 +648,7 @@ function showSamples() {
   openSheet(`<div class="info"><h2>נסו <em style="color:var(--green-2)">דוגמה</em></h2><p class="small" style="margin:0">אין פרי בהישג יד? בחרו תמונה ותראו איך זה עובד.</p>
     <div class="samples">${SAMPLES.map(s => `<button data-f="${s.file}"><img src="/web/samples/${s.file}" alt=""><span>${s.he}</span></button>`).join('')}</div>
     <button class="btn line" id="closeS">חזרה למצלמה</button></div>`);
-  document.querySelectorAll('.samples button').forEach(b => b.onclick = async () => { closeSheet(); analyze(await (await fetch('/web/samples/' + b.dataset.f)).blob()); });
+  document.querySelectorAll('.samples button').forEach(b => b.onclick = async () => { closeSheet(); analyze(await (await fetch('/web/samples/' + b.dataset.f)).blob(), false); });
   $('closeS').onclick = () => closeSheet();
 }
 async function showInfo() {
@@ -615,7 +661,7 @@ async function showInfo() {
     <div class="card"><b>דירוג איכות זמין עכשיו ל:</b><div class="chips">${rated.map(m => `<span>${esc(m.emoji)} ${esc(m.he)}</span>`).join('') || '<span>טוען…</span>'}</div>
       <p class="small" style="margin:8px 0 0">כל פרי מקבל דירוג רק אחרי שעבר מבחן דיוק על תמונות שהמודל לא ראה.${n ? ` שאר הסוגים (המודל מזהה ${n} סוגים) – זיהוי בלבד, עד שיעברו את המבחן.` : ''}</p></div>
     <div class="card"><b>מה תמונה לא יכולה לדעת</b><ul class="why"><li>מה קורה בתוך הפרי (ריקבון פנימי, מכה טרייה).</li><li>מתיקות, ובשילות של פירות שצבעם לא משתנה (הדרים, אבטיח, אבוקדו ירוק).</li><li>אם המזון בטוח לאכילה – זו הערכה חזותית בלבד.</li></ul></div>
-    <div class="card"><b>פרטיות</b><br>התמונה נשלחת לשרת שלנו לבדיקה ולא נשמרת שם. ההיסטוריה נשמרת רק במכשיר שלכם. בלי הרשמה, בלי פרסומות, בלי שירות בינה מלאכותית חיצוני.</div>
+    <div class="card"><b>פרטיות</b><br>התמונה נשלחת לשרת שלנו לבדיקה ולא נשמרת שם, אלא אם בחרתם במפורש לשתף אותה לאימון המודל. ההיסטוריה נשמרת רק במכשיר שלכם. בלי הרשמה, בלי פרסומות, בלי שירות בינה מלאכותית חיצוני.</div>
     <p class="small">המודל אומן על מאגרי תמונות פתוחים ברישיון מתאים (CC BY 4.0 / MIT)${bundle?.training_datasets ? ': ' + esc(bundle.training_datasets.join(', ')) : ''}. גרסה: ${esc(bundle?.model_id || '')}</p>
     <p class="small">תמונות הדוגמה: בננות – Grocery Store Dataset (Klasson et al., MIT); תפוח ורימון – Fresh and Rotten Fruits dataset, Mendeley Data (CC BY 4.0).</p>
     <div class="stack"><button class="btn line" id="replay">הצגת ההדרכה שוב</button><button class="btn green" id="closeI">הבנתי</button></div></div>`);
