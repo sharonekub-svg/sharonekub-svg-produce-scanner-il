@@ -54,6 +54,16 @@
           "photosPermission": "האפליקציה פותחת את הגלריה רק כשבוחרים תמונה של פרי לבדיקה.",
           "microphonePermission": false
         }
+      ],
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "enableMinifyInReleaseBuilds": true,
+            "enableShrinkResourcesInReleaseBuilds": true,
+            "useLegacyPackaging": true
+          }
+        }
       ]
     ],
     "scheme": "producescanner",
