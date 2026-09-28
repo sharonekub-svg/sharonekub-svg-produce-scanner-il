@@ -145,17 +145,19 @@ button { font:inherit; color:inherit; cursor:pointer; border:0; background:none;
 .bar-bottom .btn { flex:1; }
 
 /* result */
-.photo { position:relative; border-radius:26px; overflow:hidden; aspect-ratio:4/3; background:#ddd; box-shadow:0 14px 30px rgba(40,30,10,.14); }
+.photo-wrap { position:relative; width:min(68%, 270px); margin:6px auto 0; }
+.photo { position:relative; border-radius:24px; overflow:hidden; aspect-ratio:1/1; background:#ddd; box-shadow:0 14px 30px rgba(40,30,10,.14); }
 .photo img { width:100%; height:100%; object-fit:cover; display:block; }
-.conf-badge { position:absolute; bottom:36px; inset-inline-end:14px; width:64px; height:64px; border-radius:50%; background:rgba(255,255,255,.93);
+.conf-badge { position:absolute; bottom:-18px; inset-inline-start:calc(100% - 50px); z-index:3; width:64px; height:64px; border-radius:50%; background:rgba(255,255,255,.93);
   display:grid; place-items:center; text-align:center; color:var(--green); font-weight:800; font-size:14px; line-height:1;
   box-shadow:0 0 0 4px rgba(79,190,120,.35), 0 0 24px rgba(79,190,120,.55); direction:ltr; }
 .conf-badge span { display:block; font-size:16px; margin-bottom:2px; }
 .conf-badge.lo { color:var(--mid); box-shadow:0 0 0 4px rgba(217,154,30,.35), 0 0 24px rgba(217,154,30,.5); }
-.rcard { background:var(--card); border-radius:22px; padding:16px; margin-top:-26px; position:relative; z-index:2; margin-inline:8px; box-shadow:0 10px 26px rgba(40,30,10,.1); }
+.rcard { background:var(--card); border-radius:22px; padding:16px; margin-top:22px; position:relative; z-index:2; box-shadow:0 10px 26px rgba(40,30,10,.1); }
 .rhead { display:flex; align-items:center; justify-content:space-between; gap:8px; }
 .namepill { background:var(--green-bg); color:var(--green); font-size:19px; font-weight:800; padding:6px 14px; border-radius:14px; box-shadow:0 0 18px rgba(79,190,120,.3); white-space:nowrap; }
 .conf-t { font-size:13px; color:var(--muted); }
+.fruit-ic { width:48px; height:48px; border-radius:50%; display:grid; place-items:center; font-size:26px; flex:none; }
 .score-row { display:flex; align-items:center; gap:12px; margin-top:12px; flex-wrap:wrap; }
 .big { font-family:var(--serif); font-weight:900; font-size:52px; line-height:1; direction:ltr; }
 .big small { font-family:"Heebo"; font-size:16px; color:var(--muted); font-weight:500; }
@@ -489,9 +491,10 @@ function stageText(r) {
 function showResult(r, img, fromHistory = false) {
   last = r;
   const assessed = r.recommendation && r.recommendation !== 'inspect', [fg, bg] = TONE[toneOf(r)], c = r.produce_confidence ?? 0;
-  let h = `<div class="photo"><img src="${img}" alt="">
+  let h = `<div class="photo-wrap"><div class="photo"><img src="${img}" alt=""></div>
       <div class="conf-badge ${c < 0.85 ? 'lo' : ''}" title="ביטחון בזיהוי"><div><span>✦</span>${pct5(c)}</div></div></div>
-    <div class="rcard"><div class="rhead"><span class="namepill">${esc(r.emoji)} ${esc(r.produce_he)}</span><span class="conf-t">ביטחון ${confWord(c)} בזיהוי</span></div>`;
+    <div class="rcard"><div class="rhead"><div><span class="namepill">${esc(r.produce_he)}</span><div class="conf-t" style="margin-top:6px">ביטחון ${confWord(c)} בזיהוי</div></div>
+      <span class="fruit-ic" style="background:${bg};box-shadow:0 0 22px ${bg}">${esc(r.emoji)}</span></div>`;
   if (r.score != null) {
     h += `<div class="score-row"><span class="big" style="color:${fg}"><span data-to="${r.score}">${reduceMotion || fromHistory ? r.score : 0}</span><small>/10</small></span>
         <span class="stagepill" style="background:${bg};color:${fg}">${verdict(r.score)[0]}</span></div>
@@ -503,7 +506,7 @@ function showResult(r, img, fromHistory = false) {
   h += `</div>`;
   if (assessed) { const [tone, ic] = ACTION[r.recommendation] || ['t-mid', '•']; h += `<div class="action ${tone}"><span>${ic}</span><span>${esc(r.recommendation_he)}</span></div>`; }
   const rr = rows(r);
-  if (rr) h += `<div class="sec-h">פרטי הבדיקה</div><div class="rows">${rr}</div>`;
+  if (rr) h += `<div class="sec-h">פרטי הניתוח</div><div class="rows">${rr}</div>`;
   if (r.storage_tip_he && !['discard', 'check_defects'].includes(r.recommendation)) h += `<div class="tip"><b>💡 איך לשמור (כללי)</b>${esc(r.storage_tip_he)}</div>`;
   if (assessed && r.explanation_he?.length) h += `<details><summary>למה?</summary><div class="body"><ul class="why">${r.explanation_he.map(e => `<li>${esc(e)}</li>`).join('')}</ul></div></details>`;
   if (r.top3?.length) h += `<details><summary>מה עוד זה יכול להיות?</summary><div class="body">${r.top3.map(x => `<div class="alt"><span style="width:84px">${esc(x.he)}</span><div class="track"><div class="fill" style="width:${Math.round(x.prob * 100)}%"></div></div><span class="pct">${pct5(x.prob)}</span></div>`).join('')}</div></details>`;
