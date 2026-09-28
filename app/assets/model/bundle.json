@@ -1,7 +1,7 @@
 {
   "bundle_version": 1,
-  "model_id": "p5_c10_calibrated@2f3772e51859",
-  "created_at": "2026-09-27T21:07:35.785566+00:00",
+  "model_id": "p5_c11_more_data@148a9ebb894c",
+  "created_at": "2026-09-28T02:58:23.461873+00:00",
   "input": {
     "size": 224,
     "layout": "NCHW",
@@ -67,15 +67,15 @@
     ]
   },
   "temperatures": {
-    "produce": 0.5278406820817714,
-    "ripeness": 0.6602138773783506,
-    "freshness": 0.4275368485102569,
-    "visual_spoilage": 0.305059489748057
+    "produce": 0.5094544633043978,
+    "ripeness": 0.8371701068677104,
+    "freshness": 0.35598386445497954,
+    "visual_spoilage": 0.30360718701694056
   },
   "thresholds": {
-    "produce_min_prob": 0.93,
+    "produce_min_prob": 0.96,
     "produce_min_margin": 0.15,
-    "ood_min_energy": 4.636185646057129,
+    "ood_min_energy": 4.69384241104126,
     "head_min_prob": 0.55,
     "spoiled_alert_prob": 0.4
   },
@@ -346,14 +346,16 @@
     "grocery_store_klasson",
     "hass_avocado_ripening",
     "lemon_softwaremill",
-    "mango_banana_ripe"
+    "mango_banana_ripe",
+    "mango_ripening_mm8",
+    "strawberry_avocado_ripening"
   ],
   "files": {
     "model.onnx": {
-      "sha256": "9ef418d9ccd7ae39b52904776366e94f06e762f9b267eafc6f6cb95e010980ac"
+      "sha256": "ba43e40470e4c8991e65624e4346f7b3bf6a4f069251ebe3eae0405516c4ec5b"
     },
     "ProduceScanner.mlpackage": {
-      "sha256": "eb3ede90da8a51dc0c34d563a9fe73989377349da649424e155b788ca70bb147"
+      "sha256": "19a8acf6185448a50b4bf0514c21bcfca353ad89ad91de3f042348c4f1833412"
     }
   }
 }

@@ -266,6 +266,44 @@ Test set (`eval_test_all`, n = 8,833), C9 → C10:
 
 Scores are live for **apple, banana, grapes, orange, pomegranate, guava and avocado**. Released as **`v0.5-dev`** (`p5_c10_calibrated@2f3772e51859`). The Grocery-only identification recall gates still fail (e.g. passion fruit 0.30, n = 27), so it stays a dev build.
 
+## Round 4: C11 → `v0.6-dev` (28 Sep 2026)
+
+**New data.** Two datasets, both CC BY 4.0 (checked via the Mendeley API), both **train only** (`force_split`). They can't leak into val/test.
+- `strawberry_avocado_ripening` (zysvgmxcyz). Class order is from the paper. Only single-class images are used: 226 rotten avocados and 258 not rotten, plus 92 strawberries. There are no avocado ripeness labels, because the cultivars are mixed.
+- `mango_ripening_mm8` (mm8g66d7rc). 949 single mangoes. It is used for identification. Mango ripeness stays vetoed because the cultivar is unknown.
+
+Manifest v6. The Grocery test is unchanged. About 3% of the fresh/rotten and FruitNet test rows moved, so **C10 was re-evaluated on the v6 test** for the comparison below.
+
+| Test set (v6) | C10 | C11 |
+|---|---|---|
+| Freshness balanced acc. | 0.960 | **0.964** |
+| Ripeness balanced acc. | **0.742** | 0.707 |
+| Produce top-1 (all test rows) | 0.435 | **0.478** |
+
+**Identification.** The threshold was chosen on Grocery-**val** with the same rule as before: the smallest value whose accuracy is at least 0.9936 gives **0.96** (val 0.9942, n = 397). Results on Grocery test, confidence + margin rule:
+
+| Model | Threshold | Shown | Accuracy when shown |
+|---|---|---|---|
+| C10 | 0.93 | 73.8% | 97.0% |
+| C11 | 0.96 | **76.7%** | **97.7%** |
+
+**Per-fruit quality gate** (balanced accuracy, C10 → C11):
+
+| Fruit | Head | C10 | C11 |
+|---|---|---|---|
+| Apple | freshness | 0.948 | 0.991 |
+| Guava | freshness | 0.951 | 0.981 |
+| Orange | freshness | 0.959 | 0.983 |
+| Pomegranate | freshness | 0.893 | 0.971 |
+| Grapes | freshness | 0.953 | 0.931 |
+| Avocado | ripeness (exact) | 0.724 | 0.717 |
+
+- All of the above still pass.
+- Lemon improved (0.74 → 0.83) but is still below 0.85.
+- Avocado freshness has **no test photos**, because the new set is train only. It therefore gets no score: no evidence means no score.
+
+Released as **`v0.6-dev`** (`p5_c11_more_data@148a9ebb894c`). The same 7 fruit types have scores, now more accurate.
+
 ## Phase 5 — validation (stress proxies on the P3 model, Grocery official test, n = 1,704)
 
 The Israeli real-world set does not exist yet. These are **synthetic proxies** (`ml/evaluation/evaluate.py --stress`), not a substitute for it.

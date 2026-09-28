@@ -81,12 +81,17 @@ def test_binary_quality_labels_do_not_fabricate_ripeness():
 
 
 def test_ripeness_rule_ordering():
-    m = lambda p: TAX.decode("ripeness", map_path(TAX, "strawberry_avocado_ripening", p)["ripeness"])
-    assert m("Strawberry/Unripe/a.jpg") == "unripe"
-    assert m("Strawberry/Partially Ripe/a.jpg") == "partially_ripe"
-    assert m("Avocado/Ripe/a.jpg") == "ripe"
-    rot = map_path(TAX, "strawberry_avocado_ripening", "Avocado/Rotten/a.jpg")
+    # Real layout after scripts/prepare_strawberry_avocado.py (checked against the download).
+    m = lambda p: map_path(TAX, "strawberry_avocado_ripening", p)
+    dec = lambda h, p: TAX.decode(h, m(p)[h])
+    assert dec("ripeness", "sorted/strawberry_unripe/a.jpg") == "unripe"
+    assert dec("ripeness", "sorted/strawberry_partially_ripe/a.jpg") == "partially_ripe"
+    assert dec("ripeness", "sorted/strawberry_ripe/a.jpg") == "ripe"
+    assert m("sorted/avocado_ripe/a.jpg")["ripeness"] is None  # mixed cultivars: no avocado ripeness
+    assert dec("freshness", "sorted/avocado_ripe/a.jpg") == "fresh"
+    rot = m("sorted/avocado_rotten/a.jpg")
     assert rot["ripeness"] is None and TAX.decode("freshness", rot["freshness"]) == "spoiled"
+    assert m("images/IMG_1.jpg") is None  # unlabelled leftovers are excluded
 
 
 def test_fruits360_ambiguous_classes():

@@ -9,15 +9,52 @@
   ],
   "unknown": "unknown",
   "heads": {
-    "ripeness": ["unripe", "partially_ripe", "ripe", "overripe"],
-    "freshness": ["fresh", "declining", "spoiled"],
-    "visual_spoilage": ["none", "mild", "severe"]
+    "ripeness": [
+      "unripe",
+      "partially_ripe",
+      "ripe",
+      "overripe"
+    ],
+    "freshness": [
+      "fresh",
+      "declining",
+      "spoiled"
+    ],
+    "visual_spoilage": [
+      "none",
+      "mild",
+      "severe"
+    ]
   },
   "produce": {
-    "banana":        {"category": "fruit", "he": "בננה", "emoji": "🍌", "priority": "P1", "ripeness_visual": "strong"},
-    "apple":         {"category": "fruit", "he": "תפוח", "emoji": "🍎", "priority": "P1", "ripeness_visual": "not_applicable"},
-    "orange":        {"category": "fruit", "he": "תפוז", "emoji": "🍊", "priority": "P1", "ripeness_visual": "not_applicable"},
-    "mandarin":      {"category": "fruit", "he": "קלמנטינה", "emoji": "🍊", "priority": "P1", "ripeness_visual": "not_applicable"},
+    "banana": {
+      "category": "fruit",
+      "he": "בננה",
+      "emoji": "🍌",
+      "priority": "P1",
+      "ripeness_visual": "strong"
+    },
+    "apple": {
+      "category": "fruit",
+      "he": "תפוח",
+      "emoji": "🍎",
+      "priority": "P1",
+      "ripeness_visual": "not_applicable"
+    },
+    "orange": {
+      "category": "fruit",
+      "he": "תפוז",
+      "emoji": "🍊",
+      "priority": "P1",
+      "ripeness_visual": "not_applicable"
+    },
+    "mandarin": {
+      "category": "fruit",
+      "he": "קלמנטינה",
+      "emoji": "🍊",
+      "priority": "P1",
+      "ripeness_visual": "not_applicable"
+    },
     "avocado": {
       "category": "fruit",
       "he": "אבוקדו",
@@ -26,23 +63,125 @@
       "ripeness_visual": "cultivar_dependent",
       "ripeness_note_he": "הערכת הבשילות מבוססת על אבוקדו האס (קליפה שמכהה כשהוא מבשיל). בזנים ירוקים כמו אטינגר, פינקרטון וריד הצבע כמעט לא משתנה – בדקו רכות בלחיצה עדינה."
     },
-    "tomato":        {"category": "vegetable", "he": "עגבנייה", "emoji": "🍅", "priority": "P1", "ripeness_visual": "strong"},
-    "cucumber":      {"category": "vegetable", "he": "מלפפון", "emoji": "🥒", "priority": "P1", "ripeness_visual": "not_applicable"},
-    "mango":         {"category": "fruit", "he": "מנגו", "emoji": "🥭", "priority": "P2", "ripeness_visual": "cultivar_dependent"},
-    "peach":         {"category": "fruit", "he": "אפרסק", "emoji": "🍑", "priority": "P2", "ripeness_visual": "cultivar_dependent"},
-    "nectarine":     {"category": "fruit", "he": "נקטרינה", "emoji": "🍑", "priority": "P2", "ripeness_visual": "cultivar_dependent"},
-    "watermelon":    {"category": "fruit", "he": "אבטיח", "emoji": "🍉", "priority": "P2", "ripeness_visual": "weak"},
-    "melon":         {"category": "fruit", "he": "מלון", "emoji": "🍈", "priority": "P2", "ripeness_visual": "weak"},
-    "grape":         {"category": "fruit", "he": "ענבים", "emoji": "🍇", "priority": "P2", "ripeness_visual": "not_applicable"},
-    "strawberry":    {"category": "fruit", "he": "תות", "emoji": "🍓", "priority": "P2", "ripeness_visual": "strong"},
-    "pomegranate":   {"category": "fruit", "he": "רימון", "emoji": "🔴", "priority": "P2", "ripeness_visual": "not_applicable"},
-    "pear":          {"category": "fruit", "he": "אגס", "emoji": "🍐", "priority": "P2", "ripeness_visual": "weak"},
-    "kiwi":          {"category": "fruit", "he": "קיווי", "emoji": "🥝", "priority": "P3", "ripeness_visual": "not_applicable"},
-    "plum":          {"category": "fruit", "he": "שזיף", "emoji": "🟣", "priority": "P3", "ripeness_visual": "cultivar_dependent"},
-    "persimmon":     {"category": "fruit", "he": "אפרסמון", "emoji": "🟠", "priority": "P3", "ripeness_visual": "not_applicable"},
-    "lemon":         {"category": "fruit", "he": "לימון", "emoji": "🍋", "priority": "P3", "ripeness_visual": "not_applicable"},
-    "guava":         {"category": "fruit", "he": "גויאבה", "emoji": "🟢", "priority": "P3", "ripeness_visual": "cultivar_dependent"},
-    "pepper":        {"category": "vegetable", "he": "פלפל", "emoji": "🫑", "priority": "P3", "ripeness_visual": "not_applicable"},
+    "tomato": {
+      "category": "vegetable",
+      "he": "עגבנייה",
+      "emoji": "🍅",
+      "priority": "P1",
+      "ripeness_visual": "strong"
+    },
+    "cucumber": {
+      "category": "vegetable",
+      "he": "מלפפון",
+      "emoji": "🥒",
+      "priority": "P1",
+      "ripeness_visual": "not_applicable"
+    },
+    "mango": {
+      "category": "fruit",
+      "he": "מנגו",
+      "emoji": "🥭",
+      "priority": "P2",
+      "ripeness_visual": "cultivar_dependent"
+    },
+    "peach": {
+      "category": "fruit",
+      "he": "אפרסק",
+      "emoji": "🍑",
+      "priority": "P2",
+      "ripeness_visual": "cultivar_dependent"
+    },
+    "nectarine": {
+      "category": "fruit",
+      "he": "נקטרינה",
+      "emoji": "🍑",
+      "priority": "P2",
+      "ripeness_visual": "cultivar_dependent"
+    },
+    "watermelon": {
+      "category": "fruit",
+      "he": "אבטיח",
+      "emoji": "🍉",
+      "priority": "P2",
+      "ripeness_visual": "weak"
+    },
+    "melon": {
+      "category": "fruit",
+      "he": "מלון",
+      "emoji": "🍈",
+      "priority": "P2",
+      "ripeness_visual": "weak"
+    },
+    "grape": {
+      "category": "fruit",
+      "he": "ענבים",
+      "emoji": "🍇",
+      "priority": "P2",
+      "ripeness_visual": "not_applicable"
+    },
+    "strawberry": {
+      "category": "fruit",
+      "he": "תות",
+      "emoji": "🍓",
+      "priority": "P2",
+      "ripeness_visual": "strong"
+    },
+    "pomegranate": {
+      "category": "fruit",
+      "he": "רימון",
+      "emoji": "🔴",
+      "priority": "P2",
+      "ripeness_visual": "not_applicable"
+    },
+    "pear": {
+      "category": "fruit",
+      "he": "אגס",
+      "emoji": "🍐",
+      "priority": "P2",
+      "ripeness_visual": "weak"
+    },
+    "kiwi": {
+      "category": "fruit",
+      "he": "קיווי",
+      "emoji": "🥝",
+      "priority": "P3",
+      "ripeness_visual": "not_applicable"
+    },
+    "plum": {
+      "category": "fruit",
+      "he": "שזיף",
+      "emoji": "🟣",
+      "priority": "P3",
+      "ripeness_visual": "cultivar_dependent"
+    },
+    "persimmon": {
+      "category": "fruit",
+      "he": "אפרסמון",
+      "emoji": "🟠",
+      "priority": "P3",
+      "ripeness_visual": "not_applicable"
+    },
+    "lemon": {
+      "category": "fruit",
+      "he": "לימון",
+      "emoji": "🍋",
+      "priority": "P3",
+      "ripeness_visual": "not_applicable"
+    },
+    "guava": {
+      "category": "fruit",
+      "he": "גויאבה",
+      "emoji": "🟢",
+      "priority": "P3",
+      "ripeness_visual": "cultivar_dependent"
+    },
+    "pepper": {
+      "category": "vegetable",
+      "he": "פלפל",
+      "emoji": "🫑",
+      "priority": "P3",
+      "ripeness_visual": "not_applicable"
+    },
     "lime": {
       "category": "fruit",
       "he": "ליים",
@@ -88,12 +227,35 @@
       "note": "named negative (plum/avocado lookalike)",
       "ripeness_visual": "not_applicable"
     },
-    "other":         {"category": "none", "he": "אחר", "emoji": "❔", "priority": "-", "is_negative_class": true, "ripeness_visual": "not_applicable"}
+    "other": {
+      "category": "none",
+      "he": "אחר",
+      "emoji": "❔",
+      "priority": "-",
+      "is_negative_class": true,
+      "ripeness_visual": "not_applicable"
+    }
   },
   "label_he": {
-    "ripeness":        {"unripe": "לא בשל", "partially_ripe": "כמעט בשל", "ripe": "בשל", "overripe": "בשל מדי", "unknown": "לא ידוע"},
-    "freshness":       {"fresh": "טרי", "declining": "פחות טרי", "spoiled": "מקולקל", "unknown": "לא ידוע"},
-    "visual_spoilage": {"none": "לא זוהו", "mild": "סימנים קלים", "severe": "סימנים משמעותיים", "unknown": "לא ידוע"}
+    "ripeness": {
+      "unripe": "לא בשל",
+      "partially_ripe": "כמעט בשל",
+      "ripe": "בשל",
+      "overripe": "בשל מדי",
+      "unknown": "לא ידוע"
+    },
+    "freshness": {
+      "fresh": "טרי",
+      "declining": "פחות טרי",
+      "spoiled": "מקולקל",
+      "unknown": "לא ידוע"
+    },
+    "visual_spoilage": {
+      "none": "לא זוהו",
+      "mild": "סימנים קלים",
+      "severe": "סימנים משמעותיים",
+      "unknown": "לא ידוע"
+    }
   },
   "datasets": {
     "own_il_collection": {
@@ -102,56 +264,241 @@
       "table": "labels.csv",
       "path_column": "path",
       "group_column": "fruit_instance_id",
-      "columns":                   {"produce": "produce", "ripeness": "ripeness", "freshness": "freshness", "visual_spoilage": "visual_spoilage"},
-      "value_maps":                {}
+      "columns": {
+        "produce": "produce",
+        "ripeness": "ripeness",
+        "freshness": "freshness",
+        "visual_spoilage": "visual_spoilage"
+      },
+      "value_maps": {}
     },
     "grocery_store_klasson": {
       "adapter": "path_rules",
       "verified_against_download": true,
       "verified_note": "Layout checked 2026-09-26 at git commit in .provenance.json: dataset/{train,val,test}/{Fruit,Vegetables,Packages}/<Coarse>[/<Fine>]/<Fine>_NNN.jpg, 348x348",
-      "exclude_patterns": ["iconic-images", "(^|/)Packages/", "(^|/)sample_images/"],
+      "exclude_patterns": [
+        "iconic-images",
+        "(^|/)Packages/",
+        "(^|/)sample_images/"
+      ],
       "split_pattern": "(^|/)dataset/(?P<split>train|val|test)/",
       "rules": [
-        {"pattern": "(^|/)Watermelon(/|$)", "labels": {"produce": "watermelon"}},
-        {"pattern": "(^|/)(Cantaloupe|Galia-Melon|Honeydew-Melon)(/|$)", "labels": {"produce": "melon"}},
-        {"pattern": "(^|/)Apple(/|$)", "labels": {"produce": "apple"}},
-        {"pattern": "(^|/)Avocado(/|$)", "labels": {"produce": "avocado"}},
-        {"pattern": "(^|/)Banana(/|$)", "labels": {"produce": "banana"}},
-        {"pattern": "(^|/)Kiwi(/|$)", "labels": {"produce": "kiwi"}},
-        {"pattern": "(^|/)Lemon(/|$)", "labels": {"produce": "lemon"}},
-        {"pattern": "(^|/)Mango(/|$)", "labels": {"produce": "mango"}},
-        {"pattern": "(^|/)Nectarine(/|$)", "labels": {"produce": "nectarine"}},
-        {"pattern": "(^|/)Satsumas(/|$)", "labels": {"produce": "mandarin"}},
-        {"pattern": "(^|/)Orange(/|$)", "labels": {"produce": "orange"}},
-        {"pattern": "(^|/)Peach(/|$)", "labels": {"produce": "peach"}},
-        {"pattern": "(^|/)Pear(/|$)", "labels": {"produce": "pear"}},
-        {"pattern": "(^|/)Plum(/|$)", "labels": {"produce": "plum"}},
-        {"pattern": "(^|/)Pomegranate(/|$)", "labels": {"produce": "pomegranate"}},
-        {"pattern": "(^|/)Cucumber(/|$)", "labels": {"produce": "cucumber"}},
-        {"pattern": "(^|/)Tomato(/|$)", "labels": {"produce": "tomato"}},
-        {"pattern": "(^|/)Pepper(/|$)", "labels": {"produce": "pepper"}},
-        {"pattern": "(^|/)Lime(/|$)", "labels": {"produce": "lime"}},
-        {"pattern": "(^|/)Red-Grapefruit(/|$)", "labels": {"produce": "grapefruit"}},
-        {"pattern": "(^|/)Zucchini(/|$)", "labels": {"produce": "zucchini"}},
-        {"pattern": "(^|/)Potato(/|$)", "labels": {"produce": "potato"}},
-        {"pattern": "(^|/)Passion-Fruit(/|$)", "labels": {"produce": "passion_fruit"}},
-        {"pattern": "(^|/)(Fruit|Vegetables)/", "labels": {"produce": "other"}}
+        {
+          "pattern": "(^|/)Watermelon(/|$)",
+          "labels": {
+            "produce": "watermelon"
+          }
+        },
+        {
+          "pattern": "(^|/)(Cantaloupe|Galia-Melon|Honeydew-Melon)(/|$)",
+          "labels": {
+            "produce": "melon"
+          }
+        },
+        {
+          "pattern": "(^|/)Apple(/|$)",
+          "labels": {
+            "produce": "apple"
+          }
+        },
+        {
+          "pattern": "(^|/)Avocado(/|$)",
+          "labels": {
+            "produce": "avocado"
+          }
+        },
+        {
+          "pattern": "(^|/)Banana(/|$)",
+          "labels": {
+            "produce": "banana"
+          }
+        },
+        {
+          "pattern": "(^|/)Kiwi(/|$)",
+          "labels": {
+            "produce": "kiwi"
+          }
+        },
+        {
+          "pattern": "(^|/)Lemon(/|$)",
+          "labels": {
+            "produce": "lemon"
+          }
+        },
+        {
+          "pattern": "(^|/)Mango(/|$)",
+          "labels": {
+            "produce": "mango"
+          }
+        },
+        {
+          "pattern": "(^|/)Nectarine(/|$)",
+          "labels": {
+            "produce": "nectarine"
+          }
+        },
+        {
+          "pattern": "(^|/)Satsumas(/|$)",
+          "labels": {
+            "produce": "mandarin"
+          }
+        },
+        {
+          "pattern": "(^|/)Orange(/|$)",
+          "labels": {
+            "produce": "orange"
+          }
+        },
+        {
+          "pattern": "(^|/)Peach(/|$)",
+          "labels": {
+            "produce": "peach"
+          }
+        },
+        {
+          "pattern": "(^|/)Pear(/|$)",
+          "labels": {
+            "produce": "pear"
+          }
+        },
+        {
+          "pattern": "(^|/)Plum(/|$)",
+          "labels": {
+            "produce": "plum"
+          }
+        },
+        {
+          "pattern": "(^|/)Pomegranate(/|$)",
+          "labels": {
+            "produce": "pomegranate"
+          }
+        },
+        {
+          "pattern": "(^|/)Cucumber(/|$)",
+          "labels": {
+            "produce": "cucumber"
+          }
+        },
+        {
+          "pattern": "(^|/)Tomato(/|$)",
+          "labels": {
+            "produce": "tomato"
+          }
+        },
+        {
+          "pattern": "(^|/)Pepper(/|$)",
+          "labels": {
+            "produce": "pepper"
+          }
+        },
+        {
+          "pattern": "(^|/)Lime(/|$)",
+          "labels": {
+            "produce": "lime"
+          }
+        },
+        {
+          "pattern": "(^|/)Red-Grapefruit(/|$)",
+          "labels": {
+            "produce": "grapefruit"
+          }
+        },
+        {
+          "pattern": "(^|/)Zucchini(/|$)",
+          "labels": {
+            "produce": "zucchini"
+          }
+        },
+        {
+          "pattern": "(^|/)Potato(/|$)",
+          "labels": {
+            "produce": "potato"
+          }
+        },
+        {
+          "pattern": "(^|/)Passion-Fruit(/|$)",
+          "labels": {
+            "produce": "passion_fruit"
+          }
+        },
+        {
+          "pattern": "(^|/)(Fruit|Vegetables)/",
+          "labels": {
+            "produce": "other"
+          }
+        }
       ]
     },
     "fruitnet_indian": {
       "adapter": "path_rules",
       "verified_against_download": true,
-      "exclude_patterns": ["(?i)mixed"],
+      "exclude_patterns": [
+        "(?i)mixed"
+      ],
       "rules": [
-        {"pattern": "(?i)apple", "labels": {"produce": "apple"}},
-        {"pattern": "(?i)banana", "labels": {"produce": "banana"}},
-        {"pattern": "(?i)guava", "labels": {"produce": "guava"}},
-        {"pattern": "(?i)lime", "labels": {"produce": "lime"}},
-        {"pattern": "(?i)orange", "labels": {"produce": "orange"}},
-        {"pattern": "(?i)pomegranate", "labels": {"produce": "pomegranate"}},
-        {"pattern": "(?i)(_good|good[ _]quality)", "labels": {"freshness": "fresh", "visual_spoilage": "none"}},
-        {"pattern": "(?i)banana_bad", "labels": {"freshness": "unknown", "visual_spoilage": "unknown"}},
-        {"pattern": "(?i)(_bad|bad[ _]quality)", "labels": {"freshness": ["declining", "spoiled"], "visual_spoilage": ["mild", "severe"]}}
+        {
+          "pattern": "(?i)apple",
+          "labels": {
+            "produce": "apple"
+          }
+        },
+        {
+          "pattern": "(?i)banana",
+          "labels": {
+            "produce": "banana"
+          }
+        },
+        {
+          "pattern": "(?i)guava",
+          "labels": {
+            "produce": "guava"
+          }
+        },
+        {
+          "pattern": "(?i)lime",
+          "labels": {
+            "produce": "lime"
+          }
+        },
+        {
+          "pattern": "(?i)orange",
+          "labels": {
+            "produce": "orange"
+          }
+        },
+        {
+          "pattern": "(?i)pomegranate",
+          "labels": {
+            "produce": "pomegranate"
+          }
+        },
+        {
+          "pattern": "(?i)(_good|good[ _]quality)",
+          "labels": {
+            "freshness": "fresh",
+            "visual_spoilage": "none"
+          }
+        },
+        {
+          "pattern": "(?i)banana_bad",
+          "labels": {
+            "freshness": "unknown",
+            "visual_spoilage": "unknown"
+          }
+        },
+        {
+          "pattern": "(?i)(_bad|bad[ _]quality)",
+          "labels": {
+            "freshness": [
+              "declining",
+              "spoiled"
+            ],
+            "visual_spoilage": [
+              "mild",
+              "severe"
+            ]
+          }
+        }
       ],
       "verified_note": "Layout checked 2026-09-27 (b6fftwbr2v-3/FruitNetDataset/{Good Quality_Fruits,Bad Quality_Fruits,Mixed Qualit_Fruits}/<Fruit>_<Good|Bad>/). Visual audit of 36 random Bad photos: mostly rot/mould, some single bruises or spots, speckled overripe bananas -> set-valued labels, banana Bad unlabelled. Mixed (several fruits per image) excluded."
     },
@@ -161,23 +508,82 @@
       "table": "metadata.csv",
       "path_column": "filename",
       "group_column": "sample",
-      "constant_labels":           {"produce": "avocado"},
-      "columns":                   {"ripeness": "ripening_index"},
-      "value_maps":                {"ripeness": {"1": "unripe", "2": "partially_ripe", "3": "ripe", "4": "ripe", "5": "overripe"}},
+      "constant_labels": {
+        "produce": "avocado"
+      },
+      "columns": {
+        "ripeness": "ripening_index"
+      },
+      "value_maps": {
+        "ripeness": {
+          "1": "unripe",
+          "2": "partially_ripe",
+          "3": "ripe",
+          "4": "ripe",
+          "5": "overripe"
+        }
+      },
       "verified_note": "Downloaded 2026-09-27 via scripts/fetch_mendeley.py (--zip); metadata.csv from the authors' xlsx by scripts/prepare_hass_avocado.py",
       "cultivar": "hass",
       "split_by_metadata_group": true
     },
     "strawberry_avocado_ripening": {
       "adapter": "path_rules",
-      "verified_against_download": false,
+      "verified_against_download": true,
+      "verified_note": "Mendeley zysvgmxcyz v1 (CC BY 4.0, authors' own photos). Class order from the paper (PMC12152553): 0-3 strawberry unripe/partially/ripe/rotten, 4-7 avocado same order. scripts/prepare_strawberry_avocado.py sorts single-class images into sorted/<class>/. Contains background-replaced copies and the same fruits over 25 days, so it is TRAIN ONLY (never val/test). Avocado cultivars are mixed -> no avocado ripeness labels; used for freshness/defects and identification.",
+      "force_split": "train",
       "rules": [
-        {"pattern": "(?i)strawberr", "labels": {"produce": "strawberry"}},
-        {"pattern": "(?i)avocado", "labels": {"produce": "avocado"}},
-        {"pattern": "(?i)rotten", "labels": {"freshness": "spoiled", "visual_spoilage": ["mild", "severe"]}},
-        {"pattern": "(?i)unripe", "labels": {"ripeness": "unripe"}},
-        {"pattern": "(?i)partial", "labels": {"ripeness": "partially_ripe"}},
-        {"pattern": "(?i)(^|/|_| )ripe", "labels": {"ripeness": "ripe"}}
+        {
+          "pattern": "(^|/)sorted/strawberry_",
+          "labels": {
+            "produce": "strawberry"
+          }
+        },
+        {
+          "pattern": "(^|/)sorted/avocado_",
+          "labels": {
+            "produce": "avocado"
+          }
+        },
+        {
+          "pattern": "(^|/)sorted/strawberry_unripe/",
+          "labels": {
+            "ripeness": "unripe"
+          }
+        },
+        {
+          "pattern": "(^|/)sorted/strawberry_partially_ripe/",
+          "labels": {
+            "ripeness": "partially_ripe"
+          }
+        },
+        {
+          "pattern": "(^|/)sorted/strawberry_ripe/",
+          "labels": {
+            "ripeness": "ripe"
+          }
+        },
+        {
+          "pattern": "(^|/)sorted/[a-z]+_(unripe|partially_ripe|ripe)/",
+          "labels": {
+            "freshness": "fresh",
+            "visual_spoilage": "none"
+          }
+        },
+        {
+          "pattern": "(^|/)sorted/[a-z]+_rotten/",
+          "labels": {
+            "freshness": "spoiled",
+            "visual_spoilage": [
+              "mild",
+              "severe"
+            ]
+          }
+        }
+      ],
+      "exclude_patterns": [
+        "^images/",
+        "^labels/"
       ]
     },
     "fruits360_original": {
@@ -185,55 +591,255 @@
       "verified_against_download": true,
       "verified_note": "Checked 2026-09-26 against 151 real class dirs (Training/Validation/Test/<Class N>/rK_N.jpg). This version has 'Avocado Black'/'Avocado Green' (NOT mapped to ripeness: skin colour depends on cultivar), 'Orange peeled' (excluded), no mandarin/kiwi/mango/watermelon/persimmon classes.",
       "default_produce": "other",
-      "exclude_patterns": ["(?i)wedge", "(?i)(^|/)[^/]*\\bcut\\b", "(?i)peeled"],
+      "exclude_patterns": [
+        "(?i)wedge",
+        "(?i)(^|/)[^/]*\\bcut\\b",
+        "(?i)peeled"
+      ],
       "max_per_group": 80,
       "group_pattern": "(?P<group>[^/]+)/[^/]+$",
       "force_split": "train",
       "rules": [
-        {"pattern": "(?i)(^|/)Avocado ripe", "labels": {"produce": "avocado", "ripeness": "ripe"}},
-        {"pattern": "(?i)(^|/)Tomato not Ripen", "labels": {"produce": "tomato", "ripeness": "unripe"}},
-        {"pattern": "(?i)(^|/)Watermelon", "labels": {"produce": "watermelon"}},
-        {"pattern": "(?i)(^|/)(Melon|Cantaloupe)", "labels": {"produce": "melon"}},
-        {"pattern": "(?i)(^|/)Apple", "labels": {"produce": "apple"}},
-        {"pattern": "(?i)(^|/)Avocado", "labels": {"produce": "avocado"}},
-        {"pattern": "(?i)(^|/)Banana", "labels": {"produce": "banana"}},
-        {"pattern": "(?i)(^|/)Cucumber", "labels": {"produce": "cucumber"}},
-        {"pattern": "(?i)(^|/)Grape(?!fruit)", "labels": {"produce": "grape"}},
-        {"pattern": "(?i)(^|/)(Kaki|Persimmon)", "labels": {"produce": "persimmon"}},
-        {"pattern": "(?i)(^|/)Kiwi", "labels": {"produce": "kiwi"}},
-        {"pattern": "(?i)(^|/)Lemon", "labels": {"produce": "lemon"}},
-        {"pattern": "(?i)(^|/)(Mandarin|Clementine|Tangelo)", "labels": {"produce": "mandarin"}},
-        {"pattern": "(?i)(^|/)Mango", "labels": {"produce": "mango"}},
-        {"pattern": "(?i)(^|/)Nectarine", "labels": {"produce": "nectarine"}},
-        {"pattern": "(?i)(^|/)Orange", "labels": {"produce": "orange"}},
-        {"pattern": "(?i)(^|/)Peach", "labels": {"produce": "peach"}},
-        {"pattern": "(?i)(^|/)Pear", "labels": {"produce": "pear"}},
-        {"pattern": "(?i)(^|/)Pepper", "labels": {"produce": "pepper"}},
-        {"pattern": "(?i)(^|/)Plum", "labels": {"produce": "plum"}},
-        {"pattern": "(?i)(^|/)Pomegranate", "labels": {"produce": "pomegranate"}},
-        {"pattern": "(?i)(^|/)Strawberry", "labels": {"produce": "strawberry"}},
-        {"pattern": "(?i)(^|/)Tomato", "labels": {"produce": "tomato"}},
-        {"pattern": "(?i)(^|/)Guava", "labels": {"produce": "guava"}}
+        {
+          "pattern": "(?i)(^|/)Avocado ripe",
+          "labels": {
+            "produce": "avocado",
+            "ripeness": "ripe"
+          }
+        },
+        {
+          "pattern": "(?i)(^|/)Tomato not Ripen",
+          "labels": {
+            "produce": "tomato",
+            "ripeness": "unripe"
+          }
+        },
+        {
+          "pattern": "(?i)(^|/)Watermelon",
+          "labels": {
+            "produce": "watermelon"
+          }
+        },
+        {
+          "pattern": "(?i)(^|/)(Melon|Cantaloupe)",
+          "labels": {
+            "produce": "melon"
+          }
+        },
+        {
+          "pattern": "(?i)(^|/)Apple",
+          "labels": {
+            "produce": "apple"
+          }
+        },
+        {
+          "pattern": "(?i)(^|/)Avocado",
+          "labels": {
+            "produce": "avocado"
+          }
+        },
+        {
+          "pattern": "(?i)(^|/)Banana",
+          "labels": {
+            "produce": "banana"
+          }
+        },
+        {
+          "pattern": "(?i)(^|/)Cucumber",
+          "labels": {
+            "produce": "cucumber"
+          }
+        },
+        {
+          "pattern": "(?i)(^|/)Grape(?!fruit)",
+          "labels": {
+            "produce": "grape"
+          }
+        },
+        {
+          "pattern": "(?i)(^|/)(Kaki|Persimmon)",
+          "labels": {
+            "produce": "persimmon"
+          }
+        },
+        {
+          "pattern": "(?i)(^|/)Kiwi",
+          "labels": {
+            "produce": "kiwi"
+          }
+        },
+        {
+          "pattern": "(?i)(^|/)Lemon",
+          "labels": {
+            "produce": "lemon"
+          }
+        },
+        {
+          "pattern": "(?i)(^|/)(Mandarin|Clementine|Tangelo)",
+          "labels": {
+            "produce": "mandarin"
+          }
+        },
+        {
+          "pattern": "(?i)(^|/)Mango",
+          "labels": {
+            "produce": "mango"
+          }
+        },
+        {
+          "pattern": "(?i)(^|/)Nectarine",
+          "labels": {
+            "produce": "nectarine"
+          }
+        },
+        {
+          "pattern": "(?i)(^|/)Orange",
+          "labels": {
+            "produce": "orange"
+          }
+        },
+        {
+          "pattern": "(?i)(^|/)Peach",
+          "labels": {
+            "produce": "peach"
+          }
+        },
+        {
+          "pattern": "(?i)(^|/)Pear",
+          "labels": {
+            "produce": "pear"
+          }
+        },
+        {
+          "pattern": "(?i)(^|/)Pepper",
+          "labels": {
+            "produce": "pepper"
+          }
+        },
+        {
+          "pattern": "(?i)(^|/)Plum",
+          "labels": {
+            "produce": "plum"
+          }
+        },
+        {
+          "pattern": "(?i)(^|/)Pomegranate",
+          "labels": {
+            "produce": "pomegranate"
+          }
+        },
+        {
+          "pattern": "(?i)(^|/)Strawberry",
+          "labels": {
+            "produce": "strawberry"
+          }
+        },
+        {
+          "pattern": "(?i)(^|/)Tomato",
+          "labels": {
+            "produce": "tomato"
+          }
+        },
+        {
+          "pattern": "(?i)(^|/)Guava",
+          "labels": {
+            "produce": "guava"
+          }
+        }
       ]
     },
     "fruq_db": {
       "adapter": "path_rules",
       "verified_against_download": false,
       "rules": [
-        {"pattern": "(?i)banana", "labels": {"produce": "banana"}},
-        {"pattern": "(?i)cucumber", "labels": {"produce": "cucumber"}},
-        {"pattern": "(?i)grape", "labels": {"produce": "grape"}},
-        {"pattern": "(?i)kaki", "labels": {"produce": "persimmon"}},
-        {"pattern": "(?i)papaya", "labels": {"produce": "other"}},
-        {"pattern": "(?i)peach", "labels": {"produce": "peach"}},
-        {"pattern": "(?i)pear", "labels": {"produce": "pear"}},
-        {"pattern": "(?i)pepper", "labels": {"produce": "pepper"}},
-        {"pattern": "(?i)strawberr", "labels": {"produce": "strawberry"}},
-        {"pattern": "(?i)tomato", "labels": {"produce": "tomato"}},
-        {"pattern": "(?i)watermelon", "labels": {"produce": "watermelon"}},
-        {"pattern": "(?i)good", "labels": {"freshness": "fresh"}},
-        {"pattern": "(?i)mild", "labels": {"freshness": "declining"}},
-        {"pattern": "(?i)rotten", "labels": {"freshness": "spoiled", "visual_spoilage": ["mild", "severe"]}}
+        {
+          "pattern": "(?i)banana",
+          "labels": {
+            "produce": "banana"
+          }
+        },
+        {
+          "pattern": "(?i)cucumber",
+          "labels": {
+            "produce": "cucumber"
+          }
+        },
+        {
+          "pattern": "(?i)grape",
+          "labels": {
+            "produce": "grape"
+          }
+        },
+        {
+          "pattern": "(?i)kaki",
+          "labels": {
+            "produce": "persimmon"
+          }
+        },
+        {
+          "pattern": "(?i)papaya",
+          "labels": {
+            "produce": "other"
+          }
+        },
+        {
+          "pattern": "(?i)peach",
+          "labels": {
+            "produce": "peach"
+          }
+        },
+        {
+          "pattern": "(?i)pear",
+          "labels": {
+            "produce": "pear"
+          }
+        },
+        {
+          "pattern": "(?i)pepper",
+          "labels": {
+            "produce": "pepper"
+          }
+        },
+        {
+          "pattern": "(?i)strawberr",
+          "labels": {
+            "produce": "strawberry"
+          }
+        },
+        {
+          "pattern": "(?i)tomato",
+          "labels": {
+            "produce": "tomato"
+          }
+        },
+        {
+          "pattern": "(?i)watermelon",
+          "labels": {
+            "produce": "watermelon"
+          }
+        },
+        {
+          "pattern": "(?i)good",
+          "labels": {
+            "freshness": "fresh"
+          }
+        },
+        {
+          "pattern": "(?i)mild",
+          "labels": {
+            "freshness": "declining"
+          }
+        },
+        {
+          "pattern": "(?i)rotten",
+          "labels": {
+            "freshness": "spoiled",
+            "visual_spoilage": [
+              "mild",
+              "severe"
+            ]
+          }
+        }
       ]
     },
     "open_images_v7": {
@@ -244,7 +850,9 @@
       "path_column": "path",
       "group_column": "image_id",
       "split_column": "split",
-      "columns":                   {"produce": "class_name"},
+      "columns": {
+        "produce": "class_name"
+      },
       "value_maps": {
         "produce": {
           "Apple": "apple",
@@ -313,8 +921,13 @@
       "table": "metadata.csv",
       "path_column": "filename",
       "group_column": "group",
-      "constant_labels":           {"produce": "lemon"},
-      "columns":                   {"visual_spoilage": "visual_spoilage", "freshness": "freshness"},
+      "constant_labels": {
+        "produce": "lemon"
+      },
+      "columns": {
+        "visual_spoilage": "visual_spoilage",
+        "freshness": "freshness"
+      },
       "split_by_metadata_group": true
     },
     "bananas_psolymos": {
@@ -324,8 +937,12 @@
       "table": "metadata.csv",
       "path_column": "filename",
       "group_column": "fruit",
-      "constant_labels":           {"produce": "banana"},
-      "columns":                   {"ripeness": "ripeness"},
+      "constant_labels": {
+        "produce": "banana"
+      },
+      "columns": {
+        "ripeness": "ripeness"
+      },
       "split_by_metadata_group": true
     },
     "apple_good_bad": {
@@ -335,8 +952,26 @@
       "default_produce": "apple",
       "group_pattern": "/(?P<group>[^/]+?)(-[A-Za-z0-9]{6})?\\.(jpe?g|png)$",
       "rules": [
-        {"pattern": "/Good ?/", "labels": {"freshness": "fresh", "visual_spoilage": "none"}},
-        {"pattern": "/Bad/", "labels": {"freshness": ["declining", "spoiled"], "visual_spoilage": ["mild", "severe"]}}
+        {
+          "pattern": "/Good ?/",
+          "labels": {
+            "freshness": "fresh",
+            "visual_spoilage": "none"
+          }
+        },
+        {
+          "pattern": "/Bad/",
+          "labels": {
+            "freshness": [
+              "declining",
+              "spoiled"
+            ],
+            "visual_spoilage": [
+              "mild",
+              "severe"
+            ]
+          }
+        }
       ],
       "split_by_metadata_group": true
     },
@@ -348,25 +983,89 @@
       "split_by_metadata_group": true,
       "group_pattern": "(?P<group>IMG_\\d{8}_\\d{6})",
       "rules": [
-        {"pattern": "_fresh/", "labels": {"freshness": "fresh", "visual_spoilage": "none"}},
-        {"pattern": "_rotten/", "labels": {"freshness": "spoiled"}}
+        {
+          "pattern": "_fresh/",
+          "labels": {
+            "freshness": "fresh",
+            "visual_spoilage": "none"
+          }
+        },
+        {
+          "pattern": "_rotten/",
+          "labels": {
+            "freshness": "spoiled"
+          }
+        }
       ]
     },
     "fresh_rotten_mendeley_bd": {
       "adapter": "path_rules",
       "verified_against_download": true,
       "verified_note": "Layout checked 2026-09-27: bdd69gyhv8-1/{Original Image,Augmented Image}/<...>/<Fresh|Rotten><Fruit>/. Originals only (augmented = copies). Fresh/rotten graded by a domain expert (dataset method). Jujube not in taxonomy. Visual audit: rotten = clear rot/mould/collapse.",
-      "exclude_patterns": ["Augmented Image", "Jujube"],
+      "exclude_patterns": [
+        "Augmented Image",
+        "Jujube"
+      ],
       "rules": [
-        {"pattern": "/(Fresh|Rotten)Apple/", "labels": {"produce": "apple"}},
-        {"pattern": "/(Fresh|Rotten)Banana/", "labels": {"produce": "banana"}},
-        {"pattern": "/(Fresh|Rotten)Grape/", "labels": {"produce": "grape"}},
-        {"pattern": "/(Fresh|Rotten)Guava/", "labels": {"produce": "guava"}},
-        {"pattern": "/(Fresh|Rotten)Orange/", "labels": {"produce": "orange"}},
-        {"pattern": "/(Fresh|Rotten)Pomegranate/", "labels": {"produce": "pomegranate"}},
-        {"pattern": "/(Fresh|Rotten)Strawberry/", "labels": {"produce": "strawberry"}},
-        {"pattern": "/Fresh[A-Z]", "labels": {"freshness": "fresh", "visual_spoilage": "none"}},
-        {"pattern": "/Rotten[A-Z]", "labels": {"freshness": "spoiled", "visual_spoilage": ["mild", "severe"]}}
+        {
+          "pattern": "/(Fresh|Rotten)Apple/",
+          "labels": {
+            "produce": "apple"
+          }
+        },
+        {
+          "pattern": "/(Fresh|Rotten)Banana/",
+          "labels": {
+            "produce": "banana"
+          }
+        },
+        {
+          "pattern": "/(Fresh|Rotten)Grape/",
+          "labels": {
+            "produce": "grape"
+          }
+        },
+        {
+          "pattern": "/(Fresh|Rotten)Guava/",
+          "labels": {
+            "produce": "guava"
+          }
+        },
+        {
+          "pattern": "/(Fresh|Rotten)Orange/",
+          "labels": {
+            "produce": "orange"
+          }
+        },
+        {
+          "pattern": "/(Fresh|Rotten)Pomegranate/",
+          "labels": {
+            "produce": "pomegranate"
+          }
+        },
+        {
+          "pattern": "/(Fresh|Rotten)Strawberry/",
+          "labels": {
+            "produce": "strawberry"
+          }
+        },
+        {
+          "pattern": "/Fresh[A-Z]",
+          "labels": {
+            "freshness": "fresh",
+            "visual_spoilage": "none"
+          }
+        },
+        {
+          "pattern": "/Rotten[A-Z]",
+          "labels": {
+            "freshness": "spoiled",
+            "visual_spoilage": [
+              "mild",
+              "severe"
+            ]
+          }
+        }
       ]
     },
     "mango_banana_ripe": {
@@ -376,10 +1075,66 @@
       "split_by_metadata_group": true,
       "group_pattern": "(?P<group>(?<=\\.[0-9a-f]{8}-)[0-9a-f]{4}|(?<=/)[A-Za-z]+_[A-Za-z]+\\d+(?=_\\d))",
       "rules": [
-        {"pattern": "/Raw_Banana", "labels": {"produce": "banana", "ripeness": "unripe"}},
-        {"pattern": "/Ripe_Banana", "labels": {"produce": "banana", "ripeness": "ripe"}},
-        {"pattern": "/Raw_Mango", "labels": {"produce": "mango", "ripeness": "unripe"}},
-        {"pattern": "/Ripe_Mango", "labels": {"produce": "mango", "ripeness": "ripe"}}
+        {
+          "pattern": "/Raw_Banana",
+          "labels": {
+            "produce": "banana",
+            "ripeness": "unripe"
+          }
+        },
+        {
+          "pattern": "/Ripe_Banana",
+          "labels": {
+            "produce": "banana",
+            "ripeness": "ripe"
+          }
+        },
+        {
+          "pattern": "/Raw_Mango",
+          "labels": {
+            "produce": "mango",
+            "ripeness": "unripe"
+          }
+        },
+        {
+          "pattern": "/Ripe_Mango",
+          "labels": {
+            "produce": "mango",
+            "ripeness": "ripe"
+          }
+        }
+      ]
+    },
+    "mango_ripening_mm8": {
+      "adapter": "path_rules",
+      "verified_against_download": true,
+      "verified_note": "Mendeley mm8g66d7rc v1 (CC BY 4.0). 4 rar archives Stage_0..3 extracted with unar into x/<Stage>/{Training,Test}/ (2 truncated files skipped). Single mango on white paper, one Indian cultivar (unknown) -> ripeness labels kept but mango ripeness stays vetoed. Used to improve mango identification. TRAIN ONLY: the same fruits may repeat across the authors' Training/Test.",
+      "force_split": "train",
+      "rules": [
+        {
+          "pattern": "(^|/)Stage_",
+          "labels": {
+            "produce": "mango"
+          }
+        },
+        {
+          "pattern": "(^|/)Stage_0",
+          "labels": {
+            "ripeness": "unripe"
+          }
+        },
+        {
+          "pattern": "(^|/)Stage_(1|2)",
+          "labels": {
+            "ripeness": "partially_ripe"
+          }
+        },
+        {
+          "pattern": "(^|/)Stage_3",
+          "labels": {
+            "ripeness": "ripe"
+          }
+        }
       ]
     }
   }
