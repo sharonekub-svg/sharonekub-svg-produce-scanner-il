@@ -9,6 +9,11 @@ rm -rf dist
 npx expo export --platform web > /dev/null
 OUT="$ROOT/server/web/preview"
 rm -rf "$OUT" && cp -R dist "$OUT" && rm -rf dist
+# Vercel drops any folder named node_modules from the deployment: move the dependency icons and fix the references.
+if [ -d "$OUT/assets/node_modules" ]; then
+  mv "$OUT/assets/node_modules" "$OUT/assets/_deps"
+  grep -rl '/assets/node_modules/' "$OUT/_expo" | xargs -r sed -i 's#/assets/node_modules/#/assets/_deps/#g'
+fi
 python3 - "$OUT/index.html" <<'PY'
 import sys
 p = sys.argv[1]; s = open(p, encoding="utf-8").read()

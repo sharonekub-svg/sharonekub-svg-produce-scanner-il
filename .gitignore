@@ -8,5 +8,3 @@ exports/
 node_modules/
 runs/
 runs_*.log
-# app web preview build (scripts/build_app_preview.sh) ships icons from its dependencies
-!server/web/preview/assets/node_modules/
