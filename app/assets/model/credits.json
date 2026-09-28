@@ -1,5 +1,5 @@
 {
-  "model_id": "p5_c11_more_data@148a9ebb894c",
+  "model_id": "p5_c12_fresh_spoiled@c86ba17966d0",
   "datasets": [
     {
       "dataset_id": "apple_good_bad",
@@ -21,6 +21,13 @@
       "license": "CC BY 4.0",
       "url": "https://data.mendeley.com/datasets/bdd69gyhv8/1",
       "attribution": "Data in Brief 2022 (Bangladesh)"
+    },
+    {
+      "dataset_id": "fruit_inspection_6ps",
+      "name": "Spoiled and fresh fruit inspection dataset",
+      "license": "CC BY 4.0",
+      "url": "https://data.mendeley.com/datasets/6ps7gtp2wg/1",
+      "attribution": "Pachon Suescun, Pinzon Arenas, Jimenez-Moreno (Colombia)"
     },
     {
       "dataset_id": "fruitnet_indian",
@@ -56,6 +63,13 @@
       "license": "MIT",
       "url": "https://github.com/softwaremill/lemon-dataset",
       "attribution": "SoftwareMill (Maciej Adamiak); DOI 10.5281/zenodo.3965568"
+    },
+    {
+      "dataset_id": "lemon_varieties",
+      "name": "LemonVarities: rotten and multiple types fresh lemon",
+      "license": "CC BY 4.0",
+      "url": "https://data.mendeley.com/datasets/mygrsk3vyb/2",
+      "attribution": "Mujahidul Islam"
     },
     {
       "dataset_id": "mango_banana_ripe",

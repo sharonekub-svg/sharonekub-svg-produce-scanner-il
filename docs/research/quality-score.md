@@ -34,6 +34,6 @@ Rendered (synthetic head outputs; ![](../img/ux/score_good.jpg) good · ![](../i
 
 A quality head is switched on for a produce type only when training has enough **exactly labelled** examples: at least 200, with at least 2 classes of at least 50 each (`supported_heads_from_manifest`). Ripeness is also vetoed where it isn't visible. The release gates then check the head on held-out photos.
 
-**Status 28 Sep 2026, `v0.6-dev`:** scores are live for **apple, banana (ripeness), grapes, orange, pomegranate, guava and avocado (ripeness, 72.4%)**. Strawberry (too few test photos) and lemon failed the held-out gate, so they show no score. Lemon is at 83% against the 85% bar. See results.md, round 4.
+**Status 28 Sep 2026, `v0.7-dev`:** scores are live for **apple, banana (ripeness + freshness), grapes, orange, pomegranate, guava, avocado (ripeness), strawberry and lemon**. Strawberry and lemon pass the held-out gate for the first time; their test photos come from the same kind of phone photos as training (fruit_inspection_6ps, lemon sets), so real Israeli photos are still needed to confirm. Tomato (1 fresh test photo) and mango freshness (no test photos) show no score. See results.md, round 5.
 
 More types switch on as training data arrives (see [dataset-search-2026-09.md](dataset-search-2026-09.md) and the data-collection protocol). No code change is needed: retraining writes `supported_heads`, `scripts/gate_quality_heads.py` keeps only the types that pass on held-out photos, and the score appears for each one.

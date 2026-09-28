@@ -54,11 +54,14 @@ def main() -> None:
     if args.limit:
         rows = sorted(rows, key=lambda r: r["sha256"])[: args.limit]
     tf = build_eval_transform(cfg)
-    X = np.stack([tf(load_rgb(args.processed / r["image"])).numpy() for r in rows])
     y = np.array([tax.produce.index(r["labels"]["produce"]) for r in rows])
+
+    def batches():  # stream images in batches: the full test split no longer fits in memory at once
+        for i in range(0, len(rows), 64):
+            yield np.stack([tf(load_rgb(args.processed / r["image"])).numpy() for r in rows[i:i + 64]])
     torch.set_num_threads(args.threads)
     with torch.inference_mode():
-        ref = np.concatenate([net(torch.from_numpy(X[i:i + 64]))["produce"].numpy() for i in range(0, len(X), 64)])
+        ref = np.concatenate([net(torch.from_numpy(xb))["produce"].numpy() for xb in batches()])
     opts = ort.SessionOptions()
     opts.intra_op_num_threads = args.threads
     report = {"n": len(rows), "splits": args.splits, "variants": {}}
@@ -67,7 +70,7 @@ def main() -> None:
         if not p.exists():
             continue
         sess = ort.InferenceSession(str(p), opts, providers=["CPUExecutionProvider"])
-        out = np.concatenate([sess.run(None, {"image": X[i:i + 1]})[0] for i in range(len(X))])
+        out = np.concatenate([sess.run(None, {"image": xb[j:j + 1]})[0] for xb in batches() for j in range(len(xb))])
         probs = calibration.softmax(out, temps.get("produce", 1.0))
         s = metrics.summarize(probs, y, list(tax.produce))
         report["variants"][name] = {

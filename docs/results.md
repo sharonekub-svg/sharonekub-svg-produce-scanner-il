@@ -304,6 +304,40 @@ Manifest v6. The Grocery test is unchanged. About 3% of the fresh/rotten and Fru
 
 Released as **`v0.6-dev`** (`p5_c11_more_data@148a9ebb894c`). The same 7 fruit types have scores, now more accurate.
 
+## Round 5: C12 → `v0.7-dev` (28 Sep 2026)
+
+**New data** (both CC BY 4.0, checked via the Mendeley API; manifest v7):
+- `fruit_inspection_6ps` (6ps7gtp2wg): 12,000 phone photos on kitchen surfaces, fresh vs non-fresh for strawberry, tomato, orange, lime (Colombian "limón"), mango and banana. Split by fruit (blocks of 100 consecutive shots), so it adds held-out test photos. Lulo and tamarillo excluded. A visual audit found fresh and spoiled photos share the same backgrounds, so there is no background shortcut; the spoilage in it is obvious, which makes this test easy.
+- `lemon_varieties` (mygrsk3vyb): 1,956 original lemon photos (fresh / rotten), quality-only aux.
+
+**Per-fruit quality gate** (balanced accuracy on the v7 test, C11 → C12):
+
+| Fruit | Head | C11 | C12 | Gate |
+|---|---|---|---|---|
+| Strawberry | freshness | 0.576 | **1.000** | pass (new) |
+| Lemon | freshness | 0.916 | **0.944** | pass (new) |
+| Lemon | visual spoilage | 0.833 | **0.915** | pass (new) |
+| Banana | freshness | 0.831 | **1.000** | pass (new) |
+| Orange | freshness | 0.812 | **0.982** | pass |
+| Grapes | freshness | 0.931 | **0.980** | pass |
+| Apple | freshness | 0.989 | 0.985 | pass |
+| Pomegranate | freshness | 0.992 | 0.983 | pass |
+| Guava | freshness | 0.980 | 0.953 | pass |
+| Avocado | ripeness (exact) | 0.717 | 0.710 | pass |
+| Tomato | freshness | 0.789 | 1.000 | **fail**: only 1 fresh test photo |
+| Mango | freshness | – | – | **fail**: no test photos |
+
+Lime passes but stays off (held-out look-alike class in the OOD test, as before).
+
+**Identification got slightly worse.** Threshold chosen on Grocery-**val** with the same rule (smallest value with accuracy ≥ 0.9936): **0.98** (val 0.9947, 374 of 461 shown). On Grocery test (confidence + margin, photo-quality gate on):
+
+| Model | Threshold | Shown | Accuracy when shown |
+|---|---|---|---|
+| C11 | 0.97 (same rule on v7) | 50.2% | 98.3% |
+| C12 | 0.98 | 47.4% | 97.5% |
+
+Released as **`v0.7-dev`** because the quality gains are large (strawberry, lemon and banana freshness get scores; orange and grapes much more accurate), at the cost of about 3 points fewer identifications shown and 0.8 points lower accuracy when shown on Grocery. The Grocery-only identification recall gates still fail (lemon recall 0.55, n = 11), so it stays a dev build. On all test photos (release gates), produce macro-F1 rose 0.557 → 0.589 and recall improved for orange (0.46 → 0.72), mango (0.19 → 0.50), lime and banana, but fell for mandarin (0.57 → 0.40) and avocado (0.66 → 0.52), partly because of the stricter threshold.
+
 ## Phase 5 — validation (stress proxies on the P3 model, Grocery official test, n = 1,704)
 
 The Israeli real-world set does not exist yet. These are **synthetic proxies** (`ml/evaluation/evaluate.py --stress`), not a substitute for it.
