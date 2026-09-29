@@ -19,3 +19,20 @@ test('unsure result, then the user picks the fruit: assessed as that fruit and m
   expect(r.chosen_by_user).toBe(true);
   expect(r.score).not.toBeNull();
 });
+
+test('a type without a verified head gets a general fresh-vs-spoiled score, marked as general', () => {
+  const sup = { ...b.supported_heads, mango: ['freshness~general'] };
+  const bb = { ...b, supported_heads: sup, thresholds: { ...b.thresholds, produce_min_prob: 0.5 } };
+  const n = b.outputs.produce.length;
+  const produce = Array(n).fill(0.001); produce[b.outputs.produce.indexOf('mango')] = 1 - 0.001 * (n - 1);
+  const base = { produce, ripeness: flat(b.outputs.ripeness.length), freshness: flat(3), visual_spoilage: flat(3) };
+  const bad = decide(bb, { ...base, freshness_general: Array(n).fill(0.9) } as any);
+  expect(bad.status).toBe('ok');
+  expect(bad.general_score).toBe(true);
+  expect(bad.freshness?.label).toBe('not_fresh');
+  expect(bad.score).toBe(4);
+  const good = decide(bb, { ...base, freshness_general: Array(n).fill(0.05) } as any);
+  expect(good.score).toBe(10);
+  expect(good.general_score).toBe(true);
+  expect(decide(bb, base as any).score).toBeNull(); // old server without the general head: no score, as before
+});

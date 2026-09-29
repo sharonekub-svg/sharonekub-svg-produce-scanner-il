@@ -6,7 +6,7 @@ import { useState } from 'react';
 import { Image, Pressable, ScrollView, Share, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { STORAGE_TIP_HE, TOUCH_HE, confidenceWord, surfaceHe, verdictHe } from '../model/advice';
+import { STORAGE_TIP_HE, TOUCH_HE, confidenceWord, stageUseHe, surfaceHe, verdictHe } from '../model/advice';
 import { decide } from '../model/decision';
 import { type ScanOutput, getBundle } from '../model/engine';
 import { addToHistory } from '../history';
@@ -114,6 +114,7 @@ export default function ResultScreen() {
   const assessed = ok && Boolean(r.ripeness?.available || r.freshness?.available || r.visual_spoilage?.available);
   const tone = r.recommendation ? REC_TONE[r.recommendation] : undefined;
   const tip = ok && r.produce && r.recommendation !== 'discard' && r.recommendation !== 'check_defects' ? STORAGE_TIP_HE[r.produce] : undefined;
+  const stageUse = ok && r.ripeness?.available && r.recommendation !== 'discard' ? stageUseHe(r.produce, r.ripeness.label) : null;
   const statusHead = STATUS_HEAD[r.status];
 
   return (
@@ -152,6 +153,9 @@ export default function ResultScreen() {
                   <View style={[styles.stagePill, { backgroundColor: scoreTone(r.score).bg }]}>
                     <Text style={[styles.stageText, { color: scoreTone(r.score).fg }]}>{verdictHe(r.score)}</Text>
                   </View>
+                  {r.general_score ? (
+                    <View style={styles.generalPill}><Text style={styles.generalText}>{he.generalScore}</Text></View>
+                  ) : null}
                 </View>
                 <View style={styles.meter}><View style={[styles.meterFill, { width: `${r.score * 10}%`, backgroundColor: scoreTone(r.score).fg }]} /></View>
                 <Text style={styles.body}>{r.score_reason_he}</Text>
@@ -175,6 +179,13 @@ export default function ResultScreen() {
                 {r.produce && TOUCH_HE[r.produce] ? (
                   <Row icon="✋" title={he.touch} value={TOUCH_HE[r.produce]} bg="#EFE8DA" note={he.touchNote} />
                 ) : null}
+              </View>
+            ) : null}
+
+            {stageUse ? (
+              <View style={styles.tip}>
+                <Text style={styles.tipTitle}>🍽️ {he.stageUse}</Text>
+                <Text style={styles.body}>{stageUse}</Text>
               </View>
             ) : null}
 
@@ -309,6 +320,8 @@ const styles = StyleSheet.create({
   fruitEmoji: { fontSize: 26 },
   scoreBlock: { gap: 10 },
   stagePill: { borderRadius: 12, paddingHorizontal: 12, paddingVertical: 4 },
+  generalPill: { borderRadius: 12, paddingHorizontal: 10, paddingVertical: 4, borderWidth: 1, borderColor: '#C9C2B2' },
+  generalText: { fontSize: 12, fontWeight: '700', color: '#6b6b66' },
   stageText: { fontSize: 14, fontWeight: '800' },
   meter: { height: 8, borderRadius: 4, backgroundColor: '#EFE8DA', overflow: 'hidden' },
   meterFill: { height: '100%', borderRadius: 4 },

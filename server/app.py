@@ -79,6 +79,9 @@ class Engine:
             out = {"produce": np.concatenate([e @ hd["produce_W"].T + hd["produce_b"][:-1], [other]]).astype(np.float32)}
             for h in ("ripeness", "freshness", "visual_spoilage"):
                 out[h] = (e @ hd[f"{h}_W"].T + hd[f"{h}_b"]).astype(np.float32)
+            if "general_ab" in hd:  # general rotten-vs-fresh logit per produce type (types without a verified head)
+                a, b = hd["general_ab"]
+                out["freshness_general"] = (a * (hd["general_bad_W"] @ e - hd["general_fresh_W"] @ e) + b).astype(np.float32)
             return out
         outs = self.sess.run(None, {"image": self.preprocess(img)})
         return {h: o[0] for h, o in zip(self.bundle["outputs"].keys(), outs)}
@@ -214,6 +217,8 @@ def _probs(e, img) -> tuple[dict, float, str | None]:
     lg = e.logits(img)
     temps = e.bundle.get("temperatures", {})
     probs = {h: softmax(lg[h][None], temps.get(h, 1.0))[0] for h in HEADS}
+    if "freshness_general" in lg:
+        probs["freshness_general"] = 1.0 / (1.0 + np.exp(-lg["freshness_general"]))
     return probs, float(energy(lg["produce"][None])[0]), q.reason
 
 

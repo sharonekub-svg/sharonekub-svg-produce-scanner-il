@@ -1,8 +1,8 @@
 {
  "bundle_version": 2,
  "backbone": "siglip2",
- "model_id": "siglip2_v0.8-dev@c36e90f7495a",
- "created_at": "2026-09-29T13:34:01.105205+00:00",
+ "model_id": "siglip2_v0.8.1@0b622e80a099",
+ "created_at": "2026-09-29T17:01:36.818410+00:00",
  "input": {
   "size": 224,
   "layout": "NCHW",
@@ -118,6 +118,64 @@
   "lemon": [
    "freshness",
    "visual_spoilage~coarse"
+  ],
+  "lime": [
+   "freshness~coarse",
+   "visual_spoilage~coarse"
+  ],
+  "mandarin": [
+   "freshness~general"
+  ],
+  "avocado": [
+   "freshness~general"
+  ],
+  "tomato": [
+   "freshness~general"
+  ],
+  "cucumber": [
+   "freshness~general"
+  ],
+  "mango": [
+   "freshness~general"
+  ],
+  "peach": [
+   "freshness~general"
+  ],
+  "nectarine": [
+   "freshness~general"
+  ],
+  "watermelon": [
+   "freshness~general"
+  ],
+  "melon": [
+   "freshness~general"
+  ],
+  "pear": [
+   "freshness~general"
+  ],
+  "kiwi": [
+   "freshness~general"
+  ],
+  "plum": [
+   "freshness~general"
+  ],
+  "persimmon": [
+   "freshness~general"
+  ],
+  "pepper": [
+   "freshness~general"
+  ],
+  "grapefruit": [
+   "freshness~general"
+  ],
+  "zucchini": [
+   "freshness~general"
+  ],
+  "potato": [
+   "freshness~general"
+  ],
+  "passion_fruit": [
+   "freshness~general"
   ]
  },
  "produce_meta": {
@@ -281,8 +339,8 @@
    "he": "ליים",
    "emoji": "🟢",
    "priority": "-",
-   "is_negative_class": true,
-   "note": "named negative (lemon lookalike)",
+   "is_negative_class": false,
+   "note": "supported since v0.8 (SigLIP2 identifies it); was a named negative for the v0.7 CNN",
    "ripeness_visual": "not_applicable"
   },
   "grapefruit": {
@@ -290,8 +348,8 @@
    "he": "אשכולית",
    "emoji": "🟠",
    "priority": "-",
-   "is_negative_class": true,
-   "note": "named negative (orange lookalike)",
+   "is_negative_class": false,
+   "note": "supported since v0.8 (SigLIP2 identifies it); was a named negative for the v0.7 CNN",
    "ripeness_visual": "not_applicable"
   },
   "zucchini": {
@@ -299,8 +357,8 @@
    "he": "קישוא",
    "emoji": "🥒",
    "priority": "-",
-   "is_negative_class": true,
-   "note": "named negative (cucumber lookalike)",
+   "is_negative_class": false,
+   "note": "supported since v0.8 (SigLIP2 identifies it); was a named negative for the v0.7 CNN",
    "ripeness_visual": "not_applicable"
   },
   "potato": {
@@ -308,8 +366,8 @@
    "he": "תפוח אדמה",
    "emoji": "🥔",
    "priority": "-",
-   "is_negative_class": true,
-   "note": "named negative (kiwi lookalike)",
+   "is_negative_class": false,
+   "note": "supported since v0.8 (SigLIP2 identifies it); was a named negative for the v0.7 CNN",
    "ripeness_visual": "not_applicable"
   },
   "passion_fruit": {
@@ -317,8 +375,8 @@
    "he": "פסיפלורה",
    "emoji": "🟣",
    "priority": "-",
-   "is_negative_class": true,
-   "note": "named negative (plum/avocado lookalike)",
+   "is_negative_class": false,
+   "note": "supported since v0.8 (SigLIP2 identifies it); was a named negative for the v0.7 CNN",
    "ripeness_visual": "not_applicable"
   },
   "other": {
@@ -374,7 +432,7 @@
    "sha256": "843945c3ddaaad33f363201558f537eadbdab7cbc4060f2532f9cf1536114718"
   },
   "heads.npz": {
-   "sha256": "77ecf1f06659edda1eaa0c450488cee329c48d2c9f4aa3ac073ea24624642745"
+   "sha256": "395faaaef38bc28787c0e5ed3d82f8cba09a9c813bc16e97eb20f38cddd46849"
   }
  }
 }

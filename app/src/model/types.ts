@@ -35,7 +35,7 @@ export interface Bundle {
 }
 
 export type Logits = Record<Head, number[]>;
-export type Probs = Partial<Record<Head, number[]>>;
+export type Probs = Partial<Record<Head, number[]>> & { freshness_general?: number[] };
 
 export interface QualityStats {
   ok: boolean;
@@ -71,5 +71,7 @@ export interface ScanResult {
   score_reason_he: string | null;
   /** True when the user picked the fruit after an unsure result (identification not from the model). */
   chosen_by_user?: boolean;
+  /** Score from the general fresh-vs-spoiled model (this type has no verified per-fruit head). */
+  general_score?: boolean;
   disclaimer_he: string;
 }

@@ -27,7 +27,7 @@ import yaml
 from ml.common.taxonomy import HEADS, load_taxonomy
 from ml.evaluation import calibration, metrics
 from ml.evaluation.evaluate import quality_by_produce
-from ml.siglip.features import NAMES, text_embeddings
+from ml.siglip.features import NAMES, fresh_text_embeddings, text_embeddings
 from ml.training.dataset import label_mask
 
 torch.manual_seed(0)
@@ -159,6 +159,33 @@ def main() -> None:
                 bestq = (vacc, wd, W, b)
         heads[f"{h}_W"] = (10.0 * bestq[2]).astype(np.float32)
         heads[f"{h}_b"] = bestq[3].astype(np.float32)
+
+    # ---- general fresh-vs-spoiled for every produce type (zero-shot prompts + one global scale/bias) ----
+    ft = args.out.parent / "fresh_zs_text.npz"
+    if ft.exists():
+        z2 = np.load(ft)
+        GF, GB = z2["fresh"], z2["bad"]
+    else:
+        GF, GB = fresh_text_embeddings()
+        np.savez(ft, fresh=GF, bad=GB)
+    fm = M["freshness"]
+    fi = tax.heads["freshness"].index("fresh")
+    pid = M["produce"].argmax(1)
+    gl = tr & (M["produce"].sum(1) == 1) & (pid < len(NAMES)) & (fm.sum(1) > 0) & ~((fm.sum(1) > 1) & fm[:, fi])
+    pc = pid.clip(max=len(NAMES) - 1)
+    zsl = 50.0 * ((X * GB[pc]).sum(1) - (X * GF[pc]).sum(1))
+    yb = torch.tensor(~fm[gl][:, fi], dtype=torch.float32)
+    a_, b_ = torch.ones(1, requires_grad=True), torch.zeros(1, requires_grad=True)
+    opt = torch.optim.Adam([a_, b_], lr=0.05)
+    zt = torch.tensor(zsl[gl], dtype=torch.float32)
+    for _ in range(400):
+        opt.zero_grad()
+        torch.nn.functional.binary_cross_entropy_with_logits(a_ * zt + b_, yb).backward()
+        opt.step()
+    heads["general_fresh_W"] = GF.astype(np.float32)
+    heads["general_bad_W"] = GB.astype(np.float32)
+    heads["general_ab"] = np.array([50.0 * float(a_), float(b_)], np.float32)
+    print(f"general freshness: scale {50.0 * float(a_):.2f} bias {float(b_):.3f} (fit on {int(gl.sum())} train rows)")
 
     def all_logits(Xn):
         out = {"produce": produce_logits(Xn, heads["produce_W"] / SCALE, heads["produce_b"])}

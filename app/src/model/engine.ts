@@ -71,11 +71,13 @@ export async function scan(uri: string, previous?: ScanOutput): Promise<ScanOutp
     ? await native!.analyze(uri, bundle.input.size, bundle.input.resize_ratio, bundle.input.mean, bundle.input.std)
     : await remoteAnalyze(uri);
   let probs: Record<string, number[]> = Object.fromEntries(HEADS.map((h) => [h, softmax(logits[h], bundle.temperatures[h] ?? 1)]));
+  const general = (logits as Record<string, number[] | undefined>).freshness_general; // P(spoiled) per produce type (v0.8+)
   let e = energy(logits.produce);
   if (previous && !quality.reason) {
     probs = Object.fromEntries(HEADS.map((h) => [h, combineProbs(previous.probs[h], probs[h])]));
     e = Math.max(e, previous.energy);
   }
+  if (general) probs.freshness_general = general.map((l) => 1 / (1 + Math.exp(-l)));
   const result = decide(bundle, probs, quality.reason, e);
   const top3 = probs.produce
     .map((p, i) => ({ produce: bundle.outputs.produce[i], he: bundle.produce_meta[bundle.outputs.produce[i]].he, prob: p }))

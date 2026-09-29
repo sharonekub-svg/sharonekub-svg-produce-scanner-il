@@ -78,6 +78,7 @@ const SCORE_REASON_HE: Record<string, string> = {
   unripe: 'עדיין לא בשל – יהיה טעים יותר בעוד כמה ימים.',
   overripe: 'בשל מאוד – לאכול היום או להשתמש לאפייה.',
 };
+const GENERAL_SCORE_HE = 'ציון כללי: לסוג הזה עוד אין בדיקת דיוק משלו, לכן ההערכה (טרי / לא טרי) פחות מדויקת.';
 const LOW_CONF_SCORE_HE = 'לא ניתן לדרג בביטחון מהתמונה הזו – נסו לצלם מקרוב ובאור טוב.';
 const NO_SCORE_HE = 'עדיין אין דירוג איכות לסוג הזה – המודל מזהה אותו אבל עוד לא אומן להעריך את מצבו.';
 
@@ -151,7 +152,16 @@ export function decide(bundle: Bundle, probs: Probs, qualityReason: string | nul
 function assess(bundle: Bundle, probs: Probs, t: Thresholds, name: string, conf: number | null, byUser: boolean): ScanResult {
   const meta = bundle.produce_meta[name];
   const sup = new Set(bundle.supported_heads[name] ?? []);
-  const coarse = new Set((['freshness', 'visual_spoilage'] as const).filter((h) => !sup.has(h) && sup.has(`${h}~coarse`)));
+  const coarse = new Set<string>((['freshness', 'visual_spoilage'] as const).filter((h) => !sup.has(h) && sup.has(`${h}~coarse`)));
+  // "freshness~general" (mirrors decision.py): no verified head for this type; the general fresh-vs-spoiled model
+  // gives a coarse good/bad freshness from probs.freshness_general[produce] = P(spoiled).
+  const general = sup.has('freshness~general') && Array.isArray(probs.freshness_general) && !sup.has('freshness') && !coarse.has('freshness');
+  if (general) {
+    const pb = probs.freshness_general![bundle.outputs.produce.indexOf(name)];
+    probs = { ...probs, freshness: bundle.outputs.freshness.map((l) => (l === 'fresh' ? 1 - pb : l === 'spoiled' ? pb : 0)) };
+    sup.add('freshness~coarse');
+    coarse.add('freshness');
+  }
   const r = headResult(bundle, 'ripeness', probs.ripeness, sup.has('ripeness'), t.head_min_prob);
   const f = coarse.has('freshness') ? coarseHead(bundle, 'freshness', probs.freshness, t.head_min_prob)
     : headResult(bundle, 'freshness', probs.freshness, sup.has('freshness'), t.head_min_prob);
@@ -198,5 +208,9 @@ function assess(bundle: Bundle, probs: Probs, t: Thresholds, name: string, conf:
   [res.score, res.score_reason_he] = qualityScore(
     bundle, probs, { freshness: f.available, visual_spoilage: s.available, ripeness: r.available }, rec === 'discard', coarse);
   if (rec === 'inspect' && res.score !== null) [res.score, res.score_reason_he] = [null, LOW_CONF_SCORE_HE];
+  if (general && res.score !== null) {
+    res.general_score = true;
+    res.explanation_he.push(GENERAL_SCORE_HE);
+  }
   return res;
 }

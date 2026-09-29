@@ -35,6 +35,14 @@ NEGATIVES = ["a photo of a person", "a photo of a hand", "a photo of a room", "a
              "a photo of a flower"]
 
 
+# General fresh-vs-spoiled prompts (any produce type): "bad" minus "fresh" similarity, calibrated with one global
+# scale+bias learned on the training fruits. Leave-one-fruit-out balanced accuracy 0.87 (min 0.76) - used only
+# for types without a verified per-fruit head, and shown to the user as a "general score" (results.md round 7).
+FRESH_TEMPLATES = ["a photo of a fresh {}.", "a close-up photo of a fresh {}.", "a photo of a fresh, good-looking {}."]
+BAD_TEMPLATES = ["a photo of a rotten {}.", "a photo of a moldy {}.", "a photo of a spoiled {} with dark rotten spots.",
+                 "a photo of a bruised, decaying {}."]
+
+
 def preprocess(img: Image.Image) -> np.ndarray:
     """Exactly the SigLIP2 processor: squash-resize to 224x224 (bilinear), scale to [-1, 1], CHW."""
     a = np.asarray(img.convert("RGB").resize((SIZE, SIZE), Image.Resampling.BILINEAR), dtype=np.float32) / 255.0
@@ -81,6 +89,24 @@ def text_embeddings() -> tuple[dict[str, np.ndarray], np.ndarray]:
         e = enc([t.format(n) for n in names for t in TEMPLATES]).mean(0)
         cls[c] = e / np.linalg.norm(e)
     return cls, enc(NEGATIVES)
+
+
+def fresh_text_embeddings() -> tuple[np.ndarray, np.ndarray]:
+    """(fresh, bad) prompt embeddings per produce type, rows in NAMES order. Needs torch + transformers."""
+    import torch
+    from transformers import AutoModel, AutoProcessor
+    m, p = AutoModel.from_pretrained(HF_ID).eval(), AutoProcessor.from_pretrained(HF_ID)
+
+    def enc(texts: list[str]) -> np.ndarray:
+        with torch.no_grad():
+            e = m.get_text_features(**p(text=texts, padding="max_length", max_length=64, return_tensors="pt"))
+            e = getattr(e, "pooler_output", e)
+            e = (e / e.norm(dim=-1, keepdim=True)).mean(0)
+            return (e / e.norm()).numpy()
+
+    fresh = np.stack([enc([t.format(n) for n in NAMES[c] for t in FRESH_TEMPLATES]) for c in NAMES])
+    bad = np.stack([enc([t.format(n) for n in NAMES[c] for t in BAD_TEMPLATES]) for c in NAMES])
+    return fresh, bad
 
 
 def export_onnx(out_dir: Path) -> Path:

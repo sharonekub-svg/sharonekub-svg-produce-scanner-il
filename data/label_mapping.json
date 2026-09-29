@@ -187,8 +187,8 @@
       "he": "ליים",
       "emoji": "🟢",
       "priority": "-",
-      "is_negative_class": true,
-      "note": "named negative (lemon lookalike)",
+      "is_negative_class": false,
+      "note": "supported since v0.8 (SigLIP2 identifies it); was a named negative for the v0.7 CNN",
       "ripeness_visual": "not_applicable"
     },
     "grapefruit": {
@@ -196,8 +196,8 @@
       "he": "אשכולית",
       "emoji": "🟠",
       "priority": "-",
-      "is_negative_class": true,
-      "note": "named negative (orange lookalike)",
+      "is_negative_class": false,
+      "note": "supported since v0.8 (SigLIP2 identifies it); was a named negative for the v0.7 CNN",
       "ripeness_visual": "not_applicable"
     },
     "zucchini": {
@@ -205,8 +205,8 @@
       "he": "קישוא",
       "emoji": "🥒",
       "priority": "-",
-      "is_negative_class": true,
-      "note": "named negative (cucumber lookalike)",
+      "is_negative_class": false,
+      "note": "supported since v0.8 (SigLIP2 identifies it); was a named negative for the v0.7 CNN",
       "ripeness_visual": "not_applicable"
     },
     "potato": {
@@ -214,8 +214,8 @@
       "he": "תפוח אדמה",
       "emoji": "🥔",
       "priority": "-",
-      "is_negative_class": true,
-      "note": "named negative (kiwi lookalike)",
+      "is_negative_class": false,
+      "note": "supported since v0.8 (SigLIP2 identifies it); was a named negative for the v0.7 CNN",
       "ripeness_visual": "not_applicable"
     },
     "passion_fruit": {
@@ -223,8 +223,8 @@
       "he": "פסיפלורה",
       "emoji": "🟣",
       "priority": "-",
-      "is_negative_class": true,
-      "note": "named negative (plum/avocado lookalike)",
+      "is_negative_class": false,
+      "note": "supported since v0.8 (SigLIP2 identifies it); was a named negative for the v0.7 CNN",
       "ripeness_visual": "not_applicable"
     },
     "other": {

@@ -2,7 +2,8 @@
 // sources in docs/research/food-quality.md. Generic advice, NOT a claim about the photographed item.
 import CARE from './produce_care.json';
 
-type Care = { fridge: string; chill_below_c: number | null; ethylene: { producer: boolean; sensitive: boolean }; tip_he: string; touch_he: string };
+type Care = { fridge: string; chill_below_c: number | null; ethylene: { producer: boolean; sensitive: boolean }; tip_he: string; touch_he: string;
+              stage_use_he?: Record<string, string> };
 const PRODUCE_CARE = CARE.produce as Record<string, Care>;
 export const CARE_GENERAL_HE = CARE.general_he;
 
@@ -16,6 +17,12 @@ export const STORAGE_TIP_HE: Record<string, string> = Object.fromEntries(
 
 /** General hand check per type ("texture": a photo can't measure it). Same text as the server's touch_tip_he. */
 export const TOUCH_HE: Record<string, string> = Object.fromEntries(Object.entries(PRODUCE_CARE).map(([k, c]) => [k, c.touch_he]));
+
+/** What to do with the fruit at its ripeness stage (e.g. green mango -> salad, very ripe banana -> baking). */
+export function stageUseHe(produce: string | null, stage: string | null | undefined): string | null {
+  if (!produce || !stage) return null;
+  return PRODUCE_CARE[produce]?.stage_use_he?.[stage] ?? null;
+}
 
 type HeadLike = { label: string | null; available: boolean } | null | undefined;
 /** Skin appearance in words, derived only from the freshness/spoilage heads (same rules as server/app.py surface_he). */

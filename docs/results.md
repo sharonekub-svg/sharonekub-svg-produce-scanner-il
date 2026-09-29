@@ -374,6 +374,19 @@ only asking for another angle.
 pomegranate, strawberry. Avocado ripeness 0.68 (< 0.70): no score for now. Lime stays off (look-alike class).
 Tomato / mango: not enough test photos, as before.
 
+## Round 7: a score for every type → `v0.8.1` (29 Sep 2026)
+
+**General score** (`freshness~general`): zero-shot SigLIP2 text prompts (fresh vs. rotten), plus one global
+scale and bias fitted on the fruits that have labels. Leave-one-fruit-out balanced accuracy (fresh vs. spoiled):
+mean 0.866, min 0.758. It is used only for types without a verified freshness head: they get a coarse fresh/not-fresh
+score, marked in the app as "ציון כללי" (general score) with an explanation. Verified types are unchanged (9 types incl. lime, which now passes the gate).
+
+**5 look-alike types** (lime, grapefruit, zucchini, potato, passion fruit) are no longer "not supported":
+they are identified, get a general score, and have care tips.
+
+**Advice**: a stage card with what to do at each ripeness stage (banana, avocado, mango), and a nectarine/peach
+hand check (smell, background color, the yellow stripe at the stem end).
+
 ## Phase 5 — validation (stress proxies on the P3 model, Grocery official test, n = 1,704)
 
 The Israeli real-world set does not exist yet. These are **synthetic proxies** (`ml/evaluation/evaluate.py --stress`), not a substitute for it.

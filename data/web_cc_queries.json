@@ -699,6 +699,31 @@
   },
   {
    "provider": "openverse",
+   "query": "rotten lime",
+   "tag": "lime:spoiled"
+  },
+  {
+   "provider": "openverse",
+   "query": "rotten grapefruit",
+   "tag": "grapefruit:spoiled"
+  },
+  {
+   "provider": "openverse",
+   "query": "rotten zucchini",
+   "tag": "zucchini:spoiled"
+  },
+  {
+   "provider": "openverse",
+   "query": "rotten potato",
+   "tag": "potato:spoiled"
+  },
+  {
+   "provider": "openverse",
+   "query": "moldy passion fruit",
+   "tag": "passion_fruit:spoiled"
+  },
+  {
+   "provider": "openverse",
    "query": "grapefruit",
    "tag": "grapefruit:id"
   },

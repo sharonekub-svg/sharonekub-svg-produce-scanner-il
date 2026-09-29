@@ -37,6 +37,15 @@ def main() -> None:
     digest = hashlib.sha256(args.onnx.read_bytes()[:1 << 24] + heads).hexdigest()[:12]
     thr = {"produce_min_prob": 0.7, "produce_min_margin": 0.15, "ood_min_energy": None, "head_min_prob": 0.55,
            "spoiled_alert_prob": 0.40, **{k: v for k, v in rd("thresholds.json").items() if k != "tuned_on"}}
+    # Verified per-fruit heads (gate on held-out test) + the general fresh-vs-spoiled score for every other type.
+    supported = rd("supported_heads_gated.json")
+    if "general_ab" in __import__("numpy").load(args.run / "heads.npz"):
+        for p in tax.produce:
+            if tax.produce_meta[p].get("is_negative_class"):
+                continue
+            hs = supported.setdefault(p, [])
+            if not any(h.split("~")[0] == "freshness" for h in hs):
+                hs.append("freshness~general")
     datasets = sorted({json.loads(l)["dataset_id"] for l in open(args.processed / "manifest.jsonl", encoding="utf-8")})
     bundle = {
         "bundle_version": 2, "backbone": "siglip2", "model_id": f"siglip2_{args.version}@{digest}",
@@ -44,7 +53,7 @@ def main() -> None:
         "input": {"size": 224, "layout": "NCHW", "mean": [0.5, 0.5, 0.5], "std": [0.5, 0.5, 0.5], "resize": "squash"},
         "outputs": {h: list(tax.classes(h)) for h in HEADS},
         "temperatures": rd("temperature.json"), "thresholds": thr, "quality": QUALITY,
-        "supported_heads": rd("supported_heads_gated.json"),
+        "supported_heads": supported,
         "produce_meta": {p: {k: v for k, v in tax.produce_meta[p].items()} for p in tax.produce},
         "label_he": tax.label_he, "training_datasets": datasets,
     }

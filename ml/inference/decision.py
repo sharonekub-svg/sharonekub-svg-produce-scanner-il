@@ -67,6 +67,7 @@ SCORE_REASON_HE = {
     "unripe": "עדיין לא בשל – יהיה טעים יותר בעוד כמה ימים.",
     "overripe": "בשל מאוד – לאכול היום או להשתמש לאפייה.",
 }
+GENERAL_SCORE_HE = "ציון כללי: לסוג הזה עוד אין בדיקת דיוק משלו, לכן ההערכה (טרי / לא טרי) פחות מדויקת."
 LOW_CONF_SCORE_HE = "לא ניתן לדרג בביטחון מהתמונה הזו – נסו לצלם מקרוב ובאור טוב."
 NO_SCORE_HE = "עדיין אין דירוג איכות לסוג הזה – המודל מזהה אותו אבל עוד לא אומן להעריך את מצבו."
 
@@ -104,6 +105,7 @@ class ScanResult:
     score: int | None = None                     # 1-10 visual quality, None = not available for this type
     score_reason_he: str | None = None
     disclaimer_he: str = DISCLAIMER_HE
+    general_score: bool = False                  # score from the general fresh-vs-spoiled model (no verified head)
 
     def to_dict(self) -> dict:
         return asdict(self)
@@ -189,6 +191,16 @@ def decide(tax: Taxonomy, probs: dict[str, np.ndarray], supported_heads: dict[st
 
     sup = set(supported_heads.get(name, []))
     coarse = {h for h in COARSE if h not in sup and f"{h}~coarse" in sup}
+    # "freshness~general": no verified head for this type, so the general fresh-vs-spoiled model gives a coarse
+    # good/bad freshness (probs["freshness_general"][produce] = P(spoiled)).
+    general = "freshness~general" in sup and probs.get("freshness_general") is not None and "freshness" not in sup \
+        and "freshness" not in coarse
+    if general:
+        pb = float(probs["freshness_general"][top])
+        probs = {**probs, "freshness": np.array([1.0 - pb if lbl == "fresh" else (pb if lbl == "spoiled" else 0.0)
+                                                  for lbl in tax.heads["freshness"]])}
+        sup.add("freshness~coarse")
+        coarse.add("freshness")
     r = _head(tax, "ripeness", probs.get("ripeness"), "ripeness" in sup, t["head_min_prob"])
     f = (_coarse_head(tax, "freshness", probs.get("freshness"), t["head_min_prob"]) if "freshness" in coarse
          else _head(tax, "freshness", probs.get("freshness"), "freshness" in sup, t["head_min_prob"]))
@@ -236,6 +248,9 @@ def decide(tax: Taxonomy, probs: dict[str, np.ndarray], supported_heads: dict[st
         coarse)
     if rec == "inspect" and res.score is not None:  # heads available but not confident: no number
         res.score, res.score_reason_he = None, LOW_CONF_SCORE_HE
+    if general and res.score is not None:
+        res.general_score = True
+        res.explanation_he.append(GENERAL_SCORE_HE)
     return res
 
 
