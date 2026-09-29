@@ -75,6 +75,10 @@ def main() -> None:
     ap.add_argument("--out", type=Path, required=True)
     ap.add_argument("--candidates", type=Path, default=Path("runs/p5_c12_fresh_spoiled/20260928-121025/supported_heads_ungated.json"),
                     help="candidate heads per produce (labels + vetoes) from the previous release")
+    ap.add_argument("--real-train", type=Path, default=None,
+                    help="real-world crops for the produce head (scripts/siglip_embed_oi_train.py; eval image ids excluded)")
+    ap.add_argument("--real-train-skip", nargs="*", default=["grapefruit"],
+                    help="classes whose real-world labels are unreliable (Open Images 'Grapefruit' is mostly oranges)")
     args = ap.parse_args()
     args.out.mkdir(parents=True, exist_ok=True)
     tax = load_taxonomy()
@@ -116,13 +120,25 @@ def main() -> None:
     pm = M["produce"].copy()
     ptrain = tr & ~is_aux & (pm.sum(1) > 0)
     W0 = np.concatenate([T, np.zeros((1, T.shape[1]))])  # last row unused (other = negatives)
+    PX, PM = X[ptrain], pm[ptrain]
+    reps = (0,)
+    if args.real_train:  # real-world photos (Open Images train crops): repeated k times, k chosen below
+        rt = np.load(args.real_train)
+        keep = ~np.isin(rt["true"], args.real_train_skip)
+        QX = rt["emb"][keep].astype(np.float32)
+        QM = np.zeros((len(QX), len(produce)), bool)
+        QM[np.arange(len(QX)), [produce.index(t) for t in rt["true"][keep]]] = True
+        reps = (1, 3)
+        print(f"real-world training crops: {len(QX)}")
     best = None
-    for wd in (1e-1, 1e-2, 1e-3):
-        W, b = fit_softmax(X[ptrain], pm[ptrain], wd, epochs=200, init_W=W0, anchor=W0, scale=SCALE, extra_logit=with_other, lr=0.002)
+    for wd, k in [(wd, k) for wd in (1e-1, 1e-2, 1e-3) for k in reps]:
+        TX = np.concatenate([PX] + [QX] * k) if k else PX
+        TM = np.concatenate([PM] + [QM] * k) if k else PM
+        W, b = fit_softmax(TX, TM, wd, epochs=200, init_W=W0, anchor=W0, scale=SCALE, extra_logit=with_other, lr=0.002)
         vm = va & ~is_aux & (pm.sum(1) == 1)
         vacc = float((produce_logits(X[vm], W[:-1], b).argmax(1) == pm[vm].argmax(1)).mean())
         rc = real_top1(W[:-1], b, "cal")
-        print(f"produce wd={wd}: val top1 {vacc:.3f}  real-cal top1 {rc:.3f}", flush=True)
+        print(f"produce wd={wd} real x{k}: val top1 {vacc:.3f}  real-cal top1 {rc:.3f}", flush=True)
         if best is None or rc + 0.25 * vacc > best[0]:
             best = (rc + 0.25 * vacc, wd, W, b)
     zs_b = np.zeros(len(produce))

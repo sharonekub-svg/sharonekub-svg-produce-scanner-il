@@ -387,6 +387,27 @@ they are identified, get a general score, and have care tips.
 **Advice**: a stage card with what to do at each ripeness stage (banana, avocado, mango), and a nectarine/peach
 hand check (smell, background color, the yellow stripe at the stem end).
 
+## Round 9: produce head trained on real-world photos → `v0.10` (29 Sep 2026)
+
+7,723 Open Images crops (18 of our types + 9 unsupported look-alikes as "other"; `scripts/siglip_embed_oi_train.py`)
+are added to the produce-head training. Every image id with any crop in the real-photo evaluation set is excluded (checked:
+0 overlap). Open Images "Grapefruit" is left out of training: a visual check showed it is mostly oranges, and including it
+dropped orange from 0.71 to 0.41 (so the eval's grapefruit class is also mostly oranges; its score is not meaningful).
+Selection rules unchanged (real-cal + val; threshold rule acc-when-shown >= 0.92 on cal -> 0.70).
+
+| real-photo test half | v0.9 | v0.10 |
+|---|---|---|
+| top-1, supported types without grapefruit | 0.82 | **0.88** |
+| top-1, all (incl. noisy grapefruit + other) | 0.80 | 0.83 |
+| answer shown (not "unsure") | 56% | **79%** |
+| correct when shown | 94% | 90% |
+| unsupported shown as a fruit | 4% | 5% |
+
+Largest gains: lemon 0.53 -> 0.86, potato 0.73 -> 0.92, peach 0.67 -> 0.82, orange 0.71 -> 0.90, cucumber 0.46 -> 0.59.
+Still weak: cucumber vs zucchini (~0.6). Studio val top-1 0.972 -> 0.963. Quality heads and the gate unchanged.
+Note: "correct when shown" is lower (0.90 on test vs 0.92 target on cal), in exchange for answering 79% of photos instead of 56%;
+when unsure the app shows its top guesses to pick from.
+
 ## Round 8: avocado ripeness passes → `v0.9` (29 Sep 2026)
 
 The shared ripeness probe had seen only 1,200 of the 10,000 Hass training photos (embedding caps). Now all
