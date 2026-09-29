@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024"><g transform="translate(512 512) scale(0.82) translate(-512 -512)">
+  <g fill="none" stroke="#fff" stroke-width="34" stroke-linecap="round" stroke-linejoin="round">
+    <!-- scan frame corners -->
+    <path d="M232 300 V222 H310 M714 222 H792 V300 M792 724 V802 H714 M310 802 H232 V724"/>
+    <!-- apple -->
+    <path d="M512 368 C452 322 342 318 306 420 C272 516 310 640 384 704 C432 746 476 740 512 722 C548 740 592 746 640 704 C714 640 752 516 718 420 C682 318 572 322 512 368 Z"/>
+    <path d="M512 368 C510 322 518 292 538 262"/>
+    <path d="M532 318 C560 262 622 246 668 256 C648 300 590 326 532 318 Z" stroke-width="28"/>
+    <path d="M366 492 C370 450 392 424 426 414" stroke-width="28"/>
+  </g>
+  <!-- scan line -->
+  <rect x="262" y="556" width="500" height="12" rx="6" fill="#fff" opacity="0.85"/>
+</g></svg>

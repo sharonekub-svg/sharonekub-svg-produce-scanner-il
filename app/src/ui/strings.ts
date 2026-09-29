@@ -1,6 +1,6 @@
 // All user-facing copy (Hebrew). Wording rules: docs/product-spec.md — never "safe", always "visual".
 export const he = {
-  appName: 'סורק פירות וירקות',
+  appName: 'Scan Fruit AI',
   cameraHint: 'צלמו פרי או ירק אחד, מקרוב ובאור טוב',
   scan: 'סרוק פרי',
   scanAnother: 'סרוק פרי נוסף',
@@ -90,7 +90,7 @@ export const he = {
   backToCamera: 'חזרה למצלמה',
   gallery: 'גלריה',
   share: 'שיתוף',
-  shareText: (name: string, score: string) => `סרקתי ${name}${score} עם סורק פירות וירקות – הערכה חזותית בלבד.`,
+  shareText: (name: string, score: string) => `סרקתי ${name}${score} עם Scan Fruit AI – הערכה חזותית בלבד.`,
   pickBody: 'לא בטוחים ב־100%. מה זה? בחרו, ונבדוק את המצב שלו:',
   generalScore: 'ציון כללי',
   stageUse: 'מה עושים איתו עכשיו',
