@@ -387,6 +387,19 @@ they are identified, get a general score, and have care tips.
 **Advice**: a stage card with what to do at each ripeness stage (banana, avocado, mango), and a nectarine/peach
 hand check (smell, background color, the yellow stripe at the stem end).
 
+## Round 10: checks after v0.10 (nothing shipped — none beat the current model on the calibration half)
+
+| tried | chosen on | result | shipped |
+|---|---|---|---|
+| all 11,143 Open Images train crops instead of 500/class (`runs/siglip/v11`) | real cal | 0.856 vs 0.861 | no |
+| richer fresh/rotten prompts for the general score | val, leave-one-fruit-out | 0.799 vs 0.805 | no |
+| mirror test-time augmentation (2x server time) | real cal | 0.858 vs 0.861 | no |
+| centre-square / centre-80% crop instead of squashing the whole photo | full-frame cal | 0.946 / 0.935 vs 0.952 | no |
+
+Full-frame check (the app sends the whole photo, not a crop): 631 evaluation-set images where one fruit type fills
+>= 20% of the frame, downloaded whole. Current v0.10 top-1 (supported, excl. grapefruit): **0.95 cal, 0.92 test**.
+Open Images cucumber/zucchini labels are visibly mixed (and often sliced or cooked), so that pair's ~0.6 is partly label noise.
+
 ## Round 9: produce head trained on real-world photos → `v0.10` (29 Sep 2026)
 
 7,723 Open Images crops (18 of our types + 9 unsupported look-alikes as "other"; `scripts/siglip_embed_oi_train.py`)
