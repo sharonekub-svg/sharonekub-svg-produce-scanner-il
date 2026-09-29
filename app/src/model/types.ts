@@ -69,5 +69,7 @@ export interface ScanResult {
   explanation_he: string[];
   score: number | null;
   score_reason_he: string | null;
+  /** True when the user picked the fruit after an unsure result (identification not from the model). */
+  chosen_by_user?: boolean;
   disclaimer_he: string;
 }

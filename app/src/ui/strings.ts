@@ -91,6 +91,8 @@ export const he = {
   gallery: 'גלריה',
   share: 'שיתוף',
   shareText: (name: string, score: string) => `סרקתי ${name}${score} עם סורק פירות וירקות – הערכה חזותית בלבד.`,
+  pickBody: 'לא בטוחים ב־100%. מה זה? בחרו, ונבדוק את המצב שלו:',
+  chosenByYou: 'בחרתם את סוג הפרי',
   savedInAccount: 'נשמר בחשבון שלכם – זמין גם באתר ובכל מכשיר.',
   recommendation: 'המלצה',
   confidence: 'ביטחון בזיהוי',

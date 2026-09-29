@@ -106,40 +106,8 @@ def confusion_png(cm: np.ndarray, names: list[str], path: Path) -> None:
     img.save(path)
 
 
-def main() -> None:
-    ap = argparse.ArgumentParser()
-    ap.add_argument("--ckpt", type=Path, required=True)
-    ap.add_argument("--processed", type=Path, required=True)
-    ap.add_argument("--splits", nargs="+", default=["test"])
-    ap.add_argument("--datasets", nargs="*")
-    ap.add_argument("--exclude-source-regex")
-    ap.add_argument("--ood-source-regex", help="rows matching are treated as OOD (unseen produce)")
-    ap.add_argument("--stress", choices=["dark", "blur", "jpeg", "warm_light", "occlusion"])
-    ap.add_argument("--save-preds", action="store_true", help="write per-image predictions (<out>.preds.jsonl)")
-    ap.add_argument("--quality-gate", action="store_true", help="run the model-free quality gate first, as the app does")
-    ap.add_argument("--tune", action="store_true")
-    ap.add_argument("--target-accuracy", type=float, default=0.95)
-    ap.add_argument("--out", type=Path)
-    ap.add_argument("--workers", type=int, default=4)
-    args = ap.parse_args()
-
-    net, cfg, tax, temps, sup = load_ckpt(args.ckpt)
-    rows = dataset.read_manifest(args.processed / "manifest.jsonl", set(args.splits),
-                                 set(args.datasets) if args.datasets else None)
-    if args.exclude_source_regex:
-        rows = [r for r in rows if not re.search(args.exclude_source_regex, r["source_path"])]
-    is_ood = np.array([bool(args.ood_source_regex and re.search(args.ood_source_regex, r["source_path"])) for r in rows])
-    logits, masks = infer(net, rows, args.processed, tax, cfg, args.stress, workers=args.workers)
-    probs = {h: calibration.softmax(logits[h], temps.get(h, 1.0)) for h in HEADS}
-
-    res: dict = {"ckpt": str(args.ckpt), "processed": str(args.processed), "splits": args.splits,
-                 "datasets": args.datasets, "stress": args.stress, "n_rows": len(rows), "n_ood": int(is_ood.sum()),
-                 "temperatures": temps, "heads": {}}
-    ind = ~is_ood
-    for h in HEADS:
-        exact = (masks[h].sum(1) == 1) & ind
-        if exact.sum():
-            res["heads"][h] = metrics.summarize(probs[h][exact], masks[h][exact].argmax(1), list(tax.classes(h)))
+def quality_by_produce(tax, probs: dict[str, np.ndarray], masks: dict[str, np.ndarray], ind: np.ndarray) -> dict:
+    """Per-produce quality-head metrics (the per-fruit gate's input; scripts/gate_quality_heads.py)."""
     # Quality heads per produce type: coarse good-vs-bad (set-valued "bad" rows, e.g. FruitNet) and exact
     # ripeness (e.g. Hass). This is what the 1-10 score is built from (docs/research/quality-score.md).
     from ml.inference.decision import COARSE
@@ -174,7 +142,44 @@ def main() -> None:
             q.setdefault("ripeness", {})[tax.produce[int(pi)]] = {
                 "n": int(len(yt)), "accuracy": float((yt == yp).mean()),
                 "within_one_stage": float((np.abs(yt - yp) <= 1).mean())}
-    res["quality_heads"] = q
+    return q
+
+
+def main() -> None:
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--ckpt", type=Path, required=True)
+    ap.add_argument("--processed", type=Path, required=True)
+    ap.add_argument("--splits", nargs="+", default=["test"])
+    ap.add_argument("--datasets", nargs="*")
+    ap.add_argument("--exclude-source-regex")
+    ap.add_argument("--ood-source-regex", help="rows matching are treated as OOD (unseen produce)")
+    ap.add_argument("--stress", choices=["dark", "blur", "jpeg", "warm_light", "occlusion"])
+    ap.add_argument("--save-preds", action="store_true", help="write per-image predictions (<out>.preds.jsonl)")
+    ap.add_argument("--quality-gate", action="store_true", help="run the model-free quality gate first, as the app does")
+    ap.add_argument("--tune", action="store_true")
+    ap.add_argument("--target-accuracy", type=float, default=0.95)
+    ap.add_argument("--out", type=Path)
+    ap.add_argument("--workers", type=int, default=4)
+    args = ap.parse_args()
+
+    net, cfg, tax, temps, sup = load_ckpt(args.ckpt)
+    rows = dataset.read_manifest(args.processed / "manifest.jsonl", set(args.splits),
+                                 set(args.datasets) if args.datasets else None)
+    if args.exclude_source_regex:
+        rows = [r for r in rows if not re.search(args.exclude_source_regex, r["source_path"])]
+    is_ood = np.array([bool(args.ood_source_regex and re.search(args.ood_source_regex, r["source_path"])) for r in rows])
+    logits, masks = infer(net, rows, args.processed, tax, cfg, args.stress, workers=args.workers)
+    probs = {h: calibration.softmax(logits[h], temps.get(h, 1.0)) for h in HEADS}
+
+    res: dict = {"ckpt": str(args.ckpt), "processed": str(args.processed), "splits": args.splits,
+                 "datasets": args.datasets, "stress": args.stress, "n_rows": len(rows), "n_ood": int(is_ood.sum()),
+                 "temperatures": temps, "heads": {}}
+    ind = ~is_ood
+    for h in HEADS:
+        exact = (masks[h].sum(1) == 1) & ind
+        if exact.sum():
+            res["heads"][h] = metrics.summarize(probs[h][exact], masks[h][exact].argmax(1), list(tax.classes(h)))
+    res["quality_heads"] = quality_by_produce(tax, probs, masks, ind)
     # System-level behaviour through the real decision policy (abstention included).
     thr = dict(DEFAULT_THRESHOLDS)
     tpath = args.ckpt.parent / "thresholds.json"

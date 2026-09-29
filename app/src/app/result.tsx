@@ -7,12 +7,14 @@ import { Image, Pressable, ScrollView, Share, StyleSheet, Text, View } from 'rea
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { STORAGE_TIP_HE, TOUCH_HE, confidenceWord, surfaceHe, verdictHe } from '../model/advice';
-import { getBundle } from '../model/engine';
+import { decide } from '../model/decision';
+import { type ScanOutput, getBundle } from '../model/engine';
+import { addToHistory } from '../history';
 import type { HeadResult } from '../model/types';
 import { donatePhoto, donationEnabled } from '../donation';
 import { sendFeedback } from '../feedback';
 import { CHIP, pct } from '../ui/chips';
-import { getLastScan, setPendingPrevious } from '../ui/state';
+import { getLastScan, setLastScan, setPendingPrevious } from '../ui/state';
 import { he } from '../ui/strings';
 
 // Headline colour follows what we tell the user to do — never green for "don't eat".
@@ -72,12 +74,23 @@ export default function ResultScreen() {
   const [feedbackSent, setFeedbackSent] = useState(false);
   const [answer, setAnswer] = useState<boolean | null>(null);
   const [donate, setDonate] = useState<'idle' | 'consent' | 'sending' | 'sent' | 'failed'>('idle');
+  const [picked, setPicked] = useState<ScanOutput | null>(null);
   if (!last) {
     router.replace('/');
     return null;
   }
-  const { result: r, top3 } = last.output;
   const fromHistory = Boolean(last.fromHistory);
+  const output = picked ?? last.output;
+  const { result: r, top3 } = output;
+  // "Unsure": let the user say which fruit it is, then assess it as that fruit (identification by the user).
+  const candidates = r.status === 'unsure' ? top3.filter((t) => t.produce !== 'other').slice(0, 3) : [];
+  const onPick = (name: string) => {
+    const res = decide(getBundle(), last.output.probs, null, null, undefined, name);
+    const next = { ...last.output, result: res };
+    setPicked(next);
+    setLastScan({ ...last, output: next });
+    if (!fromHistory) addToHistory(last.photoUri, next);
+  };
   const canDonate = !fromHistory && !last.sample && donationEnabled();
   const onShare = () => {
     const sc = r.score != null ? ` – ${r.score}/10 (${verdictHe(r.score)})` : '';
@@ -122,7 +135,7 @@ export default function ResultScreen() {
             <View style={styles.identity}>
               <View style={styles.flex1}>
                 <View style={styles.namePill}><Text style={styles.name}>{r.produce_he}</Text></View>
-                <Text style={[styles.muted, styles.confWord]}>{confidenceWord(r.produce_confidence)} בזיהוי</Text>
+                <Text style={[styles.muted, styles.confWord]}>{r.chosen_by_user ? he.chosenByYou : `${confidenceWord(r.produce_confidence)} בזיהוי`}</Text>
               </View>
               <View style={[styles.fruitBubble, { backgroundColor: r.score != null ? scoreTone(r.score).bg : '#EFE8DA' }]}>
                 <Text style={styles.fruitEmoji}>{r.emoji}</Text>
@@ -175,7 +188,17 @@ export default function ResultScreen() {
         ) : (
           <View style={styles.card}>
             {statusHead ? <Text style={styles.stateTitle}>{statusHead.icon} {statusHead.title}</Text> : null}
-            <Text style={styles.message}>{r.message_he}</Text>
+            <Text style={styles.message}>{candidates.length ? he.pickBody : r.message_he}</Text>
+            {candidates.map((c) => {
+              const meta = getBundle().produce_meta[c.produce];
+              return (
+                <Pressable key={c.produce} onPress={() => onPick(c.produce)} accessibilityRole="button" style={styles.pick}>
+                  <Text style={styles.pickEmoji}>{meta?.emoji}</Text>
+                  <Text style={styles.pickName}>{c.he}</Text>
+                  <Text style={styles.muted}>{pct(c.prob)}</Text>
+                </Pressable>
+              );
+            })}
           </View>
         )}
 
@@ -266,6 +289,9 @@ export default function ResultScreen() {
 const styles = StyleSheet.create({
   fill: { flex: 1, backgroundColor: '#FAFAF7' },
   pad: { padding: 16, gap: 12 },
+  pick: { flexDirection: 'row', alignItems: 'center', gap: 12, borderWidth: 1.5, borderColor: '#2f7d4f', borderRadius: 14, minHeight: 52, paddingHorizontal: 14 },
+  pickEmoji: { fontSize: 24 },
+  pickName: { flex: 1, fontSize: 18, fontWeight: '800', color: '#1f5c38' },
   photoWrap: { width: '68%', maxWidth: 280, alignSelf: 'center', marginBottom: 12 },
   photo: { width: '100%', aspectRatio: 1, borderRadius: 24 },
   photoEmpty: { backgroundColor: '#EFE8DA', alignItems: 'center', justifyContent: 'center' },

@@ -126,8 +126,10 @@ function headResult(bundle: Bundle, head: 'ripeness' | 'freshness' | 'visual_spo
 }
 
 export function decide(bundle: Bundle, probs: Probs, qualityReason: string | null = null,
-                       energyScore: number | null = null, thresholds?: Partial<Thresholds>): ScanResult {
+                       energyScore: number | null = null, thresholds?: Partial<Thresholds>,
+                       chosenProduce?: string): ScanResult {
   const t: Thresholds = { ...DEFAULT_THRESHOLDS, ...bundle.thresholds, ...(thresholds ?? {}) };
+  if (chosenProduce) return assess(bundle, probs, t, chosenProduce, probs.produce![bundle.outputs.produce.indexOf(chosenProduce)] ?? null, true);
   if (qualityReason) return empty('retake', RETAKE_HE[qualityReason] ?? UNSURE_HE);
 
   const p = probs.produce!;
@@ -142,7 +144,12 @@ export function decide(bundle: Bundle, probs: Probs, qualityReason: string | nul
   const meta = bundle.produce_meta[name];
   if (meta.is_negative_class) return empty('not_produce', NOT_PRODUCE_HE, conf);
   if (conf < t.produce_min_prob || margin < t.produce_min_margin) return empty('unsure', UNSURE_HE, conf);
+  return assess(bundle, probs, t, name, conf, false);
+}
 
+/** Quality assessment once the produce type is known (by the model, or picked by the user after "unsure"). */
+function assess(bundle: Bundle, probs: Probs, t: Thresholds, name: string, conf: number | null, byUser: boolean): ScanResult {
+  const meta = bundle.produce_meta[name];
   const sup = new Set(bundle.supported_heads[name] ?? []);
   const coarse = new Set((['freshness', 'visual_spoilage'] as const).filter((h) => !sup.has(h) && sup.has(`${h}~coarse`)));
   const r = headResult(bundle, 'ripeness', probs.ripeness, sup.has('ripeness'), t.head_min_prob);
@@ -152,7 +159,7 @@ export function decide(bundle: Bundle, probs: Probs, qualityReason: string | nul
     : headResult(bundle, 'visual_spoilage', probs.visual_spoilage, sup.has('visual_spoilage'), t.head_min_prob);
   const res: ScanResult = {
     ...empty('ok', null, conf), produce: name, produce_he: meta.he, emoji: meta.emoji,
-    ripeness: r, freshness: f, visual_spoilage: s,
+    ripeness: r, freshness: f, visual_spoilage: s, ...(byUser ? { chosen_by_user: true } : {}),
   };
 
   let pSpoiled = 0;
