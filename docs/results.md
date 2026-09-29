@@ -387,6 +387,19 @@ they are identified, get a general score, and have care tips.
 **Advice**: a stage card with what to do at each ripeness stage (banana, avocado, mango), and a nectarine/peach
 hand check (smell, background color, the yellow stripe at the stem end).
 
+## Round 8: avocado ripeness passes → `v0.9` (29 Sep 2026)
+
+The shared ripeness probe had seen only 1,200 of the 10,000 Hass training photos (embedding caps). Now all
+14,710 Hass rows are embedded (`scripts/siglip_embed_dataset.py`, merged into `runs/siglip/emb_v9.npz`) and the heads
+retrained with the same script and selection rules (`runs/siglip/v09`). Val ripeness exact 0.729 (all types).
+
+Held-out test, avocado ripeness (n = 1,470): exact 0.677 → **0.706**, within one stage 0.997 → 0.998 → passes the
+gate (0.70 / 0.95). Weakest class: "partially ripe" (recall 0.34, mostly read as unripe). Nothing else changed in the
+gate; produce top-1 on real photos 0.78 (test) as before.
+
+Tried and not shipped: adding hand-made colour statistics to the embedding (val +0.012). It relies on a pale
+studio background, so it is likely to be worse on real phone photos.
+
 ## Phase 5 — validation (stress proxies on the P3 model, Grocery official test, n = 1,704)
 
 The Israeli real-world set does not exist yet. These are **synthetic proxies** (`ml/evaluation/evaluate.py --stress`), not a substitute for it.
