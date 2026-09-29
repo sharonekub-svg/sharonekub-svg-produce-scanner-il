@@ -47,13 +47,19 @@ def main() -> None:
         "supported_heads": rd("supported_heads_gated.json"),
         "produce_meta": {p: {k: v for k, v in tax.produce_meta[p].items()} for p in tax.produce},
         "label_he": tax.label_he, "training_datasets": datasets,
-        "files": ["vision.onnx", "heads.npz"],
     }
     args.to.mkdir(parents=True, exist_ok=True)
     for old in ("model.onnx", "model.int8.onnx"):
         (args.to / old).unlink(missing_ok=True)
-    shutil.copy(args.onnx, args.to / "vision.onnx")
+    for old in args.to.glob("vision.onnx*"):
+        old.unlink()
+    data, part, names = args.onnx.read_bytes(), 90 * 2**20, []
+    for i in range(0, len(data), part):  # git hosting rejects files > 100 MB; the server joins the parts
+        name = f"vision.onnx.{i // part:02d}"
+        (args.to / name).write_bytes(data[i:i + part])
+        names.append(name)
     shutil.copy(args.run / "heads.npz", args.to / "heads.npz")
+    bundle["files"] = {f: {"sha256": hashlib.sha256((args.to / f).read_bytes()).hexdigest()} for f in (*names, "heads.npz")}
     (args.to / "bundle.json").write_text(json.dumps(bundle, ensure_ascii=False, indent=1), encoding="utf-8")
     print("released", bundle["model_id"], "->", args.to)
 

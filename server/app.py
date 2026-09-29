@@ -40,6 +40,14 @@ class Engine:
     def __init__(self, bundle_dir: Path):
         import onnxruntime as ort
         self.bundle = json.loads((bundle_dir / "bundle.json").read_text(encoding="utf-8"))
+        self.siglip = self.bundle.get("backbone") == "siglip2"
+        if self.siglip:  # v0.8+: SigLIP2 encoder + linear heads (ml/siglip/features.py, scripts/siglip_train_heads.py)
+            from ml.siglip.features import Encoder
+            self.encoder = Encoder(bundle_dir / "vision.onnx", threads=int(os.environ.get("PRODUCE_THREADS", "2")))
+            self.heads = dict(np.load(bundle_dir / "heads.npz"))
+            self.onnx_file = "vision.onnx"
+            self.tax = restrict_produce(load_taxonomy(), self.bundle["outputs"]["produce"])
+            return
         onnx_file = "model.int8.onnx" if (bundle_dir / "model.int8.onnx").exists() else "model.onnx"
         opts = ort.SessionOptions()
         opts.intra_op_num_threads = int(os.environ.get("PRODUCE_THREADS", "2"))
@@ -63,6 +71,15 @@ class Engine:
         return x.transpose(2, 0, 1)[None]
 
     def logits(self, img: Image.Image) -> dict[str, np.ndarray]:
+        if self.siglip:
+            e = self.encoder([img])[0]
+            hd = self.heads
+            neg = e @ hd["neg_W"].T
+            other = float(neg.max() + np.log(np.exp(neg - neg.max()).sum()) + hd["produce_b"][-1])
+            out = {"produce": np.concatenate([e @ hd["produce_W"].T + hd["produce_b"][:-1], [other]]).astype(np.float32)}
+            for h in ("ripeness", "freshness", "visual_spoilage"):
+                out[h] = (e @ hd[f"{h}_W"].T + hd[f"{h}_b"]).astype(np.float32)
+            return out
         outs = self.sess.run(None, {"image": self.preprocess(img)})
         return {h: o[0] for h, o in zip(self.bundle["outputs"].keys(), outs)}
 

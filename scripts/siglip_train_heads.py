@@ -128,13 +128,19 @@ def main() -> None:
     zs_b = np.zeros(len(produce))
     zs = real_top1(T, zs_b, "cal")
     print(f"zero-shot real-cal top1 {zs:.3f}; best fitted wd={best[1]} real-cal {real_top1(best[2][:-1], best[3], 'cal'):.3f}")
-    # Keep the fitted head only if it is better on REAL photos; otherwise the zero-shot text head.
-    if real_top1(best[2][:-1], best[3], "cal") > zs + 0.005:
-        Wp, bp = best[2][:-1], best[3]
-        print("produce head: fitted")
-    else:
-        Wp, bp = T, zs_b
-        print("produce head: zero-shot (fitting did not help on real photos)")
+    # Blend the zero-shot text head (best on real photos) with the fitted head (knows our labelled cases, e.g.
+    # heavily rotten fruit): W = (1-a) T + a W_fit. `a` chosen on the real-photo calibration half + val.
+    vm = va & ~is_aux & (pm.sum(1) == 1)
+    best_a = None
+    for a in (0.0, 0.25, 0.5, 0.75, 1.0):
+        Wa, ba = (1 - a) * T + a * best[2][:-1], a * best[3]
+        rc = real_top1(Wa, ba, "cal")
+        vacc = float((produce_logits(X[vm], Wa, ba).argmax(1) == pm[vm].argmax(1)).mean())
+        print(f"blend a={a}: real-cal top1 {rc:.3f}  val top1 {vacc:.3f}", flush=True)
+        if best_a is None or rc + 0.25 * vacc > best_a[0]:
+            best_a = (rc + 0.25 * vacc, a, Wa, ba)
+    _, a, Wp, bp = best_a
+    print(f"produce head: blend a={a}")
     heads = {"produce_W": (SCALE * Wp).astype(np.float32), "produce_b": bp.astype(np.float32),
              "neg_W": (SCALE * NEG).astype(np.float32)}
 

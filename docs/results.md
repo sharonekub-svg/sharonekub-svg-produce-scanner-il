@@ -338,6 +338,42 @@ Lime passes but stays off (held-out look-alike class in the OOD test, as before)
 
 Released as **`v0.7-dev`** because the quality gains are large (strawberry, lemon and banana freshness get scores; orange and grapes much more accurate), at the cost of about 3 points fewer identifications shown and 0.8 points lower accuracy when shown on Grocery. The Grocery-only identification recall gates still fail (lemon recall 0.55, n = 11), so it stays a dev build. On all test photos (release gates), produce macro-F1 rose 0.557 → 0.589 and recall improved for orange (0.46 → 0.72), mango (0.19 → 0.50), lime and banana, but fell for mandarin (0.57 → 0.40) and avocado (0.66 → 0.52), partly because of the stricter threshold.
 
+## Round 6: SigLIP2 backbone → `v0.8-dev` (29 Sep 2026)
+
+**Why.** First real use on an Android phone failed: an apple was called an avocado, a sharp well-lit photo was
+sent back as "retake", and web photos got "try another angle". We measured the app's exact path on **real web
+photos the model never trained on** (Open Images crops, 900 photos, 15 supported types): v0.7 top-1 **0.29**,
+answer shown for 14% of photos, 65% correct when shown; 9% of photos rejected by the photo-quality check.
+The v0.7 CNN had learned our uniform datasets, not real photos.
+
+**New model.** Google SigLIP2-base (Apache-2.0) image encoder, exported to ONNX with weight-only 8-bit weights
+(109 MB; same accuracy as fp32 — plain int8 dropped real-photo top-1 to 0.55, so it was not used). Every head is
+linear on its 768-d embedding (`ml/siglip/`, `scripts/siglip_*.py`):
+- identification = half zero-shot text prompts + half fitted on our photos (blend chosen on real photos + val);
+  "not supported" prompts form the `other` class;
+- freshness / spoilage / ripeness = regression on our labelled photos (same data and per-fruit gate as before).
+
+**Real photos** (Open Images, 2,133 incl. 693 unsupported produce; threshold chosen on the calibration half,
+reported on the other half):
+
+| | v0.7 | v0.8 |
+|---|---|---|
+| top-1 (supported) | 0.29 | **0.78** |
+| answer shown | 14% | **56%** |
+| correct when shown | 65% | **94%** |
+| unsupported produce shown as a supported one | – | 4% |
+
+Below the threshold the app now shows its top guesses and the user picks the fruit ("chosen by user"), instead of
+only asking for another angle.
+
+**Photo-quality check.** On real photos the model is almost as accurate on "blurry" (texture below 30) and
+"overexposed" (white background) photos as on the rest, so only extreme cases ask for a retake now
+(texture < 8, clipped > 85%, luma < 20 or > 245).
+
+**Per-fruit gate** (held-out test, same bar): scores for apple, banana, grapes (freshness), guava, lemon, orange,
+pomegranate, strawberry. Avocado ripeness 0.68 (< 0.70): no score for now. Lime stays off (look-alike class).
+Tomato / mango: not enough test photos, as before.
+
 ## Phase 5 — validation (stress proxies on the P3 model, Grocery official test, n = 1,704)
 
 The Israeli real-world set does not exist yet. These are **synthetic proxies** (`ml/evaluation/evaluate.py --stress`), not a substitute for it.

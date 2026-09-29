@@ -48,7 +48,15 @@ class Encoder:
         import onnxruntime as ort
         o = ort.SessionOptions()
         o.intra_op_num_threads = threads
-        self.sess = ort.InferenceSession(str(onnx_path), o, providers=["CPUExecutionProvider"])
+        p = Path(onnx_path)
+        if p.exists():
+            model: str | bytes = str(p)
+        else:  # shipped in parts (<100 MB each for git hosting): vision.onnx.00, vision.onnx.01, ...
+            parts = sorted(p.parent.glob(p.name + ".[0-9][0-9]"))
+            if not parts:
+                raise FileNotFoundError(p)
+            model = b"".join(x.read_bytes() for x in parts)
+        self.sess = ort.InferenceSession(model, o, providers=["CPUExecutionProvider"])
 
     def __call__(self, images: list[Image.Image], batch: int = 16) -> np.ndarray:
         out = [self.sess.run(None, {"pixel_values": np.stack([preprocess(x) for x in images[i:i + batch]])})[0]
