@@ -63,6 +63,8 @@ def main() -> int:
     ap.add_argument("--min-crop", type=int, default=64)
     ap.add_argument("--workers", type=int, default=16)
     ap.add_argument("--purpose", choices=registry.PURPOSES, default="research_training")
+    ap.add_argument("--classes", nargs="*", default=None, help="only these Open Images class names (default: all mapped)")
+    ap.add_argument("--append", action="store_true", help="merge into the existing crops.csv / attribution.csv")
     args = ap.parse_args()
 
     ok, why = registry.is_allowed(registry.load_registry()["open_images_v7"], args.purpose)
@@ -74,6 +76,10 @@ def main() -> int:
     mids = {r["LabelName"]: r["DisplayName"] for r in
             csv.DictReader(io.StringIO(urllib.request.urlopen(f"{BASE}/v7/oidv7-class-descriptions-boxable.csv").read().decode()),
                            fieldnames=["LabelName", "DisplayName"])}
+    if args.classes:
+        class_map = {k: v for k, v in class_map.items() if k in args.classes}
+        if set(args.classes) - set(class_map):
+            raise SystemExit(f"not in the Open Images class map: {set(args.classes) - set(class_map)}")
     wanted = {m: n for m, n in mids.items() if n in class_map}
     missing = set(class_map) - set(wanted.values())
     if missing:
@@ -166,6 +172,11 @@ def main() -> int:
             if n % 500 == 0:
                 print(f"downloaded {n}/{len(usable)}", flush=True)
 
+    if args.append:  # keep earlier fetches; new rows win on the same path / image id
+        for name, rows, key in (("crops.csv", crop_rows, "path"), ("attribution.csv", attr_rows, "image_id")):
+            if (OUT / name).exists():
+                seen = {r[key] for r in rows}
+                rows[:0] = [r for r in csv.DictReader(open(OUT / name, encoding="utf-8")) if r[key] not in seen]
     for name, rows in (("crops.csv", crop_rows), ("attribution.csv", attr_rows)):
         with open(OUT / name, "w", newline="", encoding="utf-8") as f:
             w = csv.DictWriter(f, fieldnames=list(rows[0]))
@@ -177,11 +188,12 @@ def main() -> int:
     for r in crop_rows:
         per_class[r["class_name"]] += 1
     out = {**report, "per_class_crops": dict(sorted(per_class.items()))}
-    (OUT / "fetch_report.json").write_text(json.dumps(out, indent=2))
-    (OUT / ".provenance.json").write_text(json.dumps({
-        "dataset_id": "open_images_v7", "sources": {**BOX_CSV, **{f"meta_{k}": v for k, v in META_CSV.items()}},
-        "license": "annotations CC BY 4.0; images filtered to per-image CC BY 2.0 (see attribution.csv)",
-        "imported_at": dt.datetime.now(dt.timezone.utc).isoformat(), "args": vars(args)}, indent=2))
+    (OUT / ("fetch_report_append.json" if args.append else "fetch_report.json")).write_text(json.dumps(out, indent=2))
+    if not args.append:
+        (OUT / ".provenance.json").write_text(json.dumps({
+            "dataset_id": "open_images_v7", "sources": {**BOX_CSV, **{f"meta_{k}": v for k, v in META_CSV.items()}},
+            "license": "annotations CC BY 4.0; images filtered to per-image CC BY 2.0 (see attribution.csv)",
+            "imported_at": dt.datetime.now(dt.timezone.utc).isoformat(), "args": vars(args)}, indent=2))
     print(json.dumps(out, indent=2))
     return 0
 

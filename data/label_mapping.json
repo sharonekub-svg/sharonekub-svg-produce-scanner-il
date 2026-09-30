@@ -268,8 +268,8 @@
       "he": "דלעת",
       "emoji": "🎃",
       "priority": "-",
-      "is_negative_class": false,
-      "note": "added 2026-09-30 (docs/plan-more-types.md): identified by SigLIP2 + Open Images training crops",
+      "is_negative_class": true,
+      "note": "added 2026-09-30 but held back: real-photo test 25/26 correct, below the n >= 30 rule (docs/plan-more-types.md step 5); enable once the eval has >= 30 test photos",
       "ripeness_visual": "not_applicable"
     },
     "pineapple": {
@@ -1014,7 +1014,15 @@
         "Mushroom": "mushroom",
         "Coconut": "coconut",
         "Garden Asparagus": "asparagus",
-        "Artichoke": "artichoke"
+        "Artichoke": "artichoke",
+        "Bread": "other",
+        "Doughnut": "other",
+        "Cheese": "other",
+        "Muffin": "other",
+        "Cookie": "other",
+        "Pizza": "other",
+        "Houseplant": "other",
+        "Flower": "other"
       }
     },
     "lemon_softwaremill": {
