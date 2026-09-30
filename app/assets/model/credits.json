@@ -1,96 +1,109 @@
 {
-  "model_id": "p5_c12_fresh_spoiled@c86ba17966d0",
+  "model_id": "siglip2_v0.9.1@43715f167be8",
   "datasets": [
     {
       "dataset_id": "apple_good_bad",
       "name": "Good and bad classification of apple (Mandal & Sarkar)",
       "license": "CC BY 4.0",
       "url": "https://data.mendeley.com/datasets/n2gsjb3vk3/1",
-      "attribution": ""
+      "attribution": "",
+      "credits_url": null
     },
     {
       "dataset_id": "bananas_psolymos",
       "name": "Data set of ripening bananas (Solymos 2022)",
       "license": "MIT",
       "url": "https://github.com/psolymos/bananas",
-      "attribution": "Peter Solymos (R package bananas 0.1.0)"
+      "attribution": "Peter Solymos (R package bananas 0.1.0)",
+      "credits_url": null
     },
     {
       "dataset_id": "fresh_rotten_mendeley_bd",
       "name": "Fresh and Rotten Fruits Dataset for Machine-Based Evaluation of Fruit Quality",
       "license": "CC BY 4.0",
       "url": "https://data.mendeley.com/datasets/bdd69gyhv8/1",
-      "attribution": "Data in Brief 2022 (Bangladesh)"
+      "attribution": "Data in Brief 2022 (Bangladesh)",
+      "credits_url": null
     },
     {
       "dataset_id": "fruit_inspection_6ps",
       "name": "Spoiled and fresh fruit inspection dataset",
       "license": "CC BY 4.0",
       "url": "https://data.mendeley.com/datasets/6ps7gtp2wg/1",
-      "attribution": "Pachon Suescun, Pinzon Arenas, Jimenez-Moreno (Colombia)"
+      "attribution": "Pachon Suescun, Pinzon Arenas, Jimenez-Moreno (Colombia)",
+      "credits_url": null
     },
     {
       "dataset_id": "fruitnet_indian",
       "name": "FruitNet: Indian fruits with quality (Good/Bad/Mixed)",
       "license": "CC BY 4.0",
       "url": "https://data.mendeley.com/datasets/b6fftwbr2v/3",
-      "attribution": "Meshram & Patil (Data in Brief 2021)"
+      "attribution": "Meshram & Patil (Data in Brief 2021)",
+      "credits_url": null
     },
     {
       "dataset_id": "grapenet",
       "name": "GrapeNet: An Image Dataset for Grape Variety and Quality Classification",
       "license": "CC BY 4.0",
       "url": "https://data.mendeley.com/datasets/3j3zzsc7wb/1",
-      "attribution": ""
+      "attribution": "",
+      "credits_url": null
     },
     {
       "dataset_id": "grocery_store_klasson",
       "name": "Grocery Store Dataset (Klasson et al. WACV 2019)",
       "license": "MIT",
       "url": "https://github.com/marcusklasson/GroceryStoreDataset",
-      "attribution": "Klasson, Zhang, Kjellström. A Hierarchical Grocery Store Image Dataset with Visual and Semantic Labels. WACV 2019. MIT License."
+      "attribution": "Klasson, Zhang, Kjellström. A Hierarchical Grocery Store Image Dataset with Visual and Semantic Labels. WACV 2019. MIT License.",
+      "credits_url": null
     },
     {
       "dataset_id": "hass_avocado_ripening",
       "name": "'Hass' Avocado Ripening Photographic Dataset",
       "license": "CC BY 4.0",
       "url": "https://data.mendeley.com/datasets/3xd9n945v8/1",
-      "attribution": "Univ. research group (see Mendeley record) - 478 avocados photographed daily"
+      "attribution": "Univ. research group (see Mendeley record) - 478 avocados photographed daily",
+      "credits_url": null
     },
     {
       "dataset_id": "lemon_softwaremill",
       "name": "Lemons quality control dataset (SoftwareMill 2020)",
       "license": "MIT",
       "url": "https://github.com/softwaremill/lemon-dataset",
-      "attribution": "SoftwareMill (Maciej Adamiak); DOI 10.5281/zenodo.3965568"
+      "attribution": "SoftwareMill (Maciej Adamiak); DOI 10.5281/zenodo.3965568",
+      "credits_url": null
     },
     {
       "dataset_id": "lemon_varieties",
       "name": "LemonVarities: rotten and multiple types fresh lemon",
       "license": "CC BY 4.0",
       "url": "https://data.mendeley.com/datasets/mygrsk3vyb/2",
-      "attribution": "Mujahidul Islam"
+      "attribution": "Mujahidul Islam",
+      "credits_url": null
     },
     {
       "dataset_id": "mango_banana_ripe",
       "name": "Mango and Banana Dataset (Ripe Unripe)",
       "license": "CC BY 4.0",
       "url": "https://data.mendeley.com/datasets/y3649cmgg6/3",
-      "attribution": ""
+      "attribution": "",
+      "credits_url": null
     },
     {
       "dataset_id": "mango_ripening_mm8",
       "name": "Ripening Detection of Mango",
       "license": "CC BY 4.0",
       "url": "https://data.mendeley.com/datasets/mm8g66d7rc/1",
-      "attribution": ""
+      "attribution": "",
+      "credits_url": null
     },
     {
       "dataset_id": "strawberry_avocado_ripening",
       "name": "Comprehensive Dataset on Ripening Stages of Strawberries and Avocados",
       "license": "CC BY 4.0",
       "url": "https://data.mendeley.com/datasets/zysvgmxcyz/1",
-      "attribution": "Authors (farms in Mahabaleshwar, markets in Pune)"
+      "attribution": "Authors (farms in Mahabaleshwar, markets in Pune)",
+      "credits_url": null
     }
   ]
 }

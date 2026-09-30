@@ -18,6 +18,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 from ml.common.taxonomy import HEADS, load_taxonomy
+from ml.preprocessing import registry
 
 QUALITY = {"min_mean_luma": 20.0, "max_mean_luma": 245.0, "min_laplacian_var": 8.0, "max_clipped_frac": 0.85,
            "analysis_size": 256}
@@ -30,6 +31,8 @@ def main() -> None:
     ap.add_argument("--processed", type=Path, required=True)
     ap.add_argument("--version", required=True)
     ap.add_argument("--to", type=Path, required=True)
+    ap.add_argument("--extra-datasets", nargs="*", default=[],
+                    help="training sources outside the manifest, e.g. open_images_v7 when the run used --real-train")
     args = ap.parse_args()
     tax = load_taxonomy()
     rd = lambda n: json.loads((args.run / n).read_text())  # noqa: E731
@@ -46,7 +49,17 @@ def main() -> None:
             hs = supported.setdefault(p, [])
             if not any(h.split("~")[0] == "freshness" for h in hs):
                 hs.append("freshness~general")
-    datasets = sorted({json.loads(l)["dataset_id"] for l in open(args.processed / "manifest.jsonl", encoding="utf-8")})
+    datasets = sorted({json.loads(l)["dataset_id"] for l in open(args.processed / "manifest.jsonl", encoding="utf-8")}
+                      | set(args.extra_datasets))
+    # Licence gate: a shipped (commercial) model may only be trained on sources the registry allows for
+    # commercial training, directly or through an owner sign-off in data/license_signoffs.json.
+    reg = registry.load_registry()
+    blocked = {d: why for d in datasets for ok, why in [registry.is_allowed(reg[d], "commercial_training")] if not ok}
+    if blocked:
+        raise SystemExit(f"licence gate: not allowed for commercial training: {blocked}")
+    rt = args.run / "real_train.json"
+    if rt.exists() and not set(json.loads(rt.read_text())["datasets"]) <= set(args.extra_datasets):
+        raise SystemExit(f"{rt}: the run trained on {json.loads(rt.read_text())['datasets']}; pass them via --extra-datasets")
     bundle = {
         "bundle_version": 2, "backbone": "siglip2", "model_id": f"siglip2_{args.version}@{digest}",
         "created_at": datetime.now(timezone.utc).isoformat(),

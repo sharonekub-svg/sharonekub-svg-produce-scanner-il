@@ -130,6 +130,9 @@ def main() -> None:
         QM[np.arange(len(QX)), [produce.index(t) for t in rt["true"][keep]]] = True
         reps = (1, 3)
         print(f"real-world training crops: {len(QX)}")
+        # recorded so scripts/release_siglip.py can check the source against the licence registry
+        (args.out / "real_train.json").write_text(json.dumps({"datasets": ["open_images_v7"], "file": str(args.real_train),
+                                                              "skipped_classes": args.real_train_skip}))
     best = None
     for wd, k in [(wd, k) for wd in (1e-1, 1e-2, 1e-3) for k in reps]:
         TX = np.concatenate([PX] + [QX] * k) if k else PX
