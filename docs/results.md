@@ -387,6 +387,15 @@ they are identified, get a general score, and have care tips.
 **Advice**: a stage card with what to do at each ripeness stage (banana, avocado, mango), and a nectarine/peach
 hand check (smell, background color, the yellow stripe at the stem end).
 
+## Licence rollback: live model back to v0.9 heads → `v0.9.1` (30 Sep 2026)
+
+v0.10 trained the produce head on Open Images crops. The dataset registry marks Open Images as
+`commercial_use=conditional_per_image` and `ml/preprocessing/registry.py` allows commercial training only with an
+owner sign-off in `data/license_signoffs.json` (currently empty). That check was skipped for v0.10. Until the owner
+signs off (per-image CC BY 2.0, attribution to every photographer in the app credits), the live model is the v0.9
+heads again (`siglip2_v0.9.1`, Open Images used only for evaluation/calibration, which the registry permits).
+v0.10 (`runs/siglip/v10`) is kept and can be re-released unchanged after sign-off.
+
 ## Round 10: checks after v0.10 (nothing shipped — none beat the current model on the calibration half)
 
 | tried | chosen on | result | shipped |

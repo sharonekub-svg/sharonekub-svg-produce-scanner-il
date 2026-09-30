@@ -30,7 +30,7 @@ def test_shipped_model_serves(monkeypatch):
     from server import app as srv
     srv.engine.cache_clear()
     c = TestClient(srv.app)
-    assert c.get("/healthz").json()["model_id"].startswith("siglip2_v0.10")
+    assert c.get("/healthz").json()["model_id"].startswith("siglip2_v0.9")
     rng = np.random.default_rng(0)
     buf = io.BytesIO()
     Image.fromarray(rng.integers(0, 255, (320, 320, 3), dtype=np.uint8)).save(buf, "JPEG")

@@ -1,8 +1,8 @@
 {
  "bundle_version": 2,
  "backbone": "siglip2",
- "model_id": "siglip2_v0.10@bddd19549dbb",
- "created_at": "2026-09-29T22:51:30.986430+00:00",
+ "model_id": "siglip2_v0.9.1@43715f167be8",
+ "created_at": "2026-09-30T09:56:15.146555+00:00",
  "input": {
   "size": 224,
   "layout": "NCHW",
@@ -67,13 +67,13 @@
   ]
  },
  "temperatures": {
-  "produce": 1.2176494708921342,
+  "produce": 1.287239518815352,
   "ripeness": 1.149859761161462,
   "freshness": 1.1151244319798383,
   "visual_spoilage": 0.3625004048130315
  },
  "thresholds": {
-  "produce_min_prob": 0.7,
+  "produce_min_prob": 0.88,
   "produce_min_margin": 0.15,
   "ood_min_energy": null,
   "head_min_prob": 0.55,
@@ -433,7 +433,7 @@
    "sha256": "843945c3ddaaad33f363201558f537eadbdab7cbc4060f2532f9cf1536114718"
   },
   "heads.npz": {
-   "sha256": "6b7e0758e2901c5bc924e3cab2bc19b77e0bdfdfa9b5f76d40c1f4d73a0ce428"
+   "sha256": "e9aa4b5eea93a7c35917f3dc24859f1e1e932f49b0c5ba9466be360bc79926c0"
   }
  }
 }
