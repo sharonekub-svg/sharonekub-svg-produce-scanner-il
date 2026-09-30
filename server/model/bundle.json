@@ -1,8 +1,8 @@
 {
  "bundle_version": 2,
  "backbone": "siglip2",
- "model_id": "siglip2_v0.9.1@43715f167be8",
- "created_at": "2026-09-30T09:56:15.146555+00:00",
+ "model_id": "siglip2_v0.12@942c3376c75e",
+ "created_at": "2026-09-30T20:34:49.229518+00:00",
  "input": {
   "size": 224,
   "layout": "NCHW",
@@ -47,6 +47,17 @@
    "zucchini",
    "potato",
    "passion_fruit",
+   "carrot",
+   "broccoli",
+   "cabbage",
+   "radish",
+   "pumpkin",
+   "pineapple",
+   "fig",
+   "mushroom",
+   "coconut",
+   "asparagus",
+   "artichoke",
    "other"
   ],
   "ripeness": [
@@ -67,13 +78,13 @@
   ]
  },
  "temperatures": {
-  "produce": 1.287239518815352,
+  "produce": 1.210110619172773,
   "ripeness": 1.149859761161462,
   "freshness": 1.1151244319798383,
   "visual_spoilage": 0.3625004048130315
  },
  "thresholds": {
-  "produce_min_prob": 0.88,
+  "produce_min_prob": 0.72,
   "produce_min_margin": 0.15,
   "ood_min_energy": null,
   "head_min_prob": 0.55,
@@ -176,6 +187,39 @@
    "freshness~general"
   ],
   "passion_fruit": [
+   "freshness~general"
+  ],
+  "carrot": [
+   "freshness~general"
+  ],
+  "broccoli": [
+   "freshness~general"
+  ],
+  "cabbage": [
+   "freshness~general"
+  ],
+  "radish": [
+   "freshness~general"
+  ],
+  "pumpkin": [
+   "freshness~general"
+  ],
+  "pineapple": [
+   "freshness~general"
+  ],
+  "fig": [
+   "freshness~general"
+  ],
+  "mushroom": [
+   "freshness~general"
+  ],
+  "coconut": [
+   "freshness~general"
+  ],
+  "asparagus": [
+   "freshness~general"
+  ],
+  "artichoke": [
    "freshness~general"
   ]
  },
@@ -380,6 +424,105 @@
    "note": "supported since v0.8 (SigLIP2 identifies it); was a named negative for the v0.7 CNN",
    "ripeness_visual": "not_applicable"
   },
+  "carrot": {
+   "category": "vegetable",
+   "he": "גזר",
+   "emoji": "🥕",
+   "priority": "-",
+   "is_negative_class": false,
+   "note": "added 2026-09-30 (docs/plan-more-types.md): identified by SigLIP2 + Open Images training crops",
+   "ripeness_visual": "not_applicable"
+  },
+  "broccoli": {
+   "category": "vegetable",
+   "he": "ברוקולי",
+   "emoji": "🥦",
+   "priority": "-",
+   "is_negative_class": false,
+   "note": "added 2026-09-30 (docs/plan-more-types.md): identified by SigLIP2 + Open Images training crops",
+   "ripeness_visual": "not_applicable"
+  },
+  "cabbage": {
+   "category": "vegetable",
+   "he": "כרוב",
+   "emoji": "🥬",
+   "priority": "-",
+   "is_negative_class": false,
+   "note": "added 2026-09-30 (docs/plan-more-types.md): identified by SigLIP2 + Open Images training crops",
+   "ripeness_visual": "not_applicable"
+  },
+  "radish": {
+   "category": "vegetable",
+   "he": "צנונית",
+   "emoji": "🔴",
+   "priority": "-",
+   "is_negative_class": false,
+   "note": "added 2026-09-30 (docs/plan-more-types.md): identified by SigLIP2 + Open Images training crops",
+   "ripeness_visual": "not_applicable"
+  },
+  "pumpkin": {
+   "category": "vegetable",
+   "he": "דלעת",
+   "emoji": "🎃",
+   "priority": "-",
+   "is_negative_class": false,
+   "note": "added 2026-09-30 (docs/plan-more-types.md): identified by SigLIP2 + Open Images training crops; test 29/30 after topping the test half up to n = 30",
+   "ripeness_visual": "not_applicable"
+  },
+  "pineapple": {
+   "category": "fruit",
+   "he": "אננס",
+   "emoji": "🍍",
+   "priority": "-",
+   "is_negative_class": false,
+   "note": "added 2026-09-30 (docs/plan-more-types.md): identified by SigLIP2 + Open Images training crops",
+   "ripeness_visual": "not_applicable"
+  },
+  "fig": {
+   "category": "fruit",
+   "he": "תאנה",
+   "emoji": "🟣",
+   "priority": "-",
+   "is_negative_class": false,
+   "note": "added 2026-09-30 (docs/plan-more-types.md): identified by SigLIP2 + Open Images training crops",
+   "ripeness_visual": "not_applicable"
+  },
+  "mushroom": {
+   "category": "vegetable",
+   "he": "פטריות",
+   "emoji": "🍄",
+   "priority": "-",
+   "is_negative_class": false,
+   "note": "added 2026-09-30 (docs/plan-more-types.md): identified by SigLIP2 + Open Images training crops",
+   "ripeness_visual": "not_applicable"
+  },
+  "coconut": {
+   "category": "fruit",
+   "he": "קוקוס",
+   "emoji": "🥥",
+   "priority": "-",
+   "is_negative_class": false,
+   "note": "added 2026-09-30 (docs/plan-more-types.md): identified by SigLIP2 + Open Images training crops",
+   "ripeness_visual": "not_applicable"
+  },
+  "asparagus": {
+   "category": "vegetable",
+   "he": "אספרגוס",
+   "emoji": "🌱",
+   "priority": "-",
+   "is_negative_class": false,
+   "note": "added 2026-09-30 (docs/plan-more-types.md): identified by SigLIP2 + Open Images training crops",
+   "ripeness_visual": "not_applicable"
+  },
+  "artichoke": {
+   "category": "vegetable",
+   "he": "ארטישוק",
+   "emoji": "🌿",
+   "priority": "-",
+   "is_negative_class": false,
+   "note": "added 2026-09-30 (docs/plan-more-types.md): identified by SigLIP2 + Open Images training crops",
+   "ripeness_visual": "not_applicable"
+  },
   "other": {
    "category": "none",
    "he": "אחר",
@@ -423,6 +566,7 @@
   "lemon_varieties",
   "mango_banana_ripe",
   "mango_ripening_mm8",
+  "open_images_v7",
   "strawberry_avocado_ripening"
  ],
  "files": {
@@ -433,7 +577,7 @@
    "sha256": "843945c3ddaaad33f363201558f537eadbdab7cbc4060f2532f9cf1536114718"
   },
   "heads.npz": {
-   "sha256": "e9aa4b5eea93a7c35917f3dc24859f1e1e932f49b0c5ba9466be360bc79926c0"
+   "sha256": "d1c6a6be43680ec5ae88b6d34b4c9b6f74ec055f7ab629d16d4b4742ebd6ac8e"
   }
  }
 }

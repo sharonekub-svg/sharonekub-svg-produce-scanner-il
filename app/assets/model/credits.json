@@ -1,5 +1,5 @@
 {
-  "model_id": "siglip2_v0.9.1@43715f167be8",
+  "model_id": "siglip2_v0.12@942c3376c75e",
   "datasets": [
     {
       "dataset_id": "apple_good_bad",
@@ -96,6 +96,14 @@
       "url": "https://data.mendeley.com/datasets/mm8g66d7rc/1",
       "attribution": "",
       "credits_url": null
+    },
+    {
+      "dataset_id": "open_images_v7",
+      "name": "Open Images V7 (produce classes subset)",
+      "license": "Annotations CC BY 4.0; images listed as CC BY 2.0",
+      "url": "https://storage.googleapis.com/openimages/web/index.html",
+      "attribution": "Open Images V7 (Google LLC), annotations CC BY 4.0; photos CC BY 2.0 by their Flickr authors - every photographer is listed on the page below.",
+      "credits_url": "https://sharonekub-svg-produce-scanner-il.vercel.app/web/credits/open_images.html"
     },
     {
       "dataset_id": "strawberry_avocado_ripening",
