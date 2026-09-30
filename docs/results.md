@@ -395,6 +395,7 @@ hand check (smell, background color, the yellow stripe at the stem end).
 | richer fresh/rotten prompts for the general score | val, leave-one-fruit-out | 0.799 vs 0.805 | no |
 | mirror test-time augmentation (2x server time) | real cal | 0.858 vs 0.861 | no |
 | centre-square / centre-80% crop instead of squashing the whole photo | full-frame cal | 0.946 / 0.935 vs 0.952 | no |
+| higher input resolution: siglip2-base-patch16-256 (same size), torch fp32, zero-shot / probe on 3,000 OI crops | real cal | 0.837 / 0.864 vs 0.844 / 0.886 (224) | no (384 not finished: container restart; 3x server time) |
 
 Full-frame check (the app sends the whole photo, not a crop): 631 evaluation-set images where one fruit type fills
 >= 20% of the frame, downloaded whole. Current v0.10 top-1 (supported, excl. grapefruit): **0.95 cal, 0.92 test**.
