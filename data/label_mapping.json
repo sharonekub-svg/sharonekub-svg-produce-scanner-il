@@ -268,8 +268,8 @@
       "he": "דלעת",
       "emoji": "🎃",
       "priority": "-",
-      "is_negative_class": true,
-      "note": "added 2026-09-30 but held back: real-photo test 25/26 correct, below the n >= 30 rule (docs/plan-more-types.md step 5); enable once the eval has >= 30 test photos",
+      "is_negative_class": false,
+      "note": "added 2026-09-30 (docs/plan-more-types.md): identified by SigLIP2 + Open Images training crops; test 29/30 after topping the test half up to n = 30",
       "ripeness_visual": "not_applicable"
     },
     "pineapple": {

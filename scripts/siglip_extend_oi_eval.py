@@ -31,6 +31,8 @@ def main() -> None:
     ap.add_argument("--out", type=Path, required=True)
     ap.add_argument("--onnx", type=Path, default=Path("exports/siglip2/vision.onnx"))
     ap.add_argument("--per-class", type=int, default=80)
+    ap.add_argument("--min-test", type=int, default=30,
+                    help="top up any supported type with fewer test-half crops than this (the gate needs n >= 30)")
     a = ap.parse_args()
     cmap = json.loads(Path("data/label_mapping.json").read_text(encoding="utf-8"))["datasets"]["open_images_v7"]["class_name_map"]
     z = np.load(a.real, allow_pickle=True)
@@ -59,6 +61,31 @@ def main() -> None:
             if k >= a.per_class:
                 break
         print(f"{c}: +{k}")
+    # 3. Top-up: supported types whose test half is below --min-test get more crops from unused image ids.
+    #    Only the COUNT decides (fixed rule), never the accuracy.
+    used_ids = {Path(r["path"]).name.rsplit("_", 1)[0] for r in rows + new}
+    by_all: dict[str, list[dict]] = {}
+    for r in csv.DictReader(open(OI / "crops.csv", encoding="utf-8")):
+        if r["class_name"] in cmap and cmap[r["class_name"]] != "other" and r["image_id"] not in used_ids:
+            by_all.setdefault(r["class_name"], []).append(r)
+    for c, rs in sorted(by_all.items()):
+        n_test = sum(1 for r in rows + new if cls_of[r["path"]] == c and r["split"] == "test")
+        if n_test >= a.min_test:
+            continue
+        random.shuffle(rs)
+        added = 0
+        for r in rs:
+            if n_test >= a.min_test:
+                break
+            split = "cal" if int(hashlib.md5(r["image_id"].encode()).hexdigest(), 16) % 2 == 0 else "test"
+            im = Image.open(OI / r["path"]).convert("RGB")
+            if min(im.size) < 200:
+                continue
+            new.append(dict(path=r["path"], true=cmap[c], split=split, q=str(quality.assess(im).reason)))
+            ims.append(im)
+            added += 1
+            n_test += split == "test"
+        print(f"{c}: top-up +{added} (test now {n_test})")
     E_new = Encoder(a.onnx, threads=8)(ims) if ims else np.zeros((0, z["emb"].shape[1]), np.float32)
     allr = rows + new
     np.savez(a.out, emb=np.concatenate([z["emb"].astype(np.float32), E_new]), true=np.array([r["true"] for r in allr]),

@@ -405,7 +405,7 @@ pizza, flower, houseplant (773 "other" rows vs 693 before). Training crops exclu
 
 New types, test top-1 (n): broccoli 1.00 (36), coconut 1.00 (41), mushroom 0.97 (38), pineapple 0.97 (37),
 artichoke 0.95 (39), cabbage 0.93 (42), radish 0.93 (42), carrot 0.89 (35), asparagus 0.89 (38), fig 0.85 (39):
-all pass the >= 0.80 / n >= 30 rule. Pumpkin 0.96 but n = 26 -> held back (is_negative_class) until >= 30 test photos.
+all pass the >= 0.80 / n >= 30 rule. Pumpkin first had n = 26 test photos; the eval builder now tops up any type below 30 test photos from unused image ids (count-only rule), then train crops were rebuilt without them and v12 retrained: pumpkin 0.97 (29/30) -> enabled. After the retrain: answered 85%, correct when answered 93%, unsupported shown 10% (test); old types 0.88.
 Still weak (unchanged types): cucumber 0.65 / zucchini 0.59 (mixed labels), melon 0.77. Quality heads and gate unchanged.
 
 ## Licence rollback: live model back to v0.9 heads → `v0.9.1` (30 Sep 2026)
