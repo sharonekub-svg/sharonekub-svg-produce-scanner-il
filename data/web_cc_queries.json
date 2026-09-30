@@ -771,6 +771,171 @@
    "provider": "commons",
    "category": "Unripe fruit",
    "tag": "mixed:unripe"
+  },
+  {
+   "provider": "openverse",
+   "query": "carrot",
+   "tag": "carrot:id"
+  },
+  {
+   "provider": "openverse",
+   "query": "carrot market",
+   "tag": "carrot:id"
+  },
+  {
+   "provider": "openverse",
+   "query": "rotten carrot",
+   "tag": "carrot:spoiled"
+  },
+  {
+   "provider": "openverse",
+   "query": "broccoli",
+   "tag": "broccoli:id"
+  },
+  {
+   "provider": "openverse",
+   "query": "broccoli market",
+   "tag": "broccoli:id"
+  },
+  {
+   "provider": "openverse",
+   "query": "rotten broccoli",
+   "tag": "broccoli:spoiled"
+  },
+  {
+   "provider": "openverse",
+   "query": "cabbage",
+   "tag": "cabbage:id"
+  },
+  {
+   "provider": "openverse",
+   "query": "cabbage market",
+   "tag": "cabbage:id"
+  },
+  {
+   "provider": "openverse",
+   "query": "rotten cabbage",
+   "tag": "cabbage:spoiled"
+  },
+  {
+   "provider": "openverse",
+   "query": "radish",
+   "tag": "radish:id"
+  },
+  {
+   "provider": "openverse",
+   "query": "radish market",
+   "tag": "radish:id"
+  },
+  {
+   "provider": "openverse",
+   "query": "rotten radish",
+   "tag": "radish:spoiled"
+  },
+  {
+   "provider": "openverse",
+   "query": "pumpkin",
+   "tag": "pumpkin:id"
+  },
+  {
+   "provider": "openverse",
+   "query": "pumpkin market",
+   "tag": "pumpkin:id"
+  },
+  {
+   "provider": "openverse",
+   "query": "rotten pumpkin",
+   "tag": "pumpkin:spoiled"
+  },
+  {
+   "provider": "openverse",
+   "query": "pineapple",
+   "tag": "pineapple:id"
+  },
+  {
+   "provider": "openverse",
+   "query": "pineapple market",
+   "tag": "pineapple:id"
+  },
+  {
+   "provider": "openverse",
+   "query": "rotten pineapple",
+   "tag": "pineapple:spoiled"
+  },
+  {
+   "provider": "openverse",
+   "query": "fig fruit",
+   "tag": "fig:id"
+  },
+  {
+   "provider": "openverse",
+   "query": "fig fruit market",
+   "tag": "fig:id"
+  },
+  {
+   "provider": "openverse",
+   "query": "rotten fig fruit",
+   "tag": "fig:spoiled"
+  },
+  {
+   "provider": "openverse",
+   "query": "mushrooms",
+   "tag": "mushroom:id"
+  },
+  {
+   "provider": "openverse",
+   "query": "mushrooms market",
+   "tag": "mushroom:id"
+  },
+  {
+   "provider": "openverse",
+   "query": "moldy mushrooms",
+   "tag": "mushroom:spoiled"
+  },
+  {
+   "provider": "openverse",
+   "query": "coconut",
+   "tag": "coconut:id"
+  },
+  {
+   "provider": "openverse",
+   "query": "coconut market",
+   "tag": "coconut:id"
+  },
+  {
+   "provider": "openverse",
+   "query": "rotten coconut",
+   "tag": "coconut:spoiled"
+  },
+  {
+   "provider": "openverse",
+   "query": "asparagus",
+   "tag": "asparagus:id"
+  },
+  {
+   "provider": "openverse",
+   "query": "asparagus market",
+   "tag": "asparagus:id"
+  },
+  {
+   "provider": "openverse",
+   "query": "rotten asparagus",
+   "tag": "asparagus:spoiled"
+  },
+  {
+   "provider": "openverse",
+   "query": "artichoke",
+   "tag": "artichoke:id"
+  },
+  {
+   "provider": "openverse",
+   "query": "artichoke market",
+   "tag": "artichoke:id"
+  },
+  {
+   "provider": "openverse",
+   "query": "rotten artichoke",
+   "tag": "artichoke:spoiled"
   }
  ]
 }

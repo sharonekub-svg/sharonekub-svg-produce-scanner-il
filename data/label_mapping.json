@@ -227,6 +227,105 @@
       "note": "supported since v0.8 (SigLIP2 identifies it); was a named negative for the v0.7 CNN",
       "ripeness_visual": "not_applicable"
     },
+    "carrot": {
+      "category": "vegetable",
+      "he": "גזר",
+      "emoji": "🥕",
+      "priority": "-",
+      "is_negative_class": false,
+      "note": "added 2026-09-30 (docs/plan-more-types.md): identified by SigLIP2 + Open Images training crops",
+      "ripeness_visual": "not_applicable"
+    },
+    "broccoli": {
+      "category": "vegetable",
+      "he": "ברוקולי",
+      "emoji": "🥦",
+      "priority": "-",
+      "is_negative_class": false,
+      "note": "added 2026-09-30 (docs/plan-more-types.md): identified by SigLIP2 + Open Images training crops",
+      "ripeness_visual": "not_applicable"
+    },
+    "cabbage": {
+      "category": "vegetable",
+      "he": "כרוב",
+      "emoji": "🥬",
+      "priority": "-",
+      "is_negative_class": false,
+      "note": "added 2026-09-30 (docs/plan-more-types.md): identified by SigLIP2 + Open Images training crops",
+      "ripeness_visual": "not_applicable"
+    },
+    "radish": {
+      "category": "vegetable",
+      "he": "צנונית",
+      "emoji": "🔴",
+      "priority": "-",
+      "is_negative_class": false,
+      "note": "added 2026-09-30 (docs/plan-more-types.md): identified by SigLIP2 + Open Images training crops",
+      "ripeness_visual": "not_applicable"
+    },
+    "pumpkin": {
+      "category": "vegetable",
+      "he": "דלעת",
+      "emoji": "🎃",
+      "priority": "-",
+      "is_negative_class": false,
+      "note": "added 2026-09-30 (docs/plan-more-types.md): identified by SigLIP2 + Open Images training crops",
+      "ripeness_visual": "not_applicable"
+    },
+    "pineapple": {
+      "category": "fruit",
+      "he": "אננס",
+      "emoji": "🍍",
+      "priority": "-",
+      "is_negative_class": false,
+      "note": "added 2026-09-30 (docs/plan-more-types.md): identified by SigLIP2 + Open Images training crops",
+      "ripeness_visual": "not_applicable"
+    },
+    "fig": {
+      "category": "fruit",
+      "he": "תאנה",
+      "emoji": "🟣",
+      "priority": "-",
+      "is_negative_class": false,
+      "note": "added 2026-09-30 (docs/plan-more-types.md): identified by SigLIP2 + Open Images training crops",
+      "ripeness_visual": "not_applicable"
+    },
+    "mushroom": {
+      "category": "vegetable",
+      "he": "פטריות",
+      "emoji": "🍄",
+      "priority": "-",
+      "is_negative_class": false,
+      "note": "added 2026-09-30 (docs/plan-more-types.md): identified by SigLIP2 + Open Images training crops",
+      "ripeness_visual": "not_applicable"
+    },
+    "coconut": {
+      "category": "fruit",
+      "he": "קוקוס",
+      "emoji": "🥥",
+      "priority": "-",
+      "is_negative_class": false,
+      "note": "added 2026-09-30 (docs/plan-more-types.md): identified by SigLIP2 + Open Images training crops",
+      "ripeness_visual": "not_applicable"
+    },
+    "asparagus": {
+      "category": "vegetable",
+      "he": "אספרגוס",
+      "emoji": "🌱",
+      "priority": "-",
+      "is_negative_class": false,
+      "note": "added 2026-09-30 (docs/plan-more-types.md): identified by SigLIP2 + Open Images training crops",
+      "ripeness_visual": "not_applicable"
+    },
+    "artichoke": {
+      "category": "vegetable",
+      "he": "ארטישוק",
+      "emoji": "🌿",
+      "priority": "-",
+      "is_negative_class": false,
+      "note": "added 2026-09-30 (docs/plan-more-types.md): identified by SigLIP2 + Open Images training crops",
+      "ripeness_visual": "not_applicable"
+    },
     "other": {
       "category": "none",
       "he": "אחר",
@@ -901,17 +1000,21 @@
         "Cantaloupe": "melon",
         "Bell pepper": "pepper",
         "Grapefruit": "grapefruit",
-        "Pineapple": "other",
-        "Broccoli": "other",
-        "Cabbage": "other",
-        "Carrot": "other",
-        "Common fig": "other",
+        "Pineapple": "pineapple",
+        "Broccoli": "broccoli",
+        "Cabbage": "cabbage",
+        "Carrot": "carrot",
+        "Common fig": "fig",
         "Potato": "potato",
-        "Pumpkin": "other",
-        "Radish": "other",
+        "Pumpkin": "pumpkin",
+        "Radish": "radish",
         "Zucchini": "zucchini",
         "Winter melon": "other",
-        "Squash (Plant)": "other"
+        "Squash (Plant)": "other",
+        "Mushroom": "mushroom",
+        "Coconut": "coconut",
+        "Garden Asparagus": "asparagus",
+        "Artichoke": "artichoke"
       }
     },
     "lemon_softwaremill": {
