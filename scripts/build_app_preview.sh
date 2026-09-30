@@ -25,6 +25,10 @@ s = s.replace("</style>", """  @media (min-width: 600px) {
                 box-shadow: 0 0 0 10px #0d130f, 0 30px 80px rgba(0,0,0,.5); }
       }
     </style>""", 1)
+# Vercel Web Analytics (cookieless page views; counts only once enabled in the Vercel project's Analytics tab).
+s = s.replace("</head>", """<script>window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };</script>
+    <script defer src="/_vercel/insights/script.js"></script>
+  </head>""", 1)
 open(p, "w", encoding="utf-8").write(s)
 PY
 echo "preview built: $(du -sh "$OUT" | cut -f1)"
