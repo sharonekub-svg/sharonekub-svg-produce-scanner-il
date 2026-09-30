@@ -1,1 +1,10 @@
-[]
+[
+  {
+    "dataset_id": "open_images_v7",
+    "reviewer": "sharonekub-svg (project owner)",
+    "date": "2026-09-30",
+    "evidence_url": "https://storage.googleapis.com/openimages/web/factsfigures_v7.html",
+    "decision": "approved_commercial",
+    "conditions": "Only per-image CC BY 2.0 photos; every photographer credited at /web/credits/open_images.html, linked from the app credits screen."
+  }
+]
