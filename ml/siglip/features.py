@@ -23,14 +23,14 @@ NAMES = {"banana": ["banana"], "apple": ["apple"], "orange": ["orange"], "mandar
          "strawberry": ["strawberry"], "pomegranate": ["pomegranate"], "pear": ["pear"], "kiwi": ["kiwi fruit"],
          "plum": ["plum"], "persimmon": ["persimmon"], "lemon": ["lemon"], "guava": ["guava"], "pepper": ["bell pepper"],
          "lime": ["lime"], "grapefruit": ["grapefruit"], "zucchini": ["zucchini"], "potato": ["potato"],
-         "passion_fruit": ["passion fruit"]}
+         "passion_fruit": ["passion fruit"], "carrot": ["carrot"], "broccoli": ["broccoli"], "cabbage": ["cabbage"],
+         "radish": ["radish"], "pumpkin": ["pumpkin"], "pineapple": ["pineapple"], "fig": ["fig"], "mushroom": ["mushroom"],
+         "coconut": ["coconut"], "asparagus": ["asparagus"], "artichoke": ["artichoke"]}
 TEMPLATES = ["a photo of a {}.", "a close-up photo of a {}.", "a photo of a fresh {}.", "a photo of a rotten {}."]
 # "Not a supported produce" prompts: their probability mass becomes the taxonomy's `other` class.
 NEGATIVES = ["a photo of a person", "a photo of a hand", "a photo of a room", "a photo of a table", "a photo of a plate of food",
-             "a photo of bread", "a photo of meat", "a photo of a vegetable", "a photo of a pineapple", "a photo of broccoli",
-             "a photo of a carrot", "a photo of a pumpkin", "a photo of a cabbage", "a photo of an onion", "a photo of garlic",
-             "a photo of a coconut", "a photo of a fig", "a photo of cherries", "a photo of dates", "a photo of a radish",
-             "a photo of a squash", "a photo of a phone", "a photo of a cat", "a photo of a dog", "a photo of text",
+             "a photo of bread", "a photo of meat", "a photo of an onion", "a photo of garlic", "a photo of cherries",
+             "a photo of dates", "a photo of a squash", "a photo of a phone", "a photo of a cat", "a photo of a dog", "a photo of text",
              "a photo of a cake", "a photo of juice", "a photo of a drawing of fruit", "a photo of a plant with leaves",
              "a photo of a flower"]
 

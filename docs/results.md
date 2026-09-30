@@ -387,6 +387,27 @@ they are identified, get a general score, and have care tips.
 **Advice**: a stage card with what to do at each ripeness stage (banana, avocado, mango), and a nectarine/peach
 hand check (smell, background color, the yellow stripe at the stem end).
 
+## Round 11: 11 new types incl. vegetables → `runs/siglip/v12` (30 Sep 2026; release waits for the Open Images sign-off)
+
+New types: carrot, broccoli, cabbage, radish, pumpkin, pineapple, fig, mushroom, coconut, asparagus, artichoke
+(docs/plan-more-types.md). Real-photo evaluation extended (`scripts/siglip_extend_oi_eval.py` -> `oi_real2.npz`):
+the new vegetables' Open Images crops are relabelled from "other" to their type, 80 crops added for mushroom,
+coconut, asparagus, artichoke, and - because the remaining "not supported" examples were only squash / winter melon
+(look-alikes that would make the rule meaningless) - 80 crops each of bread, cheese, cookie, doughnut, muffin,
+pizza, flower, houseplant (773 "other" rows vs 693 before). Training crops exclude every evaluation image id (0 overlap).
+
+| real-photo test half | v0.10 (27 types) | v12 (38 types) |
+|---|---|---|
+| answer shown | 79% | **84%** |
+| correct when shown | 90% | **94%** |
+| unsupported shown as a type | 5% | 9% (bigger, harder "other" set) |
+| old types top-1 (excl. grapefruit) | 0.88 | 0.885 |
+
+New types, test top-1 (n): broccoli 1.00 (36), coconut 1.00 (41), mushroom 0.97 (38), pineapple 0.97 (37),
+artichoke 0.95 (39), cabbage 0.93 (42), radish 0.93 (42), carrot 0.89 (35), asparagus 0.89 (38), fig 0.85 (39):
+all pass the >= 0.80 / n >= 30 rule. Pumpkin first had n = 26 test photos; the eval builder now tops up any type below 30 test photos from unused image ids (count-only rule), then train crops were rebuilt without them and v12 retrained: pumpkin 0.97 (29/30) -> enabled. After the retrain: answered 85%, correct when answered 93%, unsupported shown 10% (test); old types 0.88.
+Still weak (unchanged types): cucumber 0.65 / zucchini 0.59 (mixed labels), melon 0.77. Quality heads and gate unchanged.
+
 ## Licence rollback: live model back to v0.9 heads → `v0.9.1` (30 Sep 2026)
 
 v0.10 trained the produce head on Open Images crops. The dataset registry marks Open Images as

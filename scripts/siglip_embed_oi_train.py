@@ -4,21 +4,18 @@
   PYTHONPATH=. python3 scripts/siglip_embed_oi_train.py --real runs/siglip/oi_real.npz --out runs/siglip/oi_train.npz
 
 Every image_id that has any crop in the real-photo evaluation set (--real, cal + test) is excluded, so the
-evaluation stays unseen. Up to --cap crops per class (min side 100 px). Unsupported classes -> "other".
+evaluation stays unseen. Up to --cap crops per class (min side 100 px). Labels from data/label_mapping.json (unsupported look-alikes -> "other").
 Resumable.
 """
-import argparse, csv, random
+import argparse, csv, json, random
 from pathlib import Path
 import numpy as np
 from PIL import Image
 from ml.siglip.features import Encoder
 
 OI = Path("data/raw/open_images_v7")
-MAP = {"Apple": "apple", "Banana": "banana", "Orange (fruit)": "orange", "Lemon (plant)": "lemon", "Strawberry": "strawberry",
-       "Tomato": "tomato", "Cucumber": "cucumber", "Pear": "pear", "Peach": "peach", "Pomegranate": "pomegranate", "Mango": "mango",
-       "Grape": "grape", "Watermelon": "watermelon", "Bell pepper": "pepper", "Cantaloupe": "melon", "Grapefruit": "grapefruit",
-       "Zucchini": "zucchini", "Potato": "potato"}
-UNSUP = ["Broccoli", "Carrot", "Pumpkin", "Cabbage", "Radish", "Pineapple", "Common fig", "Squash (Plant)", "Winter melon"]
+# Open Images class -> our produce key (data/label_mapping.json); classes mapped to "other" are unsupported look-alikes.
+MAP = json.loads(Path("data/label_mapping.json").read_text(encoding="utf-8"))["datasets"]["open_images_v7"]["class_name_map"]
 
 
 def main() -> None:
@@ -34,12 +31,12 @@ def main() -> None:
     random.seed(0)
     by: dict[str, list[dict]] = {}
     for r in csv.DictReader(open(OI / "crops.csv")):
-        if (r["class_name"] in MAP or r["class_name"] in UNSUP) and r["image_id"] not in held:
+        if r["class_name"] in MAP and r["image_id"] not in held:
             by.setdefault(r["class_name"], []).append(r)
     rows = []
     for c, rs in sorted(by.items()):
         random.shuffle(rs)
-        rows += rs[: a.cap if c in MAP else a.cap_other]
+        rows += rs[: a.cap if MAP[c] != "other" else a.cap_other]
     done = {}
     if a.out.exists():
         o = np.load(a.out, allow_pickle=True)
@@ -49,7 +46,7 @@ def main() -> None:
     def save():
         k = [r for r in rows if r["path"] in done]
         np.savez(a.out, path=np.array([r["path"] for r in k]), image_id=np.array([r["image_id"] for r in k]),
-                 true=np.array([MAP.get(r["class_name"], "other") for r in k]), emb=np.stack([done[r["path"]] for r in k]))
+                 true=np.array([MAP[r["class_name"]] for r in k]), emb=np.stack([done[r["path"]] for r in k]))
     todo = [r for r in rows if r["path"] not in done]
     for i in range(0, len(todo), 128):
         ch, ims = [], []

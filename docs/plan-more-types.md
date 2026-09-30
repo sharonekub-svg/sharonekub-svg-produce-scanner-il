@@ -33,3 +33,4 @@ pomelo, loquat, quince.
 5. Gate: a type is shown by name only if its real-photo accuracy (test) >= 0.80 with n >= 30; otherwise it stays
    "not supported" until data arrives.
 6. Level 3 per type as labelled data arrives (user photo donations, open datasets with rot labels).
+
