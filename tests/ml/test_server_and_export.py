@@ -102,6 +102,8 @@ def test_web_page_and_care_copy():
     assert page.status_code == 200 and 'dir="rtl"' in page.text and "/_expo/static/js/web/" in page.text
     assert c.get("/", headers={"accept": "application/json"}).json()["service"] == "produce-scanner inference API"
     for path in re.findall(r'(?:href|src)="(/[^"$]+)"', page.text):
+        if path.startswith("/_vercel/"):  # served by the Vercel platform (Web Analytics), not by this app
+            continue
         assert c.get(path).status_code == 200, path
     for route in srv.APP_ROUTES:
         assert c.get(f"/{route}").text == page.text, route
