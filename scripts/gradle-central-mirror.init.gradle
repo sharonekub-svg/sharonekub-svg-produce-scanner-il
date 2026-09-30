@@ -8,7 +8,17 @@ beforeSettings { settings ->
     google()
   }
 }
+// 429 is an error, not "not found", so Gradle does not fall through to the next source: point every
+// Maven Central declaration (including libraries' own buildscripts) at the mirror instead.
+def redirect = { RepositoryHandler repos ->
+  repos.all { r ->
+    if (r instanceof MavenArtifactRepository && r.url.toString().startsWith('https://repo.maven.apache.org')) { r.url = MIRROR }
+  }
+}
+beforeSettings { settings -> redirect(settings.pluginManagement.repositories) }
 allprojects {
+  redirect(buildscript.repositories)
+  redirect(repositories)
   buildscript { repositories { maven { url MIRROR; name 'centralMirror' } } }
   repositories { maven { url MIRROR; name 'centralMirror' } }
 }
