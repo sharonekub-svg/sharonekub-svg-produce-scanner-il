@@ -16,6 +16,7 @@ import { sendFeedback } from '../feedback';
 import { CHIP, pct } from '../ui/chips';
 import { getLastScan, setLastScan, setPendingPrevious } from '../ui/state';
 import { he } from '../ui/strings';
+import { SurveyCard } from '../ui/Survey';
 
 // Headline colour follows what we tell the user to do — never green for "don't eat".
 const REC_TONE: Record<string, { fg: string; bg: string; icon: string }> = {
@@ -265,6 +266,7 @@ export default function ResultScreen() {
             )}
           </View>
         )}
+        {ok && !fromHistory && !last.sample ? <SurveyCard /> : null}
         {ok && canDonate ? (
           <View style={styles.donate}>
             {donate === 'idle' || donate === 'failed' ? (

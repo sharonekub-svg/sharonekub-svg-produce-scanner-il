@@ -118,4 +118,14 @@ export const he = {
   donateThanks: 'תודה! התמונה נשלחה.',
   donateFailed: 'השליחה לא הצליחה. אפשר לנסות שוב.',
   visualOnlyBanner: 'הערכה חזותית בלבד',
+  surveyTitle: 'שאלה קצרה',
+  surveyQ: {
+    better_fruit: 'מאז שהתחלתם להשתמש באפליקציה, אתם בוחרים פירות וירקות טובים יותר?',
+    less_waste: 'מאז שהתחלתם להשתמש באפליקציה, אתם זורקים פחות פירות וירקות?',
+  } as Record<string, string>,
+  surveyA: { a_lot: 'כן, הרבה', a_little: 'קצת', no_change: 'לא השתנה', not_sure: 'לא בטוח/ה' } as Record<string, string>,
+  surveyLater: 'לא עכשיו',
+  surveyNever: 'לא לשאול שוב',
+  surveyThanks: 'תודה! זה עוזר לנו לשפר.',
+  surveyPrivacy: 'אנונימי: נשלחת רק התשובה, בלי תמונה ובלי פרטים מזהים.',
 };

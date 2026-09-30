@@ -4,7 +4,7 @@ import { Platform } from 'react-native';
 
 const WEB_KEY = 'app_prefs';
 
-type Prefs = { onboarded?: boolean; guest?: boolean };
+type Prefs = { onboarded?: boolean; guest?: boolean; surveyDone?: boolean; surveySnoozeUntil?: number };
 let cache: Prefs | null = null;
 
 function file(): File | null {
