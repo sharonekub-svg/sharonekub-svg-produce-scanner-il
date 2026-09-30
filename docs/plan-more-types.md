@@ -33,3 +33,9 @@ pomelo, loquat, quince.
 5. Gate: a type is shown by name only if its real-photo accuracy (test) >= 0.80 with n >= 30; otherwise it stays
    "not supported" until data arrives.
 6. Level 3 per type as labelled data arrives (user photo donations, open datasets with rot labels).
+
+## Held back: pumpkin (real-photo test n = 26 < 30)
+Re-enable: set `is_negative_class: false` in data/label_mapping.json and restore this care line in both produce_care.json copies:
+```
+    "pumpkin":     {"fridge": "no",             "chill_below_c": 10,   "ethylene": {"producer": false, "sensitive": true},  "tip_he": "דלעת שלמה – במקום קריר ויבש מחוץ למקרר, נשמרת חודשים. פרוסה – במקרר, עטופה, כמה ימים.", "touch_he": "קליפה קשה בלי כתמים רכים, ועוקץ יבש. כתמים רכים או עובש – לא לקנות."},
+```
