@@ -33,3 +33,27 @@ export async function sendFeedback(f: Feedback): Promise<boolean> {
     return false; // feedback must never break the scan flow
   }
 }
+
+export type Rating = 'great' | 'okay' | 'poor';
+
+/** "How was the analysis?" (great / okay / poor) with the type and the score shown. No photo, no identifiers
+ *  (Supabase table quality_feedback, server/supabase/migrations/006_quality_feedback.sql, insert-only). */
+export async function sendRating(r: { model_id: string; produce: string | null; score: number | null; verdict: Rating }): Promise<boolean> {
+  const url = cfg.feedback?.url, key = cfg.feedback?.anonKey;
+  if (!url || !key) return false;
+  try {
+    const res = await fetch(`${url.replace(/\/$/, '')}/rest/v1/quality_feedback`, {
+      method: 'POST',
+      headers: {
+        apikey: key,
+        ...(key.startsWith('eyJ') ? { Authorization: `Bearer ${key}` } : {}),
+        'Content-Type': 'application/json',
+        Prefer: 'return=minimal',
+      },
+      body: JSON.stringify({ ...r, app_version: Constants.expoConfig?.version ?? null }),
+    });
+    return res.ok;
+  } catch {
+    return false; // feedback must never break the scan flow
+  }
+}

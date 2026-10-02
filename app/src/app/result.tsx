@@ -12,7 +12,7 @@ import { type ScanOutput, getBundle } from '../model/engine';
 import { addToHistory } from '../history';
 import type { HeadResult } from '../model/types';
 import { donatePhoto, donationEnabled } from '../donation';
-import { sendFeedback } from '../feedback';
+import { type Rating, sendRating } from '../feedback';
 import { CHIP, pct } from '../ui/chips';
 import { getLastScan, setLastScan, setPendingPrevious } from '../ui/state';
 import { he } from '../ui/strings';
@@ -73,7 +73,7 @@ export default function ResultScreen() {
   const last = getLastScan();
   const [open, setOpen] = useState<'what' | 'why' | null>(null);
   const [feedbackSent, setFeedbackSent] = useState(false);
-  const [answer, setAnswer] = useState<boolean | null>(null);
+  const [rating, setRating] = useState<Rating | null>(null);
   const [donate, setDonate] = useState<'idle' | 'consent' | 'sending' | 'sent' | 'failed'>('idle');
   const [picked, setPicked] = useState<ScanOutput | null>(null);
   if (!last) {
@@ -99,16 +99,16 @@ export default function ResultScreen() {
   };
   const again = () => (fromHistory ? router.dismissTo('/') : router.back());
   const anotherAngle = () => { setPendingPrevious(last.output); router.back(); };
-  const onFeedback = async (correct: boolean) => {
+  const onRate = (v: Rating) => {
     setFeedbackSent(true);
-    setAnswer(correct);
-    await sendFeedback({ model_id: getBundle().model_id, status: r.status, produce: r.produce,
-                         confidence: r.produce_confidence, correct });
+    setRating(v);
+    if (v === 'poor' && canDonate) setDonate('consent'); // the photos we most need to learn from
+    sendRating({ model_id: getBundle().model_id, produce: r.produce, score: r.score ?? null, verdict: v });
   };
   const onDonate = async () => {
     setDonate('sending');
-    const sent = await donatePhoto({ photoUri: last.photoUri, model_id: getBundle().model_id,
-                                     predicted: r.produce, correct: answer });
+    const sent = await donatePhoto({ photoUri: last.photoUri, model_id: getBundle().model_id, predicted: r.produce,
+                                     correct: null, score: r.score ?? null, quality_verdict: rating });
     setDonate(sent ? 'sent' : 'failed');
   };
   const ok = r.status === 'ok';
@@ -268,9 +268,12 @@ export default function ResultScreen() {
           <View style={styles.feedback}>
             {feedbackSent ? <Text style={styles.muted}>{he.thanks}</Text> : (
               <>
-                <Text style={styles.muted}>{he.wasItRight}</Text>
-                <Pressable style={styles.thumb} accessibilityLabel={he.yes} onPress={() => onFeedback(true)}><Text style={styles.thumbText}>👍</Text></Pressable>
-                <Pressable style={styles.thumb} accessibilityLabel={he.no} onPress={() => onFeedback(false)}><Text style={styles.thumbText}>👎</Text></Pressable>
+                <Text style={styles.muted}>{he.rateQ}</Text>
+                {(['great', 'okay', 'poor'] as const).map((v) => (
+                  <Pressable key={v} accessibilityRole="button" style={styles.rate} onPress={() => onRate(v)}>
+                    <Text style={styles.rateText}>{he.rateA[v]}</Text>
+                  </Pressable>
+                ))}
               </>
             )}
           </View>
@@ -287,6 +290,7 @@ export default function ResultScreen() {
               </>
             ) : donate === 'consent' ? (
               <>
+                {rating === 'poor' ? <Text style={styles.muted}>{he.rateDonateAsk}</Text> : null}
                 <Text style={styles.body}>{he.donateConsent}</Text>
                 <View style={styles.row}>
                   <Pressable accessibilityRole="button" style={[styles.primary, styles.flex]} onPress={onDonate}>
@@ -364,9 +368,9 @@ const styles = StyleSheet.create({
   disclaimerText: { fontSize: 13 },
   link: { color: '#8A0C1B', fontSize: 16, fontWeight: '600', paddingVertical: 4 },
   body: { fontSize: 15, color: '#333', lineHeight: 22 },
-  feedback: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 12 },
-  thumb: { minWidth: 44, minHeight: 44, alignItems: 'center', justifyContent: 'center' },
-  thumbText: { fontSize: 22 },
+  feedback: { flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'center', gap: 10 },
+  rate: { minHeight: 40, paddingHorizontal: 14, borderRadius: 999, borderWidth: 1.5, borderColor: '#8A0C1B', justifyContent: 'center' },
+  rateText: { color: '#8A0C1B', fontSize: 14, fontWeight: '700' },
   primary: { backgroundColor: '#8A0C1B', minHeight: 52, borderRadius: 14, alignItems: 'center', justifyContent: 'center' },
   primaryText: { color: '#fff', fontSize: 18, fontWeight: '700' },
   secondary: { borderWidth: 1.5, borderColor: '#8A0C1B', minHeight: 52, borderRadius: 14, alignItems: 'center', justifyContent: 'center' },

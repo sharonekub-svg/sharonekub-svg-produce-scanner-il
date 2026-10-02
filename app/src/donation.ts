@@ -12,6 +12,8 @@ export interface Donation {
   model_id: string;
   predicted: string | null;
   correct: boolean | null;
+  score?: number | null;
+  quality_verdict?: 'great' | 'okay' | 'poor' | null;
 }
 
 export function donationEnabled(): boolean {
@@ -39,6 +41,7 @@ export async function donatePhoto(d: Donation): Promise<boolean> {
       method: 'POST',
       headers: { ...auth, 'Content-Type': 'application/json', Prefer: 'return=minimal' },
       body: JSON.stringify({ object_name: name, model_id: d.model_id, predicted: d.predicted, correct: d.correct,
+                             score: d.score ?? null, quality_verdict: d.quality_verdict ?? null,
                              consent_version: CONSENT_VERSION, app_version: Constants.expoConfig?.version ?? null }),
     });
     if (!reg.ok) return false;
