@@ -71,18 +71,27 @@ class Engine:
         return x.transpose(2, 0, 1)[None]
 
     def logits(self, img: Image.Image) -> dict[str, np.ndarray]:
+        return self.logits_many([img])[0]
+
+    def logits_many(self, imgs: list[Image.Image]) -> list[dict[str, np.ndarray]]:
+        """One encoder pass for several photos (the app's 2-second "short video" frames)."""
         if self.siglip:
-            e = self.encoder([img])[0]
-            hd = self.heads
-            neg = e @ hd["neg_W"].T
-            other = float(neg.max() + np.log(np.exp(neg - neg.max()).sum()) + hd["produce_b"][-1])
-            out = {"produce": np.concatenate([e @ hd["produce_W"].T + hd["produce_b"][:-1], [other]]).astype(np.float32)}
-            for h in ("ripeness", "freshness", "visual_spoilage"):
-                out[h] = (e @ hd[f"{h}_W"].T + hd[f"{h}_b"]).astype(np.float32)
-            if "general_ab" in hd:  # general rotten-vs-fresh logit per produce type (types without a verified head)
-                a, b = hd["general_ab"]
-                out["freshness_general"] = (a * (hd["general_bad_W"] @ e - hd["general_fresh_W"] @ e) + b).astype(np.float32)
-            return out
+            return [self._heads(e) for e in self.encoder(imgs)]
+        return [self._logits_cnn(img) for img in imgs]
+
+    def _heads(self, e: np.ndarray) -> dict[str, np.ndarray]:
+        hd = self.heads
+        neg = e @ hd["neg_W"].T
+        other = float(neg.max() + np.log(np.exp(neg - neg.max()).sum()) + hd["produce_b"][-1])
+        out = {"produce": np.concatenate([e @ hd["produce_W"].T + hd["produce_b"][:-1], [other]]).astype(np.float32)}
+        for h in ("ripeness", "freshness", "visual_spoilage"):
+            out[h] = (e @ hd[f"{h}_W"].T + hd[f"{h}_b"]).astype(np.float32)
+        if "general_ab" in hd:  # general rotten-vs-fresh logit per produce type (types without a verified head)
+            a, b = hd["general_ab"]
+            out["freshness_general"] = (a * (hd["general_bad_W"] @ e - hd["general_fresh_W"] @ e) + b).astype(np.float32)
+        return out
+
+    def _logits_cnn(self, img: Image.Image) -> dict[str, np.ndarray]:
         outs = self.sess.run(None, {"image": self.preprocess(img)})
         return {h: o[0] for h, o in zip(self.bundle["outputs"].keys(), outs)}
 
@@ -216,6 +225,25 @@ async def analyze(image: UploadFile = File(...)):
             "logits": {h: v.tolist() for h, v in e.logits(img).items()},
             "quality": {"ok": q.ok, "reason": q.reason, "mean_luma": q.mean_luma,
                         "laplacian_var": q.laplacian_var, "clipped_frac": q.clipped_frac}}
+
+
+MAX_FRAMES = 6
+
+
+@app.post("/v1/analyze_many")
+async def analyze_many(images: list[UploadFile] = File(...)):
+    """Same as /v1/analyze for up to MAX_FRAMES photos in one request (one encoder pass)."""
+    if not 1 <= len(images) <= MAX_FRAMES:
+        raise HTTPException(400, f"send 1-{MAX_FRAMES} images")
+    imgs = [await _read_image(f) for f in images]
+    e = engine()
+    items = []
+    for img, lg in zip(imgs, e.logits_many(imgs)):
+        q = quality.assess(img, e.bundle.get("quality"))
+        items.append({"logits": {h: v.tolist() for h, v in lg.items()},
+                      "quality": {"ok": q.ok, "reason": q.reason, "mean_luma": q.mean_luma,
+                                  "laplacian_var": q.laplacian_var, "clipped_frac": q.clipped_frac}})
+    return {"model_id": e.bundle["model_id"], "items": items}
 
 
 def _probs(e, img) -> tuple[dict, float, str | None]:

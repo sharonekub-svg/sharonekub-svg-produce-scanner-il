@@ -35,23 +35,47 @@ export function inferenceMode(): Mode | null {
   return native?.isAvailable() ? 'native' : null;
 }
 
-async function remoteAnalyze(uri: string): Promise<{ logits: Logits; quality: QualityStats }> {
-  const base = Platform.OS === 'web' ? '' : extra.inference!.serverUrl!.replace(/\/$/, '');
-  // Downscale before upload: less data, same model input (server centre-crops to 224).
+type Analysis = { logits: Logits; quality: QualityStats };
+const serverBase = () => (Platform.OS === 'web' ? '' : extra.inference!.serverUrl!.replace(/\/$/, ''));
+
+// Downscale before upload: less data, same model input (server centre-crops to 224).
+async function uploadPart(form: FormData, field: string, uri: string) {
   const ctx = ImageManipulator.manipulate(uri).resize({ width: 768 });
   const img = await (await ctx.renderAsync()).saveAsync({ compress: 0.85, format: SaveFormat.JPEG });
+  if (Platform.OS === 'web') form.append(field, await (await fetch(img.uri)).blob(), 'scan.jpg');
+  else form.append(field, { uri: img.uri, name: 'scan.jpg', type: 'image/jpeg' } as unknown as Blob);
+}
+
+async function syncBundle(modelId: string) {
+  // Server was upgraded: fetch its bundle so class lists / thresholds stay consistent.
+  if (modelId !== bundle.model_id) bundle = await (await fetch(`${serverBase()}/v1/bundle`)).json();
+}
+
+async function remoteAnalyze(uri: string): Promise<Analysis> {
   const form = new FormData();
-  if (Platform.OS === 'web') form.append('image', await (await fetch(img.uri)).blob(), 'scan.jpg');
-  else form.append('image', { uri: img.uri, name: 'scan.jpg', type: 'image/jpeg' } as unknown as Blob);
-  const res = await fetch(`${base}/v1/analyze`, { method: 'POST', body: form });
+  await uploadPart(form, 'image', uri);
+  const res = await fetch(`${serverBase()}/v1/analyze`, { method: 'POST', body: form });
   if (!res.ok) throw new Error(`server ${res.status}`);
   const body = await res.json();
-  if (body.model_id !== bundle.model_id) {
-    // Server was upgraded: fetch its bundle so class lists / thresholds stay consistent.
-    bundle = await (await fetch(`${base}/v1/bundle`)).json();
-  }
+  await syncBundle(body.model_id);
   return body;
 }
+
+/** Several frames in one request (one encoder pass on the server); one-by-one if the server is older. */
+async function remoteAnalyzeMany(uris: string[]): Promise<Analysis[]> {
+  const form = new FormData();
+  for (const u of uris) await uploadPart(form, 'images', u);
+  const res = await fetch(`${serverBase()}/v1/analyze_many`, { method: 'POST', body: form });
+  if (res.status === 404) { const out: Analysis[] = []; for (const u of uris) out.push(await remoteAnalyze(u)); return out; }
+  if (!res.ok) throw new Error(`server ${res.status}`);
+  const body = await res.json();
+  await syncBundle(body.model_id);
+  return body.items;
+}
+
+const analyzeOne = (uri: string): Promise<Analysis> => (inferenceMode() === 'native'
+  ? native!.analyze(uri, bundle.input.size, bundle.input.resize_ratio, bundle.input.mean, bundle.input.std)
+  : remoteAnalyze(uri));
 
 export interface ScanOutput {
   result: ScanResult;
@@ -65,11 +89,13 @@ export interface ScanOutput {
 /** Scan a photo. With `previous` (the "another angle" retry after an unsure result), the two
  *  photos' probabilities are combined; a bad second photo falls back to asking for a retake. */
 export async function scan(uri: string, previous?: ScanOutput): Promise<ScanOutput> {
-  const mode = inferenceMode();
-  if (!mode) throw new Error('no inference engine configured');
-  const { logits, quality } = mode === 'native'
-    ? await native!.analyze(uri, bundle.input.size, bundle.input.resize_ratio, bundle.input.mean, bundle.input.std)
-    : await remoteAnalyze(uri);
+  if (!inferenceMode()) throw new Error('no inference engine configured');
+  return fromAnalysis(await analyzeOne(uri), previous);
+}
+
+/** Probabilities, combination with an earlier photo, and the decision for one analysed photo. */
+export function fromAnalysis({ logits, quality }: Analysis, previous?: ScanOutput): ScanOutput {
+  const mode = inferenceMode()!;
   let probs: Record<string, number[]> = Object.fromEntries(HEADS.map((h) => [h, softmax(logits[h], bundle.temperatures[h] ?? 1)]));
   const general = (logits as Record<string, number[] | undefined>).freshness_general; // P(spoiled) per produce type (v0.8+)
   let e = energy(logits.produce);
@@ -94,11 +120,21 @@ export async function scan(uri: string, previous?: ScanOutput): Promise<ScanOutp
 /** "Several sides" scan: photos taken while the user turns the fruit, combined like "another angle".
  *  A blurry/dark frame never replaces a usable result and is left out of the combination. */
 export async function scanMany(uris: string[]): Promise<ScanOutput> {
+  if (!uris.length) throw new Error('no photos');
+  const mode = inferenceMode();
+  if (!mode) throw new Error('no inference engine configured');
+  const analyses: Analysis[] = [];
+  if (mode === 'remote') analyses.push(...(await remoteAnalyzeMany(uris)));
+  else for (const u of uris) analyses.push(await analyzeOne(u));
+  return combineFrames(analyses);
+}
+
+/** Folds frames into one result: a blurry/dark frame never replaces a usable result and is left out of the combination. */
+export function combineFrames(analyses: Analysis[]): ScanOutput {
   let out: ScanOutput | undefined;
-  for (const uri of uris) {
-    const o = await scan(uri, out && out.result.status !== 'retake' ? out : undefined);
+  for (const a of analyses) {
+    const o = fromAnalysis(a, out && out.result.status !== 'retake' ? out : undefined);
     if (!out || o.result.status !== 'retake' || out.result.status === 'retake') out = o;
   }
-  if (!out) throw new Error('no photos');
-  return out;
+  return out!;
 }
