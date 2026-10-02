@@ -57,3 +57,20 @@ export function combineProbs(a: number[], b: number[]): number[] {
   const s = g.reduce((x, y) => x + y, 0);
   return g.map((v) => v / s);
 }
+
+/** Quality heads below this confidence -> suggest a second photo from another side (both photos are combined). */
+export const ANGLE_CONFIDENCE = 0.75;
+type ConfHead = { label: string | null; available: boolean; confidence?: number | null } | null | undefined;
+type AngleResult = { status: string; ripeness?: ConfHead; freshness?: ConfHead; visual_spoilage?: ConfHead };
+/** True when the fruit is identified but its condition is uncertain and one more angle could settle it. */
+export function needsAnotherAngle(r: AngleResult, angles: number): boolean {
+  if (r.status !== 'ok' || angles >= 2) return false;
+  const confs = [r.ripeness, r.freshness, r.visual_spoilage]
+    .filter((h) => h?.available && h.confidence != null).map((h) => h!.confidence as number);
+  return confs.length > 0 && Math.min(...confs) < ANGLE_CONFIDENCE;
+}
+/** Where to point the camera next: under the punnet for berries, the other side for everything else. */
+export function angleHintHe(produce: string | null): string {
+  return produce && ['strawberry', 'grape'].includes(produce) ? 'הפכו את הקופסה וצלמו מלמטה – שם מסתתרים פירות פגועים'
+    : 'סובבו וצלמו את הצד השני, או מלמטה';
+}

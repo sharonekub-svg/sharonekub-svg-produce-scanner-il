@@ -6,7 +6,7 @@ import { useState } from 'react';
 import { Image, Pressable, ScrollView, Share, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { STORAGE_TIP_HE, TOUCH_HE, confidenceWord, stageUseHe, surfaceHe, verdictHe } from '../model/advice';
+import { STORAGE_TIP_HE, TOUCH_HE, angleHintHe, confidenceWord, needsAnotherAngle, stageUseHe, surfaceHe, verdictHe } from '../model/advice';
 import { decide } from '../model/decision';
 import { type ScanOutput, getBundle } from '../model/engine';
 import { addToHistory } from '../history';
@@ -214,6 +214,15 @@ export default function ResultScreen() {
           </View>
         )}
 
+        {!fromHistory && !r.chosen_by_user && needsAnotherAngle(r, last.output.angles) ? (
+          <View style={styles.donate}>
+            <Text style={styles.tipTitle}>📷 {he.betterAngleTitle}</Text>
+            <Text style={styles.body}>{he.betterAngleBody(angleHintHe(r.produce))}</Text>
+            <Pressable accessibilityRole="button" style={styles.secondarySmall} onPress={anotherAngle}>
+              <Text style={styles.secondaryText}>{he.anotherAngle}</Text>
+            </Pressable>
+          </View>
+        ) : null}
         {ok ? (
           <View style={styles.disclaimer}>
             <Text style={styles.disclaimerText}>{'\u200F'}ⓘ {r.disclaimer_he}</Text>{/* RLM: ⓘ is bidi-L; keep the paragraph RTL */}

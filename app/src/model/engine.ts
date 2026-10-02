@@ -77,7 +77,12 @@ export async function scan(uri: string, previous?: ScanOutput): Promise<ScanOutp
     probs = Object.fromEntries(HEADS.map((h) => [h, combineProbs(previous.probs[h], probs[h])]));
     e = Math.max(e, previous.energy);
   }
-  if (general) probs.freshness_general = general.map((l) => 1 / (1 + Math.exp(-l)));
+  if (general) {
+    let pg = general.map((l) => 1 / (1 + Math.exp(-l)));
+    const prevG = (previous?.probs as Record<string, number[] | undefined> | undefined)?.freshness_general;
+    if (prevG && !quality.reason) pg = pg.map((p, i) => combineProbs([1 - prevG[i], prevG[i]], [1 - p, p])[1]); // both angles count
+    probs.freshness_general = pg;
+  }
   const result = decide(bundle, probs, quality.reason, e);
   const top3 = probs.produce
     .map((p, i) => ({ produce: bundle.outputs.produce[i], he: bundle.produce_meta[bundle.outputs.produce[i]].he, prob: p }))

@@ -6,6 +6,8 @@ export const he = {
   scanAnother: 'סריקה נוספת',
   anotherAngle: 'צלם מזווית נוספת',
   anotherAngleHint: 'צלמו את אותו הפרי או הירק מצד אחר',
+  betterAngleTitle: 'רוצים תשובה מדויקת יותר?',
+  betterAngleBody: (hint: string) => `אנחנו לא בטוחים לגמרי במצב שלו. ${hint} – ונשלב את שתי התמונות לתשובה אחת.`,
   tryAgain: 'נסה שוב',
   unsureTitle: 'לא בטוח',
   retakeTitle: 'צריך צילום נוסף',
