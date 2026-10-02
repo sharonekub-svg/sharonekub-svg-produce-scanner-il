@@ -9,6 +9,7 @@ import { type Session, getSession, googleEnabled, loadSession, onAuthChange } fr
 import { type HistoryEntry, clearHistory, loadHistory, onHistoryChange, removeFromHistory, summarize, syncHistory } from '../history';
 import type { ScanResult } from '../model/types';
 import { Account } from '../ui/Account';
+import { step5 } from '../ui/chips';
 import { setLastScan } from '../ui/state';
 import { he } from '../ui/strings';
 
@@ -18,10 +19,13 @@ const toneOf = (r: ScanResult) => (r.score == null ? TONE.none : r.score >= 7 ? 
 function stageText(r: ScanResult): string {
   if (r.score == null) return he.identifyOnlyShort;
   // A low score is explained by spoilage/freshness ("מקולקל"), not by ripeness ("בשל" in red reads as a contradiction).
-  const order = r.score < 4 ? [r.visual_spoilage, r.freshness, r.ripeness] : [r.ripeness, r.freshness, r.visual_spoilage];
+  const order = r.score < 4 ? [r.condition, r.visual_spoilage, r.freshness, r.ripeness] : [r.ripeness, r.condition, r.freshness, r.visual_spoilage];
   for (const h of order) if (h?.available && h.label_he) return h.label_he;
   return '';
 }
+
+// 0-100 for every entry: older scans stored only the 1-10 score.
+const shown = (r: ScanResult) => (r.overall != null ? step5(r.overall) : r.score != null ? r.score * 10 : null);
 
 const when = (t: number) => new Date(t).toLocaleString('he-IL', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
 
@@ -34,7 +38,7 @@ export function Item({ e }: { e: HistoryEntry }) {
   };
   return (
     <View style={[styles.item, { borderColor: tone, shadowColor: tone }]}>
-      <Pressable onPress={open} accessibilityRole="button" accessibilityLabel={`${r.produce_he}, ${stageText(r)}${r.score != null ? `, ${r.score} ${he.outOf10}` : ''}`}
+      <Pressable onPress={open} accessibilityRole="button" accessibilityLabel={`${r.produce_he}, ${stageText(r)}${r.score != null ? `, ${shown(r)} ${he.outOf100}` : ''}`}
                  style={styles.itemMain}>
       {e.thumb ? <Image source={{ uri: e.thumb }} style={styles.thumb} accessibilityIgnoresInvertColors /> : <View style={[styles.thumb, styles.noThumb]}><Text style={styles.noThumbEmoji}>{r.emoji}</Text></View>}
       <View style={styles.flex1}>
@@ -45,7 +49,7 @@ export function Item({ e }: { e: HistoryEntry }) {
         </View>
         <Text style={styles.date}>{when(e.t)}</Text>
       </View>
-      {r.score != null ? <Text style={[styles.score, { color: tone }]}>{r.score}</Text> : null}
+      {r.score != null ? <Text style={[styles.score, { color: tone }]}>{shown(r)}</Text> : null}
       </Pressable>
       <Pressable onPress={() => removeFromHistory(e.id)} hitSlop={8} accessibilityRole="button" accessibilityLabel={he.deleteScan} style={styles.del}>
         <Text style={styles.delText}>🗑</Text>
@@ -133,7 +137,7 @@ const styles = StyleSheet.create({
   dot: { width: 8, height: 8, borderRadius: 4 },
   stage: { fontSize: 13, fontWeight: '700' },
   date: { fontSize: 12, color: '#7A7F76', marginTop: 2 },
-  score: { fontSize: 24, fontWeight: '900', width: 34, textAlign: 'center' },
+  score: { fontSize: 22, fontWeight: '900', width: 44, textAlign: 'center' },
   del: { width: 38, height: 38, borderRadius: 19, alignItems: 'center', justifyContent: 'center' },
   delText: { fontSize: 18 },
   empty: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: 24, gap: 10 },

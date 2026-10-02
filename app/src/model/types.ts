@@ -19,6 +19,10 @@ export interface Thresholds {
   ood_min_energy: number | null;
   head_min_prob: number;
   spoiled_alert_prob: number;
+  /** Per type: condition confidence below which the score is capped and a better photo requested (fitted on val). */
+  condition_abstain?: Record<string, number>;
+  /** Highest P(good condition) the score may use: measured reliability on photo sources the model never saw. */
+  condition_max_p?: number;
 }
 
 export interface Bundle {
@@ -26,7 +30,7 @@ export interface Bundle {
   model_id: string;
   input: { size: number; mean: number[]; std: number[]; resize: string; resize_ratio: number };
   outputs: Record<Head, string[]>;
-  temperatures: Partial<Record<Head, number>>;
+  temperatures: Partial<Record<Head | 'condition', number>>;
   thresholds: Thresholds;
   supported_heads: Record<string, string[]>;
   produce_meta: Record<string, ProduceMeta>;
@@ -35,7 +39,8 @@ export interface Bundle {
 }
 
 export type Logits = Record<Head, number[]>;
-export type Probs = Partial<Record<Head, number[]>> & { freshness_general?: number[] };
+/** freshness_general / condition: one probability per produce output (P(spoiled) / P(good condition)). */
+export type Probs = Partial<Record<Head, number[]>> & { freshness_general?: number[]; condition?: number[] };
 
 export interface QualityStats {
   ok: boolean;
@@ -74,4 +79,15 @@ export interface ScanResult {
   /** Score from the general fresh-vs-spoiled model (this type has no verified per-fruit head). */
   general_score?: boolean;
   disclaimer_he: string;
+  /** Condition head v2 (docs/quality-scoring.md): calibrated good-vs-bad condition, only for types that have it. */
+  condition?: HeadResult | null;
+  /** 0-100: min(condition, ripeness), capped at 60 when the condition is unclear. */
+  overall?: number | null;
+  condition_score?: number | null;
+  ripeness_score?: number | null;
+  condition_confidence?: number | null;
+  /** Below the type's abstain confidence: conservative score + ask for a better photo. */
+  low_confidence?: boolean;
+  /** Only what a verified head reported (no invented "small brown spot"). */
+  issues_he?: string[];
 }

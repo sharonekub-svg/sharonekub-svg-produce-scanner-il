@@ -105,17 +105,21 @@ export async function scan(uri: string, previous?: ScanOutput): Promise<ScanOutp
 export function fromAnalysis({ logits, quality }: Analysis, previous?: ScanOutput): ScanOutput {
   const mode = inferenceMode()!;
   let probs: Record<string, number[]> = Object.fromEntries(HEADS.map((h) => [h, softmax(logits[h], bundle.temperatures[h] ?? 1)]));
-  const general = (logits as Record<string, number[] | undefined>).freshness_general; // P(spoiled) per produce type (v0.8+)
   let e = energy(logits.produce);
   if (previous && !quality.reason) {
     probs = Object.fromEntries(HEADS.map((h) => [h, combineProbs(previous.probs[h], probs[h])]));
     e = Math.max(e, previous.energy);
   }
-  if (general) {
-    let pg = general.map((l) => 1 / (1 + Math.exp(-l)));
-    const prevG = (previous?.probs as Record<string, number[] | undefined> | undefined)?.freshness_general;
-    if (prevG && !quality.reason) pg = pg.map((p, i) => combineProbs([1 - prevG[i], prevG[i]], [1 - p, p])[1]); // both angles count
-    probs.freshness_general = pg;
+  // Per-type probabilities: freshness_general = P(spoiled) (v0.8+), condition = P(good condition) (v0.13+,
+  // docs/quality-scoring.md). Both angles / all video frames count, combined like the heads above.
+  const perType: [string, number][] = [['freshness_general', 1], ['condition', bundle.temperatures.condition ?? 1]];
+  for (const [k, temp] of perType) {
+    const lg = (logits as Record<string, number[] | undefined>)[k];
+    if (!lg) continue;
+    let pk = lg.map((l) => 1 / (1 + Math.exp(-l / temp)));
+    const prev = (previous?.probs as Record<string, number[] | undefined> | undefined)?.[k];
+    if (prev && !quality.reason) pk = pk.map((p, i) => combineProbs([1 - prev[i], prev[i]], [1 - p, p])[1]);
+    probs[k] = pk;
   }
   const result = decide(bundle, probs, quality.reason, e);
   const top3 = probs.produce

@@ -13,7 +13,7 @@ import { addToHistory } from '../history';
 import type { HeadResult } from '../model/types';
 import { donatePhoto, donationEnabled } from '../donation';
 import { type Rating, sendRating } from '../feedback';
-import { CHIP, pct } from '../ui/chips';
+import { CHIP, pct, step5 } from '../ui/chips';
 import { getLastScan, setLastScan, setPendingPrevious } from '../ui/state';
 import { he } from '../ui/strings';
 import { SurveyCard } from '../ui/Survey';
@@ -94,7 +94,7 @@ export default function ResultScreen() {
   };
   const canDonate = !fromHistory && !last.sample && donationEnabled();
   const onShare = () => {
-    const sc = r.score != null ? ` – ${r.score}/10 (${verdictHe(r.score)})` : '';
+    const sc = r.score != null ? ` – ${r.overall != null ? `${step5(r.overall)}/100` : `${r.score}/10`} (${verdictHe(r.score)})` : '';
     Share.share({ message: he.shareText(r.produce_he ?? '', sc) }).catch(() => {});
   };
   const again = () => (fromHistory ? router.dismissTo('/') : router.back());
@@ -112,7 +112,7 @@ export default function ResultScreen() {
     setDonate(sent ? 'sent' : 'failed');
   };
   const ok = r.status === 'ok';
-  const assessed = ok && Boolean(r.ripeness?.available || r.freshness?.available || r.visual_spoilage?.available);
+  const assessed = ok && Boolean(r.ripeness?.available || r.freshness?.available || r.visual_spoilage?.available || r.condition?.available);
   const tone = r.recommendation ? REC_TONE[r.recommendation] : undefined;
   const tip = ok && r.produce && r.recommendation !== 'discard' && r.recommendation !== 'check_defects' ? STORAGE_TIP_HE[r.produce] : undefined;
   const stageUse = ok && r.ripeness?.available && r.recommendation !== 'discard' ? stageUseHe(r.produce, r.ripeness.label) : null;
@@ -145,11 +145,12 @@ export default function ResultScreen() {
             </View>
 
             {r.score != null ? (
-              <View style={styles.scoreBlock} accessible accessibilityLabel={`${he.qualityScore}: ${r.score} ${he.outOf10}. ${r.score_reason_he ?? ''}`}>
+              <View style={styles.scoreBlock} accessible
+                    accessibilityLabel={`${he.qualityScore}: ${r.overall != null ? step5(r.overall) : r.score} ${r.overall != null ? he.outOf100 : he.outOf10}. ${r.score_reason_he ?? ''}`}>
                 <View style={styles.scoreRow}>
                   <View style={styles.scoreBadge}>
-                    <Text style={[styles.scoreNum, { color: scoreTone(r.score).fg }]}>{r.score}</Text>
-                    <Text style={styles.scoreOf}>/10</Text>
+                    <Text style={[styles.scoreNum, { color: scoreTone(r.score).fg }]}>{r.overall != null ? step5(r.overall) : r.score}</Text>
+                    <Text style={styles.scoreOf}>{r.overall != null ? '/100' : '/10'}</Text>
                   </View>
                   <View style={[styles.stagePill, { backgroundColor: scoreTone(r.score).bg }]}>
                     <Text style={[styles.stageText, { color: scoreTone(r.score).fg }]}>{verdictHe(r.score)}</Text>
@@ -158,8 +159,17 @@ export default function ResultScreen() {
                     <View style={styles.generalPill}><Text style={styles.generalText}>{he.generalScore}</Text></View>
                   ) : null}
                 </View>
-                <View style={styles.meter}><View style={[styles.meterFill, { width: `${r.score * 10}%`, backgroundColor: scoreTone(r.score).fg }]} /></View>
+                <View style={styles.meter}><View style={[styles.meterFill, { width: `${r.overall ?? r.score * 10}%`, backgroundColor: scoreTone(r.score).fg }]} /></View>
+                {r.condition_score != null && r.condition_confidence != null ? (
+                  <Text style={styles.breakdown}>{he.breakdown(r.ripeness_score != null ? step5(r.ripeness_score) : null, step5(r.condition_score), step5(r.condition_confidence * 100))}</Text>
+                ) : null}
                 <Text style={styles.body}>{r.score_reason_he}</Text>
+                {r.issues_he && r.issues_he.length ? (
+                  <View style={styles.issues}>
+                    <Text style={styles.issuesTitle}>{he.issuesFound}</Text>
+                    {r.issues_he.map((x) => <Text key={x} style={styles.issue}>• {x}</Text>)}
+                  </View>
+                ) : null}
               </View>
             ) : null}
 
@@ -175,8 +185,12 @@ export default function ResultScreen() {
               <View style={styles.details}>
                 <Text style={styles.sectionTitle}>{he.details}</Text>
                 {headRow('🌿', he.ripeness, r.ripeness)}
-                {headRow('💧', he.freshness, r.freshness)}
-                {headRow('🔍', he.skin, r.visual_spoilage, surfaceHe(r.freshness, r.visual_spoilage))}
+                {r.condition?.available ? headRow('🔍', he.condition, r.condition, r.low_confidence ? he.issuesUnclear : null) : (
+                  <>
+                    {headRow('💧', he.freshness, r.freshness)}
+                    {headRow('🔍', he.skin, r.visual_spoilage, surfaceHe(r.freshness, r.visual_spoilage))}
+                  </>
+                )}
                 {r.produce && TOUCH_HE[r.produce] ? (
                   <Row icon="✋" title={he.touch} value={TOUCH_HE[r.produce]} bg="#EFE8DA" note={he.touchNote} />
                 ) : null}
@@ -334,6 +348,10 @@ const styles = StyleSheet.create({
   fruitBubble: { width: 48, height: 48, borderRadius: 24, alignItems: 'center', justifyContent: 'center' },
   fruitEmoji: { fontSize: 26 },
   scoreBlock: { gap: 10 },
+  breakdown: { fontSize: 14, fontWeight: '700', color: '#4A3C3E', textAlign: 'right' },
+  issues: { gap: 2 },
+  issuesTitle: { fontSize: 13, fontWeight: '800', color: '#6b6b66', textAlign: 'right' },
+  issue: { fontSize: 15, color: '#2A1C1E', textAlign: 'right' },
   stagePill: { borderRadius: 12, paddingHorizontal: 12, paddingVertical: 4 },
   generalPill: { borderRadius: 12, paddingHorizontal: 10, paddingVertical: 4, borderWidth: 1, borderColor: '#C9C2B2' },
   generalText: { fontSize: 12, fontWeight: '700', color: '#6b6b66' },

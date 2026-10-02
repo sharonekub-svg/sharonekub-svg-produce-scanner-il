@@ -1,0 +1,583 @@
+{
+ "apple": {
+  "n_quality_labelled": 4690,
+  "datasets": {
+   "fruitnet_indian": {
+    "n": 2290,
+    "capture": "Smartphone, real backgrounds (floor, table, grass, hands)"
+   },
+   "apple_good_bad": {
+    "n": 2000,
+    "capture": "Phone photos, plain indoor background"
+   },
+   "fresh_rotten_mendeley_bd": {
+    "n": 400,
+    "capture": "Phone photos on plain paper backgrounds"
+   }
+  },
+  "freshness": {
+   "train": {
+    "declining|spoiled": 1500,
+    "fresh": 1564,
+    "spoiled": 135
+   },
+   "test": {
+    "declining|spoiled": 213,
+    "fresh": 230,
+    "spoiled": 23
+   },
+   "val": {
+    "declining|spoiled": 428,
+    "fresh": 555,
+    "spoiled": 42
+   }
+  },
+  "visual_spoilage": {
+   "train": {
+    "mild|severe": 1635,
+    "none": 1564
+   },
+   "test": {
+    "mild|severe": 236,
+    "none": 230
+   },
+   "val": {
+    "mild|severe": 470,
+    "none": 555
+   }
+  }
+ },
+ "avocado": {
+  "n_quality_labelled": 15194,
+  "datasets": {
+   "hass_avocado_ripening": {
+    "n": 14710,
+    "capture": "Photo lightbox, white background, Canon DSLR, 5500 K"
+   },
+   "strawberry_avocado_ripening": {
+    "n": 484,
+    "capture": "phone, farm/hand/solid backgrounds"
+   }
+  },
+  "ripeness": {
+   "test": {
+    "unripe": 314,
+    "partially_ripe": 284,
+    "ripe": 574,
+    "overripe": 298
+   },
+   "train": {
+    "unripe": 2584,
+    "partially_ripe": 1314,
+    "ripe": 4178,
+    "overripe": 1926
+   },
+   "val": {
+    "unripe": 670,
+    "partially_ripe": 630,
+    "ripe": 1298,
+    "overripe": 640
+   }
+  },
+  "freshness": {
+   "train": {
+    "fresh": 258,
+    "spoiled": 226
+   }
+  },
+  "visual_spoilage": {
+   "train": {
+    "none": 258,
+    "mild|severe": 226
+   }
+  }
+ },
+ "banana": {
+  "n_quality_labelled": 6132,
+  "datasets": {
+   "mango_banana_ripe": {
+    "n": 2499,
+    "capture": "Webcam (Lenovo 300 FHD), indoor + outdoor, several fruits per image"
+   },
+   "fruit_inspection_6ps": {
+    "n": 2000,
+    "capture": "phone, kitchen surfaces, varied backgrounds/light"
+   },
+   "fruitnet_indian": {
+    "n": 1113,
+    "capture": "Smartphone, real backgrounds (floor, table, grass, hands)"
+   },
+   "fresh_rotten_mendeley_bd": {
+    "n": 400,
+    "capture": "Phone photos on plain paper backgrounds"
+   },
+   "bananas_psolymos": {
+    "n": 120,
+    "capture": "Home, fixed camera, background masked white"
+   }
+  },
+  "ripeness": {
+   "train": {
+    "unripe|partially_ripe": 5,
+    "ripe": 830,
+    "ripe|overripe": 20,
+    "overripe": 34,
+    "unripe": 890
+   },
+   "val": {
+    "unripe|partially_ripe": 2,
+    "ripe": 343,
+    "ripe|overripe": 5,
+    "overripe": 7,
+    "unripe": 213
+   },
+   "test": {
+    "unripe|partially_ripe": 1,
+    "ripe": 109,
+    "ripe|overripe": 3,
+    "overripe": 11,
+    "unripe": 146
+   }
+  },
+  "freshness": {
+   "val": {
+    "fresh": 420,
+    "spoiled": 45,
+    "declining|spoiled": 201
+   },
+   "train": {
+    "fresh": 1681,
+    "spoiled": 130,
+    "declining|spoiled": 700
+   },
+   "test": {
+    "fresh": 212,
+    "spoiled": 25,
+    "declining|spoiled": 99
+   }
+  },
+  "visual_spoilage": {
+   "val": {
+    "none": 420,
+    "mild|severe": 246
+   },
+   "train": {
+    "none": 1681,
+    "mild|severe": 830
+   },
+   "test": {
+    "none": 212,
+    "mild|severe": 124
+   }
+  }
+ },
+ "grape": {
+  "n_quality_labelled": 25825,
+  "datasets": {
+   "grapenet": {
+    "n": 25425,
+    "capture": "Smartphone, loose grapes on white background, indoor natural light"
+   },
+   "fresh_rotten_mendeley_bd": {
+    "n": 400,
+    "capture": "Phone photos on plain paper backgrounds"
+   }
+  },
+  "freshness": {
+   "train": {
+    "fresh": 8718,
+    "spoiled": 8835
+   },
+   "val": {
+    "fresh": 3494,
+    "spoiled": 2190
+   },
+   "test": {
+    "fresh": 1413,
+    "spoiled": 1175
+   }
+  },
+  "visual_spoilage": {
+   "train": {
+    "none": 8718,
+    "mild|severe": 135
+   },
+   "val": {
+    "none": 3494,
+    "mild|severe": 40
+   },
+   "test": {
+    "none": 1413,
+    "mild|severe": 25
+   }
+  }
+ },
+ "guava": {
+  "n_quality_labelled": 2681,
+  "datasets": {
+   "fruitnet_indian": {
+    "n": 2281,
+    "capture": "Smartphone, real backgrounds (floor, table, grass, hands)"
+   },
+   "fresh_rotten_mendeley_bd": {
+    "n": 400,
+    "capture": "Phone photos on plain paper backgrounds"
+   }
+  },
+  "freshness": {
+   "val": {
+    "declining|spoiled": 86,
+    "fresh": 453,
+    "spoiled": 48
+   },
+   "train": {
+    "declining|spoiled": 1005,
+    "fresh": 688,
+    "spoiled": 134
+   },
+   "test": {
+    "declining|spoiled": 38,
+    "fresh": 211,
+    "spoiled": 18
+   }
+  },
+  "visual_spoilage": {
+   "val": {
+    "mild|severe": 134,
+    "none": 453
+   },
+   "train": {
+    "mild|severe": 1139,
+    "none": 688
+   },
+   "test": {
+    "mild|severe": 56,
+    "none": 211
+   }
+  }
+ },
+ "lemon": {
+  "n_quality_labelled": 3380,
+  "datasets": {
+   "lemon_varieties": {
+    "n": 1956,
+    "capture": "studio, background removed"
+   },
+   "lemon_softwaremill": {
+    "n": 1424,
+    "capture": "Controlled rig, black background, single lemon"
+   }
+  },
+  "freshness": {
+   "train": {
+    "spoiled": 1390,
+    "fresh": 421
+   },
+   "val": {
+    "spoiled": 147,
+    "fresh": 443
+   },
+   "test": {
+    "spoiled": 147,
+    "fresh": 92
+   }
+  },
+  "visual_spoilage": {
+   "train": {
+    "none": 871,
+    "mild|severe": 1390
+   },
+   "val": {
+    "none": 628,
+    "mild|severe": 147
+   },
+   "test": {
+    "none": 197,
+    "mild|severe": 147
+   }
+  }
+ },
+ "lime": {
+  "n_quality_labelled": 4179,
+  "datasets": {
+   "fruitnet_indian": {
+    "n": 2179,
+    "capture": "Smartphone, real backgrounds (floor, table, grass, hands)"
+   },
+   "fruit_inspection_6ps": {
+    "n": 2000,
+    "capture": "phone, kitchen surfaces, varied backgrounds/light"
+   }
+  },
+  "freshness": {
+   "val": {
+    "declining|spoiled": 543,
+    "fresh": 322
+   },
+   "test": {
+    "declining|spoiled": 301,
+    "fresh": 170
+   },
+   "train": {
+    "declining|spoiled": 1241,
+    "fresh": 1602
+   }
+  },
+  "visual_spoilage": {
+   "val": {
+    "mild|severe": 543,
+    "none": 322
+   },
+   "test": {
+    "mild|severe": 301,
+    "none": 170
+   },
+   "train": {
+    "mild|severe": 1241,
+    "none": 1602
+   }
+  }
+ },
+ "mango": {
+  "n_quality_labelled": 5449,
+  "datasets": {
+   "mango_banana_ripe": {
+    "n": 2500,
+    "capture": "Webcam (Lenovo 300 FHD), indoor + outdoor, several fruits per image"
+   },
+   "fruit_inspection_6ps": {
+    "n": 2000,
+    "capture": "phone, kitchen surfaces, varied backgrounds/light"
+   },
+   "mango_ripening_mm8": {
+    "n": 949,
+    "capture": "single mango on white paper"
+   }
+  },
+  "ripeness": {
+   "val": {
+    "unripe": 260,
+    "ripe": 290
+   },
+   "test": {
+    "unripe": 139,
+    "ripe": 111
+   },
+   "train": {
+    "unripe": 1089,
+    "ripe": 1086,
+    "partially_ripe": 474
+   }
+  },
+  "freshness": {
+   "val": {
+    "fresh": 300,
+    "declining|spoiled": 100
+   },
+   "train": {
+    "fresh": 700,
+    "declining|spoiled": 700
+   },
+   "test": {
+    "declining|spoiled": 200
+   }
+  },
+  "visual_spoilage": {
+   "val": {
+    "none": 300,
+    "mild|severe": 100
+   },
+   "train": {
+    "none": 700,
+    "mild|severe": 700
+   },
+   "test": {
+    "mild|severe": 200
+   }
+  }
+ },
+ "orange": {
+  "n_quality_labelled": 4775,
+  "datasets": {
+   "fruitnet_indian": {
+    "n": 2375,
+    "capture": "Smartphone, real backgrounds (floor, table, grass, hands)"
+   },
+   "fruit_inspection_6ps": {
+    "n": 2000,
+    "capture": "phone, kitchen surfaces, varied backgrounds/light"
+   },
+   "fresh_rotten_mendeley_bd": {
+    "n": 400,
+    "capture": "Phone photos on plain paper backgrounds"
+   }
+  },
+  "freshness": {
+   "val": {
+    "declining|spoiled": 392,
+    "fresh": 554,
+    "spoiled": 45
+   },
+   "train": {
+    "declining|spoiled": 1577,
+    "fresh": 1610,
+    "spoiled": 130
+   },
+   "test": {
+    "declining|spoiled": 190,
+    "fresh": 252,
+    "spoiled": 25
+   }
+  },
+  "visual_spoilage": {
+   "val": {
+    "mild|severe": 437,
+    "none": 554
+   },
+   "train": {
+    "mild|severe": 1707,
+    "none": 1610
+   },
+   "test": {
+    "mild|severe": 215,
+    "none": 252
+   }
+  }
+ },
+ "pomegranate": {
+  "n_quality_labelled": 7527,
+  "datasets": {
+   "fruitnet_indian": {
+    "n": 7127,
+    "capture": "Smartphone, real backgrounds (floor, table, grass, hands)"
+   },
+   "fresh_rotten_mendeley_bd": {
+    "n": 400,
+    "capture": "Phone photos on plain paper backgrounds"
+   }
+  },
+  "freshness": {
+   "test": {
+    "declining|spoiled": 103,
+    "fresh": 627,
+    "spoiled": 17
+   },
+   "val": {
+    "declining|spoiled": 212,
+    "fresh": 1386,
+    "spoiled": 49
+   },
+   "train": {
+    "declining|spoiled": 872,
+    "fresh": 4127,
+    "spoiled": 134
+   }
+  },
+  "visual_spoilage": {
+   "test": {
+    "mild|severe": 120,
+    "none": 627
+   },
+   "val": {
+    "mild|severe": 261,
+    "none": 1386
+   },
+   "train": {
+    "mild|severe": 1006,
+    "none": 4127
+   }
+  }
+ },
+ "strawberry": {
+  "n_quality_labelled": 2492,
+  "datasets": {
+   "fruit_inspection_6ps": {
+    "n": 2000,
+    "capture": "phone, kitchen surfaces, varied backgrounds/light"
+   },
+   "fresh_rotten_mendeley_bd": {
+    "n": 400,
+    "capture": "Phone photos on plain paper backgrounds"
+   },
+   "strawberry_avocado_ripening": {
+    "n": 92,
+    "capture": "phone, farm/hand/solid backgrounds"
+   }
+  },
+  "ripeness": {
+   "train": {
+    "partially_ripe": 61,
+    "ripe": 13,
+    "unripe": 16
+   }
+  },
+  "freshness": {
+   "test": {
+    "fresh": 122,
+    "spoiled": 16,
+    "declining|spoiled": 99
+   },
+   "val": {
+    "fresh": 339,
+    "spoiled": 41,
+    "declining|spoiled": 101
+   },
+   "train": {
+    "fresh": 829,
+    "spoiled": 145,
+    "declining|spoiled": 800
+   }
+  },
+  "visual_spoilage": {
+   "test": {
+    "none": 122,
+    "mild|severe": 115
+   },
+   "val": {
+    "none": 339,
+    "mild|severe": 142
+   },
+   "train": {
+    "none": 829,
+    "mild|severe": 945
+   }
+  }
+ },
+ "tomato": {
+  "n_quality_labelled": 2000,
+  "datasets": {
+   "fruit_inspection_6ps": {
+    "n": 2000,
+    "capture": "phone, kitchen surfaces, varied backgrounds/light"
+   }
+  },
+  "freshness": {
+   "val": {
+    "fresh": 299,
+    "declining|spoiled": 101
+   },
+   "train": {
+    "fresh": 700,
+    "declining|spoiled": 700
+   },
+   "test": {
+    "fresh": 1,
+    "declining|spoiled": 199
+   }
+  },
+  "visual_spoilage": {
+   "val": {
+    "none": 299,
+    "mild|severe": 101
+   },
+   "train": {
+    "none": 700,
+    "mild|severe": 700
+   },
+   "test": {
+    "none": 1,
+    "mild|severe": 199
+   }
+  }
+ }
+}

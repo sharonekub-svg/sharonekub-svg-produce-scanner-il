@@ -29,6 +29,12 @@ export const he = {
   offline: 'אין חיבור לאינטרנט. בדקו את החיבור ונסו שוב.',
   qualityScore: 'ציון איכות חזותי',
   outOf10: 'מתוך 10',
+  outOf100: 'מתוך 100',
+  condition: 'מצב הפרי',
+  issuesFound: 'מה זוהה',
+  issuesUnclear: 'לא ברור מהתמונה – צלמו שוב מקרוב ובאור טוב',
+  breakdown: (rip: number | null, cond: number, conf: number) =>
+    `${rip != null ? `בשלות ${rip} · ` : ''}מצב ${cond} · ביטחון ${conf}%`,
   ripeness: 'בשילות',
   freshness: 'טריות',
   spoilage: 'סימני קלקול',

@@ -21,22 +21,26 @@ from ml.inference.decision import DEFAULT_THRESHOLDS, decide  # noqa: E402
 
 def main() -> int:
     ap = argparse.ArgumentParser()
-    ap.add_argument("--n", type=int, default=800)
+    ap.add_argument("--n", type=int, default=2000)
     ap.add_argument("--seed", type=int, default=8)
     args = ap.parse_args()
     tax = load_taxonomy()
     rng = np.random.default_rng(args.seed)
     bundle = {"bundle_version": 1, "model_id": "fixture", "outputs": {h: list(tax.classes(h)) for h in HEADS},
               "produce_meta": tax.produce_meta, "label_he": tax.label_he, "temperatures": {},
-              "thresholds": {**DEFAULT_THRESHOLDS, "ood_min_energy": 2.0},
+              "thresholds": {**DEFAULT_THRESHOLDS, "ood_min_energy": 2.0,
+                             "condition_abstain": {"apple": 0.9, "strawberry": 0.7}, "condition_max_p": 0.86},
               "supported_heads": {"banana": ["freshness", "ripeness", "visual_spoilage"],
-                                  "avocado": ["ripeness", "visual_spoilage~coarse"], "apple": ["freshness"],
+                                  "avocado": ["ripeness", "visual_spoilage~coarse"], "apple": ["freshness", "condition"],
                                   "tomato": ["freshness", "visual_spoilage"],
                                   "orange": ["freshness~coarse", "visual_spoilage~coarse"],
-                                  "pomegranate": ["visual_spoilage~coarse"]},
+                                  "pomegranate": ["visual_spoilage~coarse"],
+                                  "strawberry": ["freshness", "ripeness", "condition"],
+                                  "kiwi": ["condition"]},
               "input": {"size": 224, "mean": [0.485, 0.456, 0.406], "std": [0.229, 0.224, 0.225],
                         "resize": "short_side_then_center_crop", "resize_ratio": 1.14}}
-    focus = [tax.produce.index(p) for p in ("banana", "avocado", "apple", "tomato", "other", "kiwi", "orange", "pomegranate")]
+    focus = [tax.produce.index(p) for p in ("banana", "avocado", "apple", "tomato", "other", "kiwi", "orange", "pomegranate",
+                                            "strawberry")]
     cases = []
     for k in range(args.n):
         probs = {}
@@ -48,6 +52,10 @@ def main() -> int:
                 logits[rng.choice(focus)] += rng.uniform(0, 8)
             e = np.exp(logits - logits.max())
             probs[h] = (e / e.sum()).round(6)
+        # condition head v2: P(good condition) per produce; mostly confident, sometimes near 0.5
+        cond = rng.uniform(0, 1, tax.num_classes("produce"))
+        sharpen = rng.random() < 0.6
+        probs["condition"] = (np.where(cond > 0.5, 1 - (1 - cond) ** 3, cond ** 3) if sharpen else cond).round(6)
         quality = rng.choice([None] * 8 + ["too_dark", "blurry", "overexposed", "weird"])
         energy = round(float(rng.normal(3, 2)), 4) if rng.random() < 0.7 else None
         res = decide(tax, {h: v for h, v in probs.items()}, bundle["supported_heads"], quality_reason=quality,

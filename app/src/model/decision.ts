@@ -39,9 +39,22 @@ function empty(status: ScanResult['status'], message: string | null, conf: numbe
   return {
     status, message_he: message, produce: null, produce_he: null, emoji: null, produce_confidence: conf,
     ripeness: null, freshness: null, visual_spoilage: null, recommendation: null, recommendation_he: null,
-    explanation_he: [], score: null, score_reason_he: null, disclaimer_he: DISCLAIMER_HE,
+    explanation_he: [], score: null, score_reason_he: null, disclaimer_he: DISCLAIMER_HE, general_score: false,
+    condition: null, overall: null, condition_score: null, ripeness_score: null, condition_confidence: null,
+    low_confidence: false, issues_he: [],
   };
 }
+
+// Condition head v2 — mirrors decision.py _decide_condition (docs/quality-scoring.md §4-5).
+const CONDITION_LABEL_HE = { good: 'תקין – בלי פגמים או סימני קלקול נראים', bad: 'נראים פגמים או סימני קלקול' };
+const LOW_CONF_CAP = 60;
+const LOW_CONF_CONDITION_HE = 'המצב לא ברור מספיק מהתמונה, לכן הציון שמרני. צלמו מקרוב, באור טוב ומכמה צדדים.';
+const ISSUE_HE: Record<string, string> = {
+  bad: 'נראים פגמים או סימני קלקול', overripe: 'בשל מאוד', unripe: 'עדיין לא בשל',
+  partially_ripe: 'עוד לא בשל לגמרי', unclear: 'המצב לא ברור מהתמונה',
+};
+const halfUp = (x: number) => Math.floor(x + 0.5); // = decision.py _half_up
+const round4 = (x: number) => Math.round(x * 1e4) / 1e4;
 
 // Coarse heads (good vs bad only) — mirrors decision.py COARSE; marked "<head>~coarse" in supported_heads.
 const COARSE: Record<'freshness' | 'visual_spoilage', [string, string[], string]> = {
@@ -152,6 +165,7 @@ export function decide(bundle: Bundle, probs: Probs, qualityReason: string | nul
 function assess(bundle: Bundle, probs: Probs, t: Thresholds, name: string, conf: number | null, byUser: boolean): ScanResult {
   const meta = bundle.produce_meta[name];
   const sup = new Set(bundle.supported_heads[name] ?? []);
+  if (sup.has('condition') && Array.isArray(probs.condition)) return assessCondition(bundle, probs, t, name, conf, byUser);
   const coarse = new Set<string>((['freshness', 'visual_spoilage'] as const).filter((h) => !sup.has(h) && sup.has(`${h}~coarse`)));
   // "freshness~general" (mirrors decision.py): no verified head for this type; the general fresh-vs-spoiled model
   // gives a coarse good/bad freshness from probs.freshness_general[produce] = P(spoiled).
@@ -212,5 +226,66 @@ function assess(bundle: Bundle, probs: Probs, t: Thresholds, name: string, conf:
     res.general_score = true;
     res.explanation_he.push(GENERAL_SCORE_HE);
   }
+  return res;
+}
+
+function assessCondition(bundle: Bundle, probs: Probs, t: Thresholds, name: string, conf: number | null, byUser: boolean): ScanResult {
+  const meta = bundle.produce_meta[name];
+  const sup = new Set(bundle.supported_heads[name] ?? []);
+  const pg = probs.condition![bundle.outputs.produce.indexOf(name)];
+  const cconf = Math.max(pg, 1 - pg);
+  const low = cconf < (t.condition_abstain?.[name] ?? 0.5);
+  const good = pg >= 0.5;
+  const cond: HeadResult = { label: good ? 'good' : 'bad', label_he: CONDITION_LABEL_HE[good ? 'good' : 'bad'], confidence: round4(cconf), available: true };
+  const r = headResult(bundle, 'ripeness', probs.ripeness, sup.has('ripeness'), t.head_min_prob);
+  const none: HeadResult = { label: null, label_he: null, confidence: null, available: false };
+  const res: ScanResult = {
+    ...empty('ok', null, conf), produce: name, produce_he: meta.he, emoji: meta.emoji,
+    ripeness: r, freshness: none, visual_spoilage: none, condition: cond, ...(byUser ? { chosen_by_user: true } : {}),
+  };
+  // Reliability ceiling measured on unseen photo sources (decision.py): the score never claims more.
+  res.condition_score = halfUp(100 * Math.min(pg, t.condition_max_p ?? 1));
+  res.condition_confidence = round4(cconf);
+  let overall = res.condition_score;
+  if (r.available && probs.ripeness) {
+    let e = 0;
+    bundle.outputs.ripeness.forEach((lbl, i) => { e += probs.ripeness![i] * SCORE_POINTS.ripeness[lbl]; });
+    res.ripeness_score = halfUp(10 * e);
+    overall = Math.min(overall, res.ripeness_score);
+  }
+  if (low) {
+    res.low_confidence = true;
+    overall = Math.min(overall, LOW_CONF_CAP);
+  }
+  res.overall = overall;
+  res.score = Math.min(10, Math.max(1, halfUp(overall / 10)));
+
+  const rip = r.available && r.label !== null && r.label !== UNKNOWN ? r.label : null;
+  let rec: string;
+  if (low) {
+    rec = 'inspect';
+    res.explanation_he.push(LOW_CONF_CONDITION_HE);
+    res.issues_he!.push(ISSUE_HE.unclear);
+  } else if (!good) {
+    rec = 'check_defects';
+    res.explanation_he.push('המראה מתאים לפרי עם פגמים, מכות או סימני ריקבון.');
+    res.explanation_he.push(MOULD_RULE_HE);
+    res.issues_he!.push(ISSUE_HE.bad);
+  } else if (rip) {
+    rec = ({ unripe: 'wait', partially_ripe: 'wait_little', ripe: 'eat_now', overripe: 'overripe' } as Record<string, string>)[rip];
+    res.explanation_he.push(`הצבע והמראה החיצוני תואמים בדרך כלל ל${meta.he} במצב '${r.label_he}'.`);
+    if (meta.ripeness_note_he) res.explanation_he.push(meta.ripeness_note_he);
+  } else {
+    rec = 'eat_now';
+    res.explanation_he.push('לא נראים פגמים או סימני קלקול.');
+  }
+  if (rip === 'overripe' || rip === 'unripe' || rip === 'partially_ripe') res.issues_he!.push(ISSUE_HE[rip]);
+  res.recommendation = rec;
+  res.recommendation_he = REC_HE[rec];
+  if (low) res.score_reason_he = LOW_CONF_CONDITION_HE;
+  else if (!good) res.score_reason_he = SCORE_REASON_HE.spoilage;
+  else if (res.ripeness_score !== null && res.ripeness_score! < res.condition_score && overall < 80) {
+    res.score_reason_he = SCORE_REASON_HE[rip === 'overripe' ? 'overripe' : 'unripe'];
+  } else res.score_reason_he = SCORE_REASON_HE[rip === 'ripe' ? 'ripe' : 'good'];
   return res;
 }

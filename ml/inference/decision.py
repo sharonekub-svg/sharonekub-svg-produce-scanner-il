@@ -69,6 +69,14 @@ SCORE_REASON_HE = {
 }
 GENERAL_SCORE_HE = "ציון כללי: לסוג הזה עוד אין בדיקת דיוק משלו, לכן ההערכה (טרי / לא טרי) פחות מדויקת."
 LOW_CONF_SCORE_HE = "לא ניתן לדרג בביטחון מהתמונה הזו – נסו לצלם מקרוב ובאור טוב."
+# Condition head v2 (docs/quality-scoring.md): one calibrated P(good condition) per type.
+CONDITION_LABEL_HE = {"good": "תקין – בלי פגמים או סימני קלקול נראים", "bad": "נראים פגמים או סימני קלקול"}
+# Below the per-type abstain confidence (thresholds.condition_abstain, fitted on val for <= 2% error) the score
+# is capped here: an uncertain photo must not land in the "good" range. A product rule, documented, not learned.
+LOW_CONF_CAP = 60
+LOW_CONF_CONDITION_HE = "המצב לא ברור מספיק מהתמונה, לכן הציון שמרני. צלמו מקרוב, באור טוב ומכמה צדדים."
+ISSUE_HE = {"bad": "נראים פגמים או סימני קלקול", "overripe": "בשל מאוד", "unripe": "עדיין לא בשל",
+            "partially_ripe": "עוד לא בשל לגמרי", "unclear": "המצב לא ברור מהתמונה"}
 NO_SCORE_HE = "עדיין אין דירוג איכות לסוג הזה – המודל מזהה אותו אבל עוד לא אומן להעריך את מצבו."
 
 DEFAULT_THRESHOLDS = {
@@ -106,6 +114,14 @@ class ScanResult:
     score_reason_he: str | None = None
     disclaimer_he: str = DISCLAIMER_HE
     general_score: bool = False                  # score from the general fresh-vs-spoiled model (no verified head)
+    # Condition head v2 (types with "condition" in supported_heads); None elsewhere.
+    condition: HeadResult | None = None
+    overall: int | None = None                   # 0-100 = min(condition, ripeness), capped when unsure
+    condition_score: int | None = None           # 100 * calibrated P(good condition)
+    ripeness_score: int | None = None            # 0-100 from the ripeness head (SCORE_POINTS policy x 10)
+    condition_confidence: float | None = None    # max(P, 1-P) of the condition head
+    low_confidence: bool = False                 # below the type's abstain confidence -> capped + "retake"
+    issues_he: list[str] = field(default_factory=list)  # only what a verified head reported
 
     def to_dict(self) -> dict:
         return asdict(self)
@@ -201,6 +217,8 @@ def decide(tax: Taxonomy, probs: dict[str, np.ndarray], supported_heads: dict[st
                                                   for lbl in tax.heads["freshness"]])}
         sup.add("freshness~coarse")
         coarse.add("freshness")
+    if "condition" in sup and probs.get("condition") is not None:
+        return _decide_condition(tax, probs, sup, name, top, conf, t)
     r = _head(tax, "ripeness", probs.get("ripeness"), "ripeness" in sup, t["head_min_prob"])
     f = (_coarse_head(tax, "freshness", probs.get("freshness"), t["head_min_prob"]) if "freshness" in coarse
          else _head(tax, "freshness", probs.get("freshness"), "freshness" in sup, t["head_min_prob"]))
@@ -251,6 +269,75 @@ def decide(tax: Taxonomy, probs: dict[str, np.ndarray], supported_heads: dict[st
     if general and res.score is not None:
         res.general_score = True
         res.explanation_he.append(GENERAL_SCORE_HE)
+    return res
+
+
+def _half_up(x: float) -> int:
+    return int(math.floor(x + 0.5))  # same rounding as the app (JS Math.round), not Python's banker's round
+
+
+def _round4(x: float) -> float:
+    return math.floor(x * 1e4 + 0.5) / 1e4  # = app round4
+
+
+def _decide_condition(tax: Taxonomy, probs: dict, sup: set, name: str, top: int, conf: float, t: dict) -> ScanResult:
+    """Condition-first scoring (docs/quality-scoring.md §4-5): Overall = min(Condition, Ripeness); a photo below the
+    type's abstain confidence gets a capped score and a request for a better photo instead of a confident guess."""
+    meta = tax.produce_meta[name]
+    pg = float(probs["condition"][top])
+    cconf = max(pg, 1.0 - pg)
+    low = cconf < float((t.get("condition_abstain") or {}).get(name, 0.5))
+    good = pg >= 0.5
+    cond = HeadResult("good" if good else "bad", CONDITION_LABEL_HE["good" if good else "bad"], _round4(cconf), True)
+    r = _head(tax, "ripeness", probs.get("ripeness"), "ripeness" in sup, t["head_min_prob"])
+    none = HeadResult(None, None, None, False)
+    res = ScanResult("ok", produce=name, produce_he=meta["he"], emoji=meta["emoji"], produce_confidence=conf,
+                     ripeness=r, freshness=none, visual_spoilage=none, condition=cond)
+    # Reliability ceiling (thresholds.condition_max_p, measured on val with heads that never saw the photo's
+    # source): even a "certain" condition is right only that often on a new kind of photo, so the score never
+    # claims more. The verdict (good/bad) still uses the raw probability.
+    res.condition_score = _half_up(100.0 * min(pg, float(t.get("condition_max_p", 1.0))))
+    res.condition_confidence = _round4(cconf)
+    overall = res.condition_score
+    if r.available and probs.get("ripeness") is not None:
+        e = sum(float(probs["ripeness"][i]) * SCORE_POINTS["ripeness"][lbl] for i, lbl in enumerate(tax.heads["ripeness"]))
+        res.ripeness_score = _half_up(10.0 * e)
+        overall = min(overall, res.ripeness_score)
+    if low:
+        res.low_confidence = True
+        overall = min(overall, LOW_CONF_CAP)
+    res.overall = overall
+    res.score = min(10, max(1, _half_up(overall / 10.0)))
+
+    rip = r.label if r.available and r.label not in (None, tax.unknown) else None
+    if low:
+        rec = "inspect"
+        res.explanation_he.append(LOW_CONF_CONDITION_HE)
+        res.issues_he.append(ISSUE_HE["unclear"])
+    elif not good:
+        rec = "check_defects"
+        res.explanation_he.append("המראה מתאים לפרי עם פגמים, מכות או סימני ריקבון.")
+        res.explanation_he.append(MOULD_RULE_HE)
+        res.issues_he.append(ISSUE_HE["bad"])
+    elif rip:
+        rec = {"unripe": "wait", "partially_ripe": "wait_little", "ripe": "eat_now", "overripe": "overripe"}[rip]
+        res.explanation_he.append(f"הצבע והמראה החיצוני תואמים בדרך כלל ל{meta['he']} במצב '{r.label_he}'.")
+        if meta.get("ripeness_note_he"):
+            res.explanation_he.append(meta["ripeness_note_he"])
+    else:
+        rec = "eat_now"
+        res.explanation_he.append("לא נראים פגמים או סימני קלקול.")
+    if rip in ("overripe", "unripe", "partially_ripe"):
+        res.issues_he.append(ISSUE_HE[rip])
+    res.recommendation, res.recommendation_he = rec, REC_HE[rec]
+    if low:
+        res.score_reason_he = LOW_CONF_CONDITION_HE
+    elif not good:
+        res.score_reason_he = SCORE_REASON_HE["spoilage"]
+    elif res.ripeness_score is not None and res.ripeness_score < res.condition_score and res.overall < 80:
+        res.score_reason_he = SCORE_REASON_HE["overripe" if rip == "overripe" else "unripe"]
+    else:
+        res.score_reason_he = SCORE_REASON_HE["ripe" if rip == "ripe" else "good"]
     return res
 
 

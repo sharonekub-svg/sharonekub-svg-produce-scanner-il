@@ -30,7 +30,7 @@ def test_shipped_model_serves(monkeypatch):
     from server import app as srv
     srv.engine.cache_clear()
     c = TestClient(srv.app)
-    assert c.get("/healthz").json()["model_id"].startswith("siglip2_v0.12")
+    assert c.get("/healthz").json()["model_id"].startswith("siglip2_v0.13")
     rng = np.random.default_rng(0)
     buf = io.BytesIO()
     Image.fromarray(rng.integers(0, 255, (320, 320, 3), dtype=np.uint8)).save(buf, "JPEG")
@@ -65,7 +65,7 @@ def test_analyze_many_matches_single_analyze():
     names = ("banana.jpg", "apple_rotten.jpg", "pomegranate.jpg")
     blobs = [(ROOT / "server/web/samples" / f).read_bytes() for f in names]
     many = c.post("/v1/analyze_many", files=[("images", (f, b, "image/jpeg")) for f, b in zip(names, blobs)]).json()
-    assert many["model_id"].startswith("siglip2_v0.12") and len(many["items"]) == 3
+    assert many["model_id"].startswith("siglip2_v0.13") and len(many["items"]) == 3
     for (f, b), item in zip(zip(names, blobs), many["items"]):
         one = c.post("/v1/analyze", files={"image": (f, b, "image/jpeg")}).json()
         assert item["quality"] == one["quality"]

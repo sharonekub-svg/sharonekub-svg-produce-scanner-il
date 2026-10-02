@@ -89,6 +89,8 @@ class Engine:
         if "general_ab" in hd:  # general rotten-vs-fresh logit per produce type (types without a verified head)
             a, b = hd["general_ab"]
             out["freshness_general"] = (a * (hd["general_bad_W"] @ e - hd["general_fresh_W"] @ e) + b).astype(np.float32)
+        if "condition_W" in hd:  # condition head v2: logit of P(good condition), one per produce output
+            out["condition"] = (float(e @ hd["condition_W"]) + hd["condition_b"]).astype(np.float32)
         return out
 
     def _logits_cnn(self, img: Image.Image) -> dict[str, np.ndarray]:
@@ -136,7 +138,12 @@ def touch_tip_he(produce: str | None) -> str | None:
 
 
 def surface_he(d: dict) -> str | None:
-    """Skin appearance in words, derived only from the freshness/spoilage heads (no new claims)."""
+    """Skin appearance in words, derived only from the freshness/spoilage/condition heads (no new claims)."""
+    c = d.get("condition") or {}
+    if c.get("available"):
+        if d.get("low_confidence"):
+            return None
+        return "קליפה נקייה, בלי פגמים נראים" if c.get("label") == "good" else "פגמים או סימני ריקבון נראים בקליפה"
     sp = d.get("visual_spoilage") or {}
     fr = d.get("freshness") or {}
     spl = sp.get("label") if sp.get("available") else None
@@ -253,6 +260,8 @@ def _probs(e, img) -> tuple[dict, float, str | None]:
     probs = {h: softmax(lg[h][None], temps.get(h, 1.0))[0] for h in HEADS}
     if "freshness_general" in lg:
         probs["freshness_general"] = 1.0 / (1.0 + np.exp(-lg["freshness_general"]))
+    if "condition" in lg:
+        probs["condition"] = 1.0 / (1.0 + np.exp(-lg["condition"] / temps.get("condition", 1.0)))
     return probs, float(energy(lg["produce"][None])[0]), q.reason
 
 
@@ -260,6 +269,13 @@ def _combine(a: np.ndarray, b: np.ndarray) -> np.ndarray:
     """Two photos of the same fruit: normalised geometric mean per head (same as app/src/model/advice.ts)."""
     g = np.sqrt(np.maximum(a, 1e-12) * np.maximum(b, 1e-12))
     return g / g.sum()
+
+
+def _combine_binary(a: np.ndarray, b: np.ndarray) -> np.ndarray:
+    """Per-type probabilities (freshness_general, condition): the same geometric mean over {p, 1-p}."""
+    g1 = np.sqrt(np.maximum(a, 1e-12) * np.maximum(b, 1e-12))
+    g0 = np.sqrt(np.maximum(1 - a, 1e-12) * np.maximum(1 - b, 1e-12))
+    return g1 / (g1 + g0)
 
 
 @app.post("/v1/scan")
@@ -271,7 +287,9 @@ async def scan(image: UploadFile = File(...), image2: UploadFile | None = File(N
     if image2 is not None:
         p2, en2, q2 = _probs(e, await _read_image(image2))
         if q2 is None and qreason is None:  # two good photos: combine the evidence
-            probs, en, angles = {h: _combine(probs[h], p2[h]) for h in HEADS}, max(en, en2), 2
+            probs, en, angles = ({h: _combine(probs[h], p2[h]) for h in HEADS}
+                                 | {k: _combine_binary(probs[k], p2[k]) for k in ("freshness_general", "condition")
+                                    if k in probs and k in p2}), max(en, en2), 2
         elif q2 is None:  # only the second photo is usable
             probs, en, qreason = p2, en2, None
         # a bad second photo never spoils a good first one

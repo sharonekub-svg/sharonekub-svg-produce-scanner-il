@@ -1,7 +1,7 @@
 {
  "bundle_version": 2,
  "backbone": "siglip2",
- "model_id": "siglip2_v0.12@942c3376c75e",
+ "model_id": "siglip2_v0.13@8bc806e7e031",
  "created_at": "2026-09-30T20:34:49.229518+00:00",
  "input": {
   "size": 224,
@@ -81,14 +81,27 @@
   "produce": 1.210110619172773,
   "ripeness": 1.149859761161462,
   "freshness": 1.1151244319798383,
-  "visual_spoilage": 0.3625004048130315
+  "visual_spoilage": 0.3625004048130315,
+  "condition": 0.7271
  },
  "thresholds": {
   "produce_min_prob": 0.72,
   "produce_min_margin": 0.15,
   "ood_min_energy": null,
   "head_min_prob": 0.55,
-  "spoiled_alert_prob": 0.4
+  "spoiled_alert_prob": 0.4,
+  "condition_abstain": {
+   "apple": 0.91,
+   "banana": 0.5,
+   "grape": 0.63,
+   "guava": 0.56,
+   "lemon": 0.95,
+   "lime": 0.5,
+   "orange": 0.87,
+   "pomegranate": 0.67,
+   "strawberry": 0.72
+  },
+  "condition_max_p": 0.858
  },
  "quality": {
   "min_mean_luma": 20.0,
@@ -100,31 +113,38 @@
  "supported_heads": {
   "apple": [
    "freshness",
-   "visual_spoilage~coarse"
+   "visual_spoilage~coarse",
+   "condition"
   ],
   "banana": [
    "freshness",
    "ripeness",
-   "visual_spoilage~coarse"
+   "visual_spoilage~coarse",
+   "condition"
   ],
   "guava": [
    "freshness",
-   "visual_spoilage~coarse"
+   "visual_spoilage~coarse",
+   "condition"
   ],
   "orange": [
    "freshness",
-   "visual_spoilage~coarse"
+   "visual_spoilage~coarse",
+   "condition"
   ],
   "pomegranate": [
    "freshness",
-   "visual_spoilage~coarse"
+   "visual_spoilage~coarse",
+   "condition"
   ],
   "grape": [
-   "freshness"
+   "freshness",
+   "condition"
   ],
   "strawberry": [
    "freshness",
-   "visual_spoilage~coarse"
+   "visual_spoilage~coarse",
+   "condition"
   ],
   "avocado": [
    "ripeness",
@@ -132,11 +152,13 @@
   ],
   "lemon": [
    "freshness",
-   "visual_spoilage~coarse"
+   "visual_spoilage~coarse",
+   "condition"
   ],
   "lime": [
    "freshness~coarse",
-   "visual_spoilage~coarse"
+   "visual_spoilage~coarse",
+   "condition"
   ],
   "mandarin": [
    "freshness~general"
@@ -577,7 +599,21 @@
    "sha256": "843945c3ddaaad33f363201558f537eadbdab7cbc4060f2532f9cf1536114718"
   },
   "heads.npz": {
-   "sha256": "d1c6a6be43680ec5ae88b6d34b4c9b6f74ec055f7ab629d16d4b4742ebd6ac8e"
+   "sha256": "8bc806e7e0312e4d5113171b0b25ea230ebd258c8607e55f912ba48cbd705b2a"
   }
+ },
+ "condition": {
+  "source": "scripts/train_condition_head.py (docs/quality-scoring.md)",
+  "types": [
+   "apple",
+   "banana",
+   "grape",
+   "guava",
+   "lemon",
+   "lime",
+   "orange",
+   "pomegranate",
+   "strawberry"
+  ]
  }
 }

@@ -12,8 +12,13 @@ export const CHIP: Record<string, { dot: string; bg: string }> = {
   severe: { dot: '🔴', bg: '#FADBD8' },
   not_fresh: { dot: '🔴', bg: '#FADBD8' },
   defects: { dot: '🔴', bg: '#FADBD8' },
+  good: { dot: '🟢', bg: '#DFF3E4' },
+  bad: { dot: '🔴', bg: '#FADBD8' },
   unknown: { dot: '⚪', bg: '#EEEEEE' },
 };
 
 /** Calibrated probability rounded to 5% (spec: no false precision). */
 export const pct = (p: number | null | undefined) => (p == null ? '' : `${Math.round((p * 100) / 5) * 5}%`);
+
+/** 0-100 score shown in steps of 5 (same rule: the model is not that precise). */
+export const step5 = (x: number) => Math.round(x / 5) * 5;
