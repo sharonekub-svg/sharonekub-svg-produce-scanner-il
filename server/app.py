@@ -148,7 +148,7 @@ def surface_he(d: dict) -> str | None:
 # The phone app is the product. Browsers get the app's own web build (scripts/build_app_preview.sh) as a
 # preview of the phone screens; scans from it go to /v1/analyze here. The older hand-made page stays at /web/index.html.
 PREVIEW = WEB / "preview"
-APP_ROUTES = ("history", "info", "result", "welcome", "signin", "credits")
+APP_ROUTES = ("history", "info", "result", "welcome", "signin", "credits", "auth-callback")
 
 
 def _preview_page() -> HTMLResponse:
