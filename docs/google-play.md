@@ -55,7 +55,7 @@ Scan Fruit AI בודקת פירות וירקות מתוך תמונה:
 ### Data safety
 - Does your app collect or share any of the required user data types? **Yes**
 - Is all user data encrypted in transit? **Yes**
-- Account creation: **OAuth** (Google) · Delete account URL: `https://sharonekub-svg-produce-scanner-il.vercel.app/privacy`
+- Account creation: **OAuth** (Google) · Delete account / Delete data URL: `https://sharonekub-svg-produce-scanner-il.vercel.app/privacy#delete` · retention: **No** (נמחק מיד לפי בקשה)
 - Do you provide a way for users to request deletion? **Yes** (מחיקת חשבון באפליקציה + מייל)
 
 | סוג נתון | נאסף? | משותף? | ephemeral | חובה/רשות | מטרה |
