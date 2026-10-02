@@ -112,7 +112,7 @@ export function fromAnalysis({ logits, quality }: Analysis, previous?: ScanOutpu
   }
   // Per-type probabilities: freshness_general = P(spoiled) (v0.8+), condition = P(good condition) (v0.13+,
   // docs/quality-scoring.md). Both angles / all video frames count, combined like the heads above.
-  const perType: [string, number][] = [['freshness_general', 1], ['condition', bundle.temperatures.condition ?? 1]];
+  const perType: [string, number][] = [['freshness_general', 1], ['condition', bundle.temperatures.condition ?? 1], ['condition_rot', 1]];
   for (const [k, temp] of perType) {
     const lg = (logits as Record<string, number[] | undefined>)[k];
     if (!lg) continue;

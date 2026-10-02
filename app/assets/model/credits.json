@@ -1,5 +1,5 @@
 {
-  "model_id": "siglip2_v0.12@942c3376c75e",
+  "model_id": "siglip2_v0.14@d4ee08b5fc54",
   "datasets": [
     {
       "dataset_id": "apple_good_bad",
@@ -111,6 +111,30 @@
       "license": "CC BY 4.0",
       "url": "https://data.mendeley.com/datasets/zysvgmxcyz/1",
       "attribution": "Authors (farms in Mahabaleshwar, markets in Pune)",
+      "credits_url": null
+    },
+    {
+      "dataset_id": "agrifreshnet",
+      "name": "AgriFreshNET Freshness and Shelf-Life Image Dataset",
+      "license": "CC BY 4.0",
+      "url": "https://data.mendeley.com/datasets/42m5tb7yv9/1",
+      "attribution": "Mendeley Data 42m5tb7yv9 v1 (authors listed in record)",
+      "credits_url": null
+    },
+    {
+      "dataset_id": "banana_id",
+      "name": "BananaID: banana varieties and ripeness stages (Indonesia)",
+      "license": "CC BY 4.0",
+      "url": "https://data.mendeley.com/datasets/h6n5srjjyw/1",
+      "attribution": "Mendeley Data h6n5srjjyw v1",
+      "credits_url": null
+    },
+    {
+      "dataset_id": "banana_image_bd",
+      "name": "BananaImageBD: banana ripeness stages (Bangladesh)",
+      "license": "CC BY 4.0",
+      "url": "https://data.mendeley.com/datasets/ptfscwtnyz/2",
+      "attribution": "Mendeley Data ptfscwtnyz v2",
       "credits_url": null
     }
   ]

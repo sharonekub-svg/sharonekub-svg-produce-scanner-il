@@ -1377,6 +1377,134 @@
           }
         }
       ]
+    },
+    "agrifreshnet": {
+      "adapter": "path_rules",
+      "verified_against_download": true,
+      "verified_note": "Mendeley 42m5tb7yv9 v1 (CC BY 4.0). 'Processed Data/<Fresh|Semi fresh|Rotten> <Type>(<days>)/<Type> (<n>).jpeg', 512 px smartphone photos. Visual audit 2026-10-02: everyday photos on fabric/tables; 'Fresh' bananas already carry sugar spots, 'Semi fresh' = clearly spotted/soft-looking, 'Rotten' = black/shrivelled. Labels are post-harvest day ranges. Papaya, eggplant, bitter melon not extracted (not in taxonomy).",
+      "split_by_metadata_group": true,
+      "group_pattern": "(?P<group>Processed Data/[^/]+/[^/(]+\\(\\d*?)\\d\\)\\.jpe?g$",
+      "rules": [
+        {
+          "pattern": "(?i)banana",
+          "labels": {
+            "produce": "banana"
+          }
+        },
+        {
+          "pattern": "(?i)cucumber",
+          "labels": {
+            "produce": "cucumber"
+          }
+        },
+        {
+          "pattern": "(?i)orange",
+          "labels": {
+            "produce": "orange"
+          }
+        },
+        {
+          "pattern": "(?i)pineapple",
+          "labels": {
+            "produce": "pineapple"
+          }
+        },
+        {
+          "pattern": "(?i)tomato",
+          "labels": {
+            "produce": "tomato"
+          }
+        },
+        {
+          "pattern": "(?i)/semi[ _]?fresh",
+          "labels": {
+            "freshness": "declining",
+            "visual_spoilage": "mild"
+          }
+        },
+        {
+          "pattern": "(?i)/rotten",
+          "labels": {
+            "freshness": "spoiled",
+            "visual_spoilage": "severe"
+          }
+        },
+        {
+          "pattern": "(?i)Processed Data/fresh",
+          "labels": {
+            "freshness": "fresh",
+            "visual_spoilage": "none"
+          }
+        }
+      ]
+    },
+    "banana_id": {
+      "adapter": "path_rules",
+      "verified_against_download": true,
+      "verified_note": "Mendeley h6n5srjjyw v1 (CC BY 4.0), ripeness originals only. '<Variety>_<Stage>_<Side>_<nnnn>.jpg'.",
+      "split_by_metadata_group": true,
+      "group_pattern": "(?P<group>[^/]+/[A-Za-z]+_[A-Za-z_]+?_\\d{2})\\d{2}\\.jpg$",
+      "default_produce": "banana",
+      "rules": [
+        {
+          "pattern": "/Unripe/",
+          "labels": {
+            "ripeness": "unripe"
+          }
+        },
+        {
+          "pattern": "/Half_Ripe/",
+          "labels": {
+            "ripeness": "partially_ripe"
+          }
+        },
+        {
+          "pattern": "/Ripe/",
+          "labels": {
+            "ripeness": "ripe"
+          }
+        },
+        {
+          "pattern": "/Overripe/",
+          "labels": {
+            "ripeness": "overripe"
+          }
+        }
+      ]
+    },
+    "banana_image_bd": {
+      "adapter": "path_rules",
+      "verified_against_download": true,
+      "verified_note": "Mendeley ptfscwtnyz v2 (CC BY 4.0), ripeness originals only. '<Stage>/<Stage>_<n>.jpg'.",
+      "split_by_metadata_group": true,
+      "group_pattern": "(?P<group>[^/]+/[A-Za-z-]+_\\d*?)\\d\\.jpg$",
+      "default_produce": "banana",
+      "rules": [
+        {
+          "pattern": "/Green/",
+          "labels": {
+            "ripeness": "unripe"
+          }
+        },
+        {
+          "pattern": "/Semi-ripe/",
+          "labels": {
+            "ripeness": "partially_ripe"
+          }
+        },
+        {
+          "pattern": "/Ripe/",
+          "labels": {
+            "ripeness": "ripe"
+          }
+        },
+        {
+          "pattern": "/Overripe/",
+          "labels": {
+            "ripeness": "overripe"
+          }
+        }
+      ]
     }
   }
 }

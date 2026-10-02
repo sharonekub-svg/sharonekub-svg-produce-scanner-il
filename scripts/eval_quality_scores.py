@@ -70,6 +70,8 @@ def probs_for(e, emb: np.ndarray, temps: dict) -> dict:
     probs["freshness_general"] = 1.0 / (1.0 + np.exp(-lg["freshness_general"]))
     if "condition" in lg:
         probs["condition"] = 1.0 / (1.0 + np.exp(-lg["condition"] / temps.get("condition", 1.0)))
+    if "condition_rot" in lg:
+        probs["condition_rot"] = 1.0 / (1.0 + np.exp(-lg["condition_rot"]))
     return probs
 
 

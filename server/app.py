@@ -89,8 +89,12 @@ class Engine:
         if "general_ab" in hd:  # general rotten-vs-fresh logit per produce type (types without a verified head)
             a, b = hd["general_ab"]
             out["freshness_general"] = (a * (hd["general_bad_W"] @ e - hd["general_fresh_W"] @ e) + b).astype(np.float32)
-        if "condition_W" in hd:  # condition head v2: logit of P(good condition), one per produce output
+        if "condition_W" in hd:  # condition head: logit of P(good condition), one per produce output
             out["condition"] = (float(e @ hd["condition_W"]) + hd["condition_b"]).astype(np.float32)
+            if "condition_g_W" in hd:  # v0.14 graded types: own P(good) head + P(rotten | not good)
+                g = (float(e @ hd["condition_g_W"]) + hd["condition_g_b"]).astype(np.float32)
+                out["condition"] = np.where(hd["condition_graded"] > 0, g, out["condition"]).astype(np.float32)
+                out["condition_rot"] = (float(e @ hd["condition_r_W"]) + hd["condition_r_b"]).astype(np.float32)
         return out
 
     def _logits_cnn(self, img: Image.Image) -> dict[str, np.ndarray]:
@@ -143,7 +147,8 @@ def surface_he(d: dict) -> str | None:
     if c.get("available"):
         if d.get("low_confidence"):
             return None
-        return "קליפה נקייה, בלי פגמים נראים" if c.get("label") == "good" else "פגמים או סימני ריקבון נראים בקליפה"
+        return {"good": "קליפה נקייה, בלי פגמים נראים", "early": "סימנים ראשונים: כתמים, ריכוך או פגמים קטנים"}.get(
+            c.get("label"), "פגמים או סימני ריקבון נראים בקליפה")
     sp = d.get("visual_spoilage") or {}
     fr = d.get("freshness") or {}
     spl = sp.get("label") if sp.get("available") else None
@@ -262,6 +267,8 @@ def _probs(e, img) -> tuple[dict, float, str | None]:
         probs["freshness_general"] = 1.0 / (1.0 + np.exp(-lg["freshness_general"]))
     if "condition" in lg:
         probs["condition"] = 1.0 / (1.0 + np.exp(-lg["condition"] / temps.get("condition", 1.0)))
+    if "condition_rot" in lg:
+        probs["condition_rot"] = 1.0 / (1.0 + np.exp(-lg["condition_rot"]))
     return probs, float(energy(lg["produce"][None])[0]), q.reason
 
 
@@ -288,7 +295,7 @@ async def scan(image: UploadFile = File(...), image2: UploadFile | None = File(N
         p2, en2, q2 = _probs(e, await _read_image(image2))
         if q2 is None and qreason is None:  # two good photos: combine the evidence
             probs, en, angles = ({h: _combine(probs[h], p2[h]) for h in HEADS}
-                                 | {k: _combine_binary(probs[k], p2[k]) for k in ("freshness_general", "condition")
+                                 | {k: _combine_binary(probs[k], p2[k]) for k in ("freshness_general", "condition", "condition_rot")
                                     if k in probs and k in p2}), max(en, en2), 2
         elif q2 is None:  # only the second photo is usable
             probs, en, qreason = p2, en2, None

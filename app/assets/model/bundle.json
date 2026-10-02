@@ -1,7 +1,7 @@
 {
  "bundle_version": 2,
  "backbone": "siglip2",
- "model_id": "siglip2_v0.13@8bc806e7e031",
+ "model_id": "siglip2_v0.14@d4ee08b5fc54",
  "created_at": "2026-09-30T20:34:49.229518+00:00",
  "input": {
   "size": 224,
@@ -79,10 +79,10 @@
  },
  "temperatures": {
   "produce": 1.210110619172773,
-  "ripeness": 1.149859761161462,
+  "ripeness": 1.1204,
   "freshness": 1.1151244319798383,
   "visual_spoilage": 0.3625004048130315,
-  "condition": 0.7271
+  "condition": 1.0
  },
  "thresholds": {
   "produce_min_prob": 0.72,
@@ -92,16 +92,20 @@
   "spoiled_alert_prob": 0.4,
   "condition_abstain": {
    "apple": 0.91,
-   "banana": 0.5,
+   "banana": 0.66,
    "grape": 0.63,
    "guava": 0.56,
    "lemon": 0.95,
    "lime": 0.5,
-   "orange": 0.87,
+   "orange": 0.97,
    "pomegranate": 0.67,
-   "strawberry": 0.72
+   "strawberry": 0.72,
+   "cucumber": 0.84,
+   "pineapple": 0.85,
+   "tomato": 0.94
   },
-  "condition_max_p": 0.858
+  "condition_max_p": 0.858,
+  "condition_max_p_graded": 0.744
  },
  "quality": {
   "min_mean_luma": 20.0,
@@ -120,7 +124,7 @@
    "freshness",
    "ripeness",
    "visual_spoilage~coarse",
-   "condition"
+   "condition~graded"
   ],
   "guava": [
    "freshness",
@@ -130,7 +134,7 @@
   "orange": [
    "freshness",
    "visual_spoilage~coarse",
-   "condition"
+   "condition~graded"
   ],
   "pomegranate": [
    "freshness",
@@ -164,10 +168,12 @@
    "freshness~general"
   ],
   "tomato": [
-   "freshness~general"
+   "freshness~general",
+   "condition~graded"
   ],
   "cucumber": [
-   "freshness~general"
+   "freshness~general",
+   "condition~graded"
   ],
   "mango": [
    "freshness~general"
@@ -227,7 +233,8 @@
    "freshness~general"
   ],
   "pineapple": [
-   "freshness~general"
+   "freshness~general",
+   "condition~graded"
   ],
   "fig": [
    "freshness~general"
@@ -589,7 +596,10 @@
   "mango_banana_ripe",
   "mango_ripening_mm8",
   "open_images_v7",
-  "strawberry_avocado_ripening"
+  "strawberry_avocado_ripening",
+  "agrifreshnet",
+  "banana_id",
+  "banana_image_bd"
  ],
  "files": {
   "vision.onnx.00": {
@@ -599,7 +609,7 @@
    "sha256": "843945c3ddaaad33f363201558f537eadbdab7cbc4060f2532f9cf1536114718"
   },
   "heads.npz": {
-   "sha256": "8bc806e7e0312e4d5113171b0b25ea230ebd258c8607e55f912ba48cbd705b2a"
+   "sha256": "d4ee08b5fc54feb17d3ff1e05456078f2b3c82851050b24044b049a816dacdd8"
   }
  },
  "condition": {
@@ -614,6 +624,15 @@
    "orange",
    "pomegranate",
    "strawberry"
-  ]
+  ],
+  "folded_T": true,
+  "graded_types": [
+   "banana",
+   "cucumber",
+   "orange",
+   "pineapple",
+   "tomato"
+  ],
+  "graded_source": "scripts/train_quality_v3.py (docs/quality-scoring.md §11)"
  }
 }

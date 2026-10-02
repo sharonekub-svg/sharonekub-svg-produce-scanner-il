@@ -14,6 +14,8 @@ export const CHIP: Record<string, { dot: string; bg: string }> = {
   defects: { dot: '🔴', bg: '#FADBD8' },
   good: { dot: '🟢', bg: '#DFF3E4' },
   bad: { dot: '🔴', bg: '#FADBD8' },
+  early: { dot: '🟠', bg: '#FFE6CC' },
+  rotten: { dot: '🔴', bg: '#FADBD8' },
   unknown: { dot: '⚪', bg: '#EEEEEE' },
 };
 

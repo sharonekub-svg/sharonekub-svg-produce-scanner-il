@@ -70,12 +70,16 @@ SCORE_REASON_HE = {
 GENERAL_SCORE_HE = "ציון כללי: לסוג הזה עוד אין בדיקת דיוק משלו, לכן ההערכה (טרי / לא טרי) פחות מדויקת."
 LOW_CONF_SCORE_HE = "לא ניתן לדרג בביטחון מהתמונה הזו – נסו לצלם מקרוב ובאור טוב."
 # Condition head v2 (docs/quality-scoring.md): one calibrated P(good condition) per type.
-CONDITION_LABEL_HE = {"good": "תקין – בלי פגמים או סימני קלקול נראים", "bad": "נראים פגמים או סימני קלקול"}
+CONDITION_LABEL_HE = {"good": "תקין – בלי פגמים או סימני קלקול נראים", "bad": "נראים פגמים או סימני קלקול",
+                      "early": "סימנים ראשונים של ירידה באיכות", "rotten": "נראים סימני ריקבון"}
+# Graded types (good / early problems / rotten): points per grade, same policy as SCORE_POINTS["freshness"].
+GRADE_POINTS = {"good": 100.0, "early": 60.0, "rotten": 10.0}
 # Below the per-type abstain confidence (thresholds.condition_abstain, fitted on val for <= 2% error) the score
 # is capped here: an uncertain photo must not land in the "good" range. A product rule, documented, not learned.
 LOW_CONF_CAP = 60
 LOW_CONF_CONDITION_HE = "המצב לא ברור מספיק מהתמונה, לכן הציון שמרני. צלמו מקרוב, באור טוב ומכמה צדדים."
-ISSUE_HE = {"bad": "נראים פגמים או סימני קלקול", "overripe": "בשל מאוד", "unripe": "עדיין לא בשל",
+ISSUE_HE = {"bad": "נראים פגמים או סימני קלקול", "early": "סימנים ראשונים: כתמים, ריכוך או פגמים קטנים",
+            "rotten": "נראים סימני ריקבון", "overripe": "בשל מאוד", "unripe": "עדיין לא בשל",
             "partially_ripe": "עוד לא בשל לגמרי", "unclear": "המצב לא ברור מהתמונה"}
 NO_SCORE_HE = "עדיין אין דירוג איכות לסוג הזה – המודל מזהה אותו אבל עוד לא אומן להעריך את מצבו."
 
@@ -217,7 +221,7 @@ def decide(tax: Taxonomy, probs: dict[str, np.ndarray], supported_heads: dict[st
                                                   for lbl in tax.heads["freshness"]])}
         sup.add("freshness~coarse")
         coarse.add("freshness")
-    if "condition" in sup and probs.get("condition") is not None:
+    if ("condition" in sup or "condition~graded" in sup) and probs.get("condition") is not None:
         return _decide_condition(tax, probs, sup, name, top, conf, t)
     r = _head(tax, "ripeness", probs.get("ripeness"), "ripeness" in sup, t["head_min_prob"])
     f = (_coarse_head(tax, "freshness", probs.get("freshness"), t["head_min_prob"]) if "freshness" in coarse
@@ -285,10 +289,13 @@ def _decide_condition(tax: Taxonomy, probs: dict, sup: set, name: str, top: int,
     type's abstain confidence gets a capped score and a request for a better photo instead of a confident guess."""
     meta = tax.produce_meta[name]
     pg = float(probs["condition"][top])
+    graded = "condition~graded" in sup and probs.get("condition_rot") is not None
+    pr = float(probs["condition_rot"][top]) if graded else None  # P(rotten | not good)
     cconf = max(pg, 1.0 - pg)
     low = cconf < float((t.get("condition_abstain") or {}).get(name, 0.5))
     good = pg >= 0.5
-    cond = HeadResult("good" if good else "bad", CONDITION_LABEL_HE["good" if good else "bad"], _round4(cconf), True)
+    label = "good" if good else ("bad" if not graded else ("rotten" if pr >= 0.5 else "early"))
+    cond = HeadResult(label, CONDITION_LABEL_HE[label], _round4(cconf), True)
     r = _head(tax, "ripeness", probs.get("ripeness"), "ripeness" in sup, t["head_min_prob"])
     none = HeadResult(None, None, None, False)
     res = ScanResult("ok", produce=name, produce_he=meta["he"], emoji=meta["emoji"], produce_confidence=conf,
@@ -296,7 +303,12 @@ def _decide_condition(tax: Taxonomy, probs: dict, sup: set, name: str, top: int,
     # Reliability ceiling (thresholds.condition_max_p, measured on val with heads that never saw the photo's
     # source): even a "certain" condition is right only that often on a new kind of photo, so the score never
     # claims more. The verdict (good/bad) still uses the raw probability.
-    res.condition_score = _half_up(100.0 * min(pg, float(t.get("condition_max_p", 1.0))))
+    if graded:
+        pc = min(pg, float(t.get("condition_max_p_graded", 1.0)))
+        res.condition_score = _half_up(GRADE_POINTS["good"] * pc + GRADE_POINTS["early"] * (1 - pc) * (1 - pr)
+                                       + GRADE_POINTS["rotten"] * (1 - pc) * pr)
+    else:
+        res.condition_score = _half_up(100.0 * min(pg, float(t.get("condition_max_p", 1.0))))
     res.condition_confidence = _round4(cconf)
     overall = res.condition_score
     if r.available and probs.get("ripeness") is not None:
@@ -314,11 +326,15 @@ def _decide_condition(tax: Taxonomy, probs: dict, sup: set, name: str, top: int,
         rec = "inspect"
         res.explanation_he.append(LOW_CONF_CONDITION_HE)
         res.issues_he.append(ISSUE_HE["unclear"])
+    elif label == "early":
+        rec = "eat_soon"
+        res.explanation_he.append("נראים סימנים ראשונים של ירידה באיכות (כתמים, ריכוך או פגמים קטנים), בלי סימני ריקבון.")
+        res.issues_he.append(ISSUE_HE["early"])
     elif not good:
         rec = "check_defects"
         res.explanation_he.append("המראה מתאים לפרי עם פגמים, מכות או סימני ריקבון.")
         res.explanation_he.append(MOULD_RULE_HE)
-        res.issues_he.append(ISSUE_HE["bad"])
+        res.issues_he.append(ISSUE_HE["rotten" if label == "rotten" else "bad"])
     elif rip:
         rec = {"unripe": "wait", "partially_ripe": "wait_little", "ripe": "eat_now", "overripe": "overripe"}[rip]
         res.explanation_he.append(f"הצבע והמראה החיצוני תואמים בדרך כלל ל{meta['he']} במצב '{r.label_he}'.")
@@ -332,6 +348,8 @@ def _decide_condition(tax: Taxonomy, probs: dict, sup: set, name: str, top: int,
     res.recommendation, res.recommendation_he = rec, REC_HE[rec]
     if low:
         res.score_reason_he = LOW_CONF_CONDITION_HE
+    elif label == "early":
+        res.score_reason_he = SCORE_REASON_HE["declining"]
     elif not good:
         res.score_reason_he = SCORE_REASON_HE["spoilage"]
     elif res.ripeness_score is not None and res.ripeness_score < res.condition_score and res.overall < 80:

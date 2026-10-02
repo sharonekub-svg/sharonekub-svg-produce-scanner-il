@@ -23,6 +23,8 @@ export interface Thresholds {
   condition_abstain?: Record<string, number>;
   /** Highest P(good condition) the score may use: measured reliability on photo sources the model never saw. */
   condition_max_p?: number;
+  /** Same ceiling for the graded (good / early / rotten) condition types. */
+  condition_max_p_graded?: number;
 }
 
 export interface Bundle {
@@ -40,7 +42,7 @@ export interface Bundle {
 
 export type Logits = Record<Head, number[]>;
 /** freshness_general / condition: one probability per produce output (P(spoiled) / P(good condition)). */
-export type Probs = Partial<Record<Head, number[]>> & { freshness_general?: number[]; condition?: number[] };
+export type Probs = Partial<Record<Head, number[]>> & { freshness_general?: number[]; condition?: number[]; condition_rot?: number[] };
 
 export interface QualityStats {
   ok: boolean;

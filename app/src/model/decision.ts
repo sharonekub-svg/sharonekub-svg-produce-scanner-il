@@ -46,11 +46,16 @@ function empty(status: ScanResult['status'], message: string | null, conf: numbe
 }
 
 // Condition head v2 — mirrors decision.py _decide_condition (docs/quality-scoring.md §4-5).
-const CONDITION_LABEL_HE = { good: 'תקין – בלי פגמים או סימני קלקול נראים', bad: 'נראים פגמים או סימני קלקול' };
+const CONDITION_LABEL_HE: Record<string, string> = {
+  good: 'תקין – בלי פגמים או סימני קלקול נראים', bad: 'נראים פגמים או סימני קלקול',
+  early: 'סימנים ראשונים של ירידה באיכות', rotten: 'נראים סימני ריקבון',
+};
+const GRADE_POINTS = { good: 100, early: 60, rotten: 10 };
 const LOW_CONF_CAP = 60;
 const LOW_CONF_CONDITION_HE = 'המצב לא ברור מספיק מהתמונה, לכן הציון שמרני. צלמו מקרוב, באור טוב ומכמה צדדים.';
 const ISSUE_HE: Record<string, string> = {
-  bad: 'נראים פגמים או סימני קלקול', overripe: 'בשל מאוד', unripe: 'עדיין לא בשל',
+  bad: 'נראים פגמים או סימני קלקול', early: 'סימנים ראשונים: כתמים, ריכוך או פגמים קטנים',
+  rotten: 'נראים סימני ריקבון', overripe: 'בשל מאוד', unripe: 'עדיין לא בשל',
   partially_ripe: 'עוד לא בשל לגמרי', unclear: 'המצב לא ברור מהתמונה',
 };
 const halfUp = (x: number) => Math.floor(x + 0.5); // = decision.py _half_up
@@ -165,7 +170,7 @@ export function decide(bundle: Bundle, probs: Probs, qualityReason: string | nul
 function assess(bundle: Bundle, probs: Probs, t: Thresholds, name: string, conf: number | null, byUser: boolean): ScanResult {
   const meta = bundle.produce_meta[name];
   const sup = new Set(bundle.supported_heads[name] ?? []);
-  if (sup.has('condition') && Array.isArray(probs.condition)) return assessCondition(bundle, probs, t, name, conf, byUser);
+  if ((sup.has('condition') || sup.has('condition~graded')) && Array.isArray(probs.condition)) return assessCondition(bundle, probs, t, name, conf, byUser);
   const coarse = new Set<string>((['freshness', 'visual_spoilage'] as const).filter((h) => !sup.has(h) && sup.has(`${h}~coarse`)));
   // "freshness~general" (mirrors decision.py): no verified head for this type; the general fresh-vs-spoiled model
   // gives a coarse good/bad freshness from probs.freshness_general[produce] = P(spoiled).
@@ -232,11 +237,15 @@ function assess(bundle: Bundle, probs: Probs, t: Thresholds, name: string, conf:
 function assessCondition(bundle: Bundle, probs: Probs, t: Thresholds, name: string, conf: number | null, byUser: boolean): ScanResult {
   const meta = bundle.produce_meta[name];
   const sup = new Set(bundle.supported_heads[name] ?? []);
-  const pg = probs.condition![bundle.outputs.produce.indexOf(name)];
+  const idx = bundle.outputs.produce.indexOf(name);
+  const pg = probs.condition![idx];
+  const graded = sup.has('condition~graded') && Array.isArray(probs.condition_rot);
+  const pr = graded ? probs.condition_rot![idx] : 0; // P(rotten | not good)
   const cconf = Math.max(pg, 1 - pg);
   const low = cconf < (t.condition_abstain?.[name] ?? 0.5);
   const good = pg >= 0.5;
-  const cond: HeadResult = { label: good ? 'good' : 'bad', label_he: CONDITION_LABEL_HE[good ? 'good' : 'bad'], confidence: round4(cconf), available: true };
+  const label = good ? 'good' : !graded ? 'bad' : pr >= 0.5 ? 'rotten' : 'early';
+  const cond: HeadResult = { label, label_he: CONDITION_LABEL_HE[label], confidence: round4(cconf), available: true };
   const r = headResult(bundle, 'ripeness', probs.ripeness, sup.has('ripeness'), t.head_min_prob);
   const none: HeadResult = { label: null, label_he: null, confidence: null, available: false };
   const res: ScanResult = {
@@ -244,7 +253,10 @@ function assessCondition(bundle: Bundle, probs: Probs, t: Thresholds, name: stri
     ripeness: r, freshness: none, visual_spoilage: none, condition: cond, ...(byUser ? { chosen_by_user: true } : {}),
   };
   // Reliability ceiling measured on unseen photo sources (decision.py): the score never claims more.
-  res.condition_score = halfUp(100 * Math.min(pg, t.condition_max_p ?? 1));
+  if (graded) {
+    const pc = Math.min(pg, t.condition_max_p_graded ?? 1);
+    res.condition_score = halfUp(GRADE_POINTS.good * pc + GRADE_POINTS.early * (1 - pc) * (1 - pr) + GRADE_POINTS.rotten * (1 - pc) * pr);
+  } else res.condition_score = halfUp(100 * Math.min(pg, t.condition_max_p ?? 1));
   res.condition_confidence = round4(cconf);
   let overall = res.condition_score;
   if (r.available && probs.ripeness) {
@@ -266,11 +278,15 @@ function assessCondition(bundle: Bundle, probs: Probs, t: Thresholds, name: stri
     rec = 'inspect';
     res.explanation_he.push(LOW_CONF_CONDITION_HE);
     res.issues_he!.push(ISSUE_HE.unclear);
+  } else if (label === 'early') {
+    rec = 'eat_soon';
+    res.explanation_he.push('נראים סימנים ראשונים של ירידה באיכות (כתמים, ריכוך או פגמים קטנים), בלי סימני ריקבון.');
+    res.issues_he!.push(ISSUE_HE.early);
   } else if (!good) {
     rec = 'check_defects';
     res.explanation_he.push('המראה מתאים לפרי עם פגמים, מכות או סימני ריקבון.');
     res.explanation_he.push(MOULD_RULE_HE);
-    res.issues_he!.push(ISSUE_HE.bad);
+    res.issues_he!.push(ISSUE_HE[label === 'rotten' ? 'rotten' : 'bad']);
   } else if (rip) {
     rec = ({ unripe: 'wait', partially_ripe: 'wait_little', ripe: 'eat_now', overripe: 'overripe' } as Record<string, string>)[rip];
     res.explanation_he.push(`הצבע והמראה החיצוני תואמים בדרך כלל ל${meta.he} במצב '${r.label_he}'.`);
@@ -283,6 +299,7 @@ function assessCondition(bundle: Bundle, probs: Probs, t: Thresholds, name: stri
   res.recommendation = rec;
   res.recommendation_he = REC_HE[rec];
   if (low) res.score_reason_he = LOW_CONF_CONDITION_HE;
+  else if (label === 'early') res.score_reason_he = SCORE_REASON_HE.declining;
   else if (!good) res.score_reason_he = SCORE_REASON_HE.spoilage;
   else if (res.ripeness_score !== null && res.ripeness_score! < res.condition_score && overall < 80) {
     res.score_reason_he = SCORE_REASON_HE[rip === 'overripe' ? 'overripe' : 'unripe'];

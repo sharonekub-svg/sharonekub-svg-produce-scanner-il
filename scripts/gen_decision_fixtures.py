@@ -29,14 +29,14 @@ def main() -> int:
     bundle = {"bundle_version": 1, "model_id": "fixture", "outputs": {h: list(tax.classes(h)) for h in HEADS},
               "produce_meta": tax.produce_meta, "label_he": tax.label_he, "temperatures": {},
               "thresholds": {**DEFAULT_THRESHOLDS, "ood_min_energy": 2.0,
-                             "condition_abstain": {"apple": 0.9, "strawberry": 0.7}, "condition_max_p": 0.86},
+                             "condition_abstain": {"apple": 0.9, "strawberry": 0.7, "orange": 0.8},
+                             "condition_max_p": 0.86, "condition_max_p_graded": 0.744},
               "supported_heads": {"banana": ["freshness", "ripeness", "visual_spoilage"],
                                   "avocado": ["ripeness", "visual_spoilage~coarse"], "apple": ["freshness", "condition"],
-                                  "tomato": ["freshness", "visual_spoilage"],
-                                  "orange": ["freshness~coarse", "visual_spoilage~coarse"],
+                                  "orange": ["freshness~coarse", "visual_spoilage~coarse", "condition~graded"],
                                   "pomegranate": ["visual_spoilage~coarse"],
                                   "strawberry": ["freshness", "ripeness", "condition"],
-                                  "kiwi": ["condition"]},
+                                  "kiwi": ["condition"], "tomato": ["freshness~general", "condition~graded"]},
               "input": {"size": 224, "mean": [0.485, 0.456, 0.406], "std": [0.229, 0.224, 0.225],
                         "resize": "short_side_then_center_crop", "resize_ratio": 1.14}}
     focus = [tax.produce.index(p) for p in ("banana", "avocado", "apple", "tomato", "other", "kiwi", "orange", "pomegranate",
@@ -56,6 +56,7 @@ def main() -> int:
         cond = rng.uniform(0, 1, tax.num_classes("produce"))
         sharpen = rng.random() < 0.6
         probs["condition"] = (np.where(cond > 0.5, 1 - (1 - cond) ** 3, cond ** 3) if sharpen else cond).round(6)
+        probs["condition_rot"] = rng.uniform(0, 1, tax.num_classes("produce")).round(6)
         quality = rng.choice([None] * 8 + ["too_dark", "blurry", "overexposed", "weird"])
         energy = round(float(rng.normal(3, 2)), 4) if rng.random() < 0.7 else None
         res = decide(tax, {h: v for h, v in probs.items()}, bundle["supported_heads"], quality_reason=quality,

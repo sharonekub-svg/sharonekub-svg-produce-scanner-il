@@ -177,7 +177,7 @@ export default function ResultScreen() {
               <View style={[styles.hero, { backgroundColor: tone.bg }]}>
                 <Text style={[styles.rec, { color: tone.fg }]} accessibilityRole="header">{tone.icon} {r.recommendation_he}</Text>
               </View>
-            ) : (
+            ) : r.score != null ? null : (  // the score block above already shows score_reason_he
               <Text style={styles.identifyOnly}>{r.score_reason_he ?? he.identifyOnly}</Text>
             )}
 
