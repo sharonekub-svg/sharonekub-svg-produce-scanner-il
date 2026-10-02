@@ -26,6 +26,7 @@ export const he = {
   permissionButton: 'אישור גישה',
   noEngine: 'המודל אינו זמין במכשיר הזה.',
   error: 'משהו השתבש. נסו שוב.',
+  offline: 'אין חיבור לאינטרנט. בדקו את החיבור ונסו שוב.',
   qualityScore: 'ציון איכות חזותי',
   outOf10: 'מתוך 10',
   ripeness: 'בשילות',

@@ -11,7 +11,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { getSession, loadSession, onAuthChange } from '../auth';
 import { addToHistory } from '../history';
-import { inferenceMode, scan, scanMany } from '../model/engine';
+import { inferenceMode, scan, scanMany, warmUp } from '../model/engine';
 import { getPref, setPref } from '../prefs';
 import { peekPendingPrevious, setLastScan, takePendingPrevious } from '../ui/state';
 import { he } from '../ui/strings';
@@ -44,6 +44,7 @@ export default function CameraScreen() {
   }, []);
 
   useFocusEffect(useCallback(() => {
+    warmUp();
     setFrozen(null);
     setSecondAngle(peekPendingPrevious() !== null);
   }, []));
@@ -68,9 +69,10 @@ export default function CameraScreen() {
       setLastScan({ output, photoUri: uri, sample });
       addToHistory(uri, output); // background; never blocks the result
       router.push('/result');
-    } catch {
+    } catch (e) {
       setFrozen(null);
-      setError(he.error);
+      // fetch() rejects with TypeError "Network request failed" (Android) / "Failed to fetch" (web) when offline
+      setError(e instanceof TypeError && /network|fetch/i.test(e.message) ? he.offline : he.error);
     }
   };
   const onScan = async () => {

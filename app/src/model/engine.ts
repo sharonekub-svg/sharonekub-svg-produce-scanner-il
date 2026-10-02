@@ -51,6 +51,14 @@ async function syncBundle(modelId: string) {
   if (modelId !== bundle.model_id) bundle = await (await fetch(`${serverBase()}/v1/bundle`)).json();
 }
 
+let warmed = false;
+/** Wakes the server (loads the model) while the user is still aiming, so the first scan isn't a cold start. */
+export function warmUp() {
+  if (warmed || inferenceMode() !== 'remote') return;
+  warmed = true;
+  fetch(`${serverBase()}/healthz`).catch(() => { warmed = false; });
+}
+
 async function remoteAnalyze(uri: string): Promise<Analysis> {
   const form = new FormData();
   await uploadPart(form, 'image', uri);
