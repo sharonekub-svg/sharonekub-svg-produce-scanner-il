@@ -22,8 +22,10 @@ const SAMPLES = [
   { key: 'pomegranate', src: require('../../assets/samples/pomegranate.jpg') },
 ];
 
-const SPIN_SHOTS = 3;
-const SPIN_GAP_MS = 700;
+// "Short video": SPIN_SHOTS frames spread over SPIN_MS while the user turns the fruit (stills, not a video file:
+// nothing new leaves the phone and no microphone permission). Combined like "another angle".
+const SPIN_SHOTS = 4;
+const SPIN_MS = 2000;
 let firstLaunchChecked = false;
 
 export default function CameraScreen() {
@@ -76,9 +78,11 @@ export default function CameraScreen() {
     try {
       if (spin && !secondAngle) {
         const uris: string[] = [];
+        const t0 = Date.now();
         for (let i = 1; i <= SPIN_SHOTS; i++) {
           setSpinStep(i);
-          if (i > 1) await new Promise((r) => setTimeout(r, SPIN_GAP_MS));
+          const wait = t0 + ((i - 1) * SPIN_MS) / (SPIN_SHOTS - 1) - Date.now();
+          if (wait > 0) await new Promise((r) => setTimeout(r, wait));
           uris.push((await camera.current.takePictureAsync({ quality: 0.9, shutterSound: false })).uri);
         }
         setSpinStep(0);
@@ -189,9 +193,9 @@ export default function CameraScreen() {
           <View style={styles.side}>
             <Pressable accessibilityRole="button" accessibilityLabel={secondAngle ? he.anotherAngle : he.scan} onPress={onScan} disabled={busy}
                        style={({ pressed }) => [styles.shutter, (pressed || busy) && { opacity: 0.75, transform: [{ scale: 0.96 }] }]}>
-              <View style={styles.shutterInner} />
+              <View style={[styles.shutterInner, spin && !secondAngle && styles.recordInner, spinStep > 0 && styles.recording]} />
             </Pressable>
-            <Text style={styles.shutterLabel}>{secondAngle ? he.anotherAngle : he.scan}</Text>
+            <Text style={styles.shutterLabel}>{secondAngle ? he.anotherAngle : spin ? he.record : he.scan}</Text>
           </View>
           <View style={styles.side}>
             <Pressable onPress={() => router.push('/history')} disabled={busy} accessibilityRole="button" accessibilityLabel={he.myScans} style={styles.glassBig}><Text style={styles.sideIcon}>🕘</Text></Pressable>
@@ -226,6 +230,8 @@ const styles = StyleSheet.create({
   glass: { width: 44, height: 44, borderRadius: 22, backgroundColor: 'rgba(0,0,0,0.45)', alignItems: 'center', justifyContent: 'center' },
   glassWide: { height: 44, borderRadius: 22, paddingHorizontal: 14, backgroundColor: 'rgba(0,0,0,0.45)', alignItems: 'center', justifyContent: 'center' },
   glassText: { color: '#fff', fontSize: 15, fontWeight: '800' },
+  recordInner: { backgroundColor: '#E0242F' },
+  recording: { borderRadius: 10, transform: [{ scale: 0.6 }] },
   spinChip: { minHeight: 40, paddingHorizontal: 16, borderRadius: 20, justifyContent: 'center', backgroundColor: 'rgba(0,0,0,0.45)', borderWidth: 1.5, borderColor: 'rgba(255,255,255,0.5)' },
   spinChipOn: { backgroundColor: '#FFD34D', borderColor: '#FFD34D' },
   spinText: { color: '#fff', fontSize: 15, fontWeight: '800' },
