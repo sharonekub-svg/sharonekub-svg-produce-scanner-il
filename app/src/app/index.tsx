@@ -12,7 +12,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { getSession, loadSession, onAuthChange } from '../auth';
 import { addToHistory } from '../history';
 import { inferenceMode, scan, scanMany } from '../model/engine';
-import { getPref } from '../prefs';
+import { getPref, setPref } from '../prefs';
 import { peekPendingPrevious, setLastScan, takePendingPrevious } from '../ui/state';
 import { he } from '../ui/strings';
 
@@ -35,7 +35,7 @@ export default function CameraScreen() {
   const [error, setError] = useState<string | null>(null);
   const [secondAngle, setSecondAngle] = useState(false);
   const [samplesOpen, setSamplesOpen] = useState(false);
-  const [spin, setSpin] = useState(false); // "several sides": SPIN_SHOTS photos while the user turns the fruit
+  const [spin, setSpin] = useState(() => getPref('videoMode') === true); // "several sides": SPIN_SHOTS photos while the user turns the fruit
   const [spinStep, setSpinStep] = useState(0);
   const [avatar, setAvatar] = useState<string | null>(getSession()?.avatar ?? null);
   useEffect(() => {
@@ -180,7 +180,7 @@ export default function CameraScreen() {
         </View>
         {error ? <Text style={styles.error}>{error}</Text> : null}
         {!secondAngle ? (
-          <Pressable onPress={() => setSpin(!spin)} disabled={busy || spinStep > 0} accessibilityRole="switch" accessibilityState={{ checked: spin }}
+          <Pressable onPress={() => { setPref('videoMode', !spin); setSpin(!spin); }} disabled={busy || spinStep > 0} accessibilityRole="switch" accessibilityState={{ checked: spin }}
                      style={[styles.spinChip, spin && styles.spinChipOn]}>
             <Text style={[styles.spinText, spin && styles.spinTextOn]}>{he.spinToggle}</Text>
           </Pressable>

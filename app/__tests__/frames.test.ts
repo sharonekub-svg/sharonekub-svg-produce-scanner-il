@@ -8,7 +8,7 @@ import bundleJson from '../assets/model/bundle.json';
 import { combineFrames } from '../src/model/engine';
 
 const b = bundleJson as any;
-const OK = { ok: true, reason: null, mean_luma: 120, laplacian_var: 500, clipped_frac: 0 };
+const OK: any = { ok: true, reason: null, mean_luma: 120, laplacian_var: 500, clipped_frac: 0 };
 const BLUR = { ...OK, ok: false, reason: 'blurry' };
 const banana = b.outputs.produce.indexOf('banana');
 const frame = (q = OK, strength = 12) => ({

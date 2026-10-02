@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 # Build the Google Play bundle (.aab), signed with the UPLOAD key (Play App Signing re-signs it for users).
 #   UPLOAD_KEYSTORE=/path/scanfruit-upload.keystore UPLOAD_KEY_ALIAS=scanfruit-upload UPLOAD_PASSWORD=... \
-#     scripts/build_android_aab.sh      -> app/android/app/build/outputs/bundle/release/app-release.aab
+#     scripts/build_android_aab.sh      -> app/android/app/build/outputs/bundle/release/app-release-upload.aab
+#     (+ native-debug-symbols.zip and mapping.txt next to it, for Play's crash reports)
 # The keystore and its password are secrets: never commit them (keep them in the environment's secret settings).
 # Same container notes as build_android_apk.sh (Maven Central mirror init script, ANDROID_HOME).
 set -euo pipefail
@@ -34,4 +35,19 @@ PY
 export UPLOAD_KEYSTORE UPLOAD_PASSWORD UPLOAD_KEY_ALIAS
 cd android
 ./gradlew bundleRelease -PreactNativeArchitectures=arm64-v8a,armeabi-v7a --no-daemon --console=plain --max-workers=3
-ls -la app/build/outputs/bundle/release/app-release.aab
+OUT=app/build/outputs/bundle/release
+# Upload copy without BUNDLE-METADATA (debug symbols + R8 map, ~19MB): small enough to send/upload anywhere.
+# Re-signed with the same upload key. The symbols go to Play separately (App bundle explorer -> Downloads):
+#   native-debug-symbols.zip (Native debug symbols) and mapping.txt (ReTrace mapping file).
+rm -rf "$OUT/meta" "$OUT/native-debug-symbols.zip" "$OUT/mapping.txt"
+unzip -q "$OUT/app-release.aab" 'BUNDLE-METADATA/*' -d "$OUT/meta"
+cp "$OUT/meta/BUNDLE-METADATA/com.android.tools.build.obfuscation/proguard.map" "$OUT/mapping.txt"
+(cd "$OUT/meta/BUNDLE-METADATA/com.android.tools.build.debugsymbols" && zip -qr ../../../native-debug-symbols.zip .)
+rm -rf "$OUT/meta"
+cp "$OUT/app-release.aab" "$OUT/app-release-upload.aab"
+zip -q -d "$OUT/app-release-upload.aab" 'BUNDLE-METADATA/com.android.tools.build.debugsymbols/*' \
+  'BUNDLE-METADATA/com.android.tools.build.obfuscation/*' 'META-INF/*.SF' 'META-INF/*.RSA' 'META-INF/MANIFEST.MF'
+jarsigner -sigalg SHA256withRSA -digestalg SHA-256 -keystore "$UPLOAD_KEYSTORE" -storepass:env UPLOAD_PASSWORD \
+  "$OUT/app-release-upload.aab" "$UPLOAD_KEY_ALIAS" > /dev/null
+jarsigner -verify "$OUT/app-release-upload.aab" | grep -q "jar verified"
+ls -la "$OUT/app-release-upload.aab" "$OUT/native-debug-symbols.zip" "$OUT/mapping.txt"
