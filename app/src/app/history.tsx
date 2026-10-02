@@ -17,7 +17,9 @@ const toneOf = (r: ScanResult) => (r.score == null ? TONE.none : r.score >= 7 ? 
 
 function stageText(r: ScanResult): string {
   if (r.score == null) return he.identifyOnlyShort;
-  for (const h of [r.ripeness, r.freshness, r.visual_spoilage]) if (h?.available && h.label_he) return h.label_he;
+  // A low score is explained by spoilage/freshness ("מקולקל"), not by ripeness ("בשל" in red reads as a contradiction).
+  const order = r.score < 4 ? [r.visual_spoilage, r.freshness, r.ripeness] : [r.ripeness, r.freshness, r.visual_spoilage];
+  for (const h of order) if (h?.available && h.label_he) return h.label_he;
   return '';
 }
 
