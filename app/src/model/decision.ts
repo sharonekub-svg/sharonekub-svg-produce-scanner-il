@@ -254,7 +254,7 @@ function assessCondition(bundle: Bundle, probs: Probs, t: Thresholds, name: stri
   };
   // Reliability ceiling measured on unseen photo sources (decision.py): the score never claims more.
   if (graded) {
-    const pc = Math.min(pg, t.condition_max_p_graded ?? 1);
+    const pc = Math.min(pg, t.condition_max_p_type?.[name] ?? t.condition_max_p_graded ?? 1); // = decision.py
     res.condition_score = halfUp(GRADE_POINTS.good * pc + GRADE_POINTS.early * (1 - pc) * (1 - pr) + GRADE_POINTS.rotten * (1 - pc) * pr);
   } else res.condition_score = halfUp(100 * Math.min(pg, t.condition_max_p ?? 1));
   res.condition_confidence = round4(cconf);

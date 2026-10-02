@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Ship quality v3 (scripts/train_quality_v3.py) into the SigLIP bundle, on top of the v0.13 condition head.
 
-  python3 scripts/add_quality_v3.py runs/siglip/quality_v3 server/model
+  python3 scripts/add_quality_v3.py runs/siglip/quality_v4 server/model [--transfer apple grape strawberry]
 
 - ripeness head  <- the shared softmax trained with BananaID / BananaImageBD (runs/.../ripeness_shared.npz) + its
                     temperature (val).
@@ -9,7 +9,10 @@
                     P(rotten | not good) from the R head ("condition_rot"). Other types keep the v0.13 head.
                     Logits are emitted already divided by their temperatures (bundle temperature 1).
 - thresholds     condition_abstain for graded types, condition_max_p_graded (reliability on unseen sources, val).
-Choice of types: docs/quality-scoring.md §11 (validation only).
+- transfer types (--transfer): no graded labels of their own; keep the v0.13 P(good) and its ceiling
+                    (thresholds.condition_max_p_type), get "how bad" from R with the mean graded-type bias.
+                    Chosen by scripts/eval_severity_transfer.py (rotten-only photos called rotten >= 75%, n >= 40).
+Choice of types: docs/quality-scoring.md §11-12 (validation only).
 """
 from __future__ import annotations
 
@@ -21,10 +24,10 @@ from pathlib import Path
 
 import numpy as np
 
-NEW_DATASETS = ["agrifreshnet", "banana_id", "banana_image_bd"]
+NEW_DATASETS = ["agrifreshnet", "banana_id", "banana_image_bd", "vegnet_quality"]
 
 
-def main(run: Path, model: Path) -> None:
+def main(run: Path, model: Path, transfer: list[str]) -> None:
     q = np.load(run / "quality_v3.npz")
     rs = np.load(run / "ripeness_shared.npz")
     cal = json.loads((run / "calibration.json").read_text())
@@ -51,6 +54,9 @@ def main(run: Path, model: Path) -> None:
         gb[i] = q["G_b"][Gt.index(p)] / TG
         rb[i] = q["R_b"][Rt.index(p)] / TR
         mask[i] = 1.0
+    bias0 = float(np.mean(q["R_b"]))
+    for p in transfer:
+        rb[produce.index(p)] = bias0 / TR
     heads["condition_g_W"] = (q["G_W"] / TG).astype(np.float32)
     heads["condition_g_b"] = gb
     heads["condition_r_W"] = (q["R_W"] / TR).astype(np.float32)
@@ -59,25 +65,25 @@ def main(run: Path, model: Path) -> None:
     np.savez(model / "heads.npz", **heads)
 
     b["temperatures"]["condition"] = 1.0
-    for p in graded:
+    for p in graded + transfer:
         sh = [h for h in b["supported_heads"].setdefault(p, []) if h not in ("condition", "condition~graded")]
         b["supported_heads"][p] = sh + ["condition~graded"]
-        if "ripeness" in sh or p == "banana":
-            pass
+    b["thresholds"]["condition_max_p_type"] = {p: b["thresholds"]["condition_max_p"] for p in transfer}
     b["thresholds"].setdefault("condition_abstain", {}).update(cal["abstain_conf_graded"])
     b["thresholds"]["condition_max_p_graded"] = round(hi, 3)
-    b["condition"] = {**b.get("condition", {}), "folded_T": True, "graded_types": graded,
+    b["condition"] = {**b.get("condition", {}), "folded_T": True, "graded_types": graded, "transfer_types": transfer,
                       "graded_source": "scripts/train_quality_v3.py (docs/quality-scoring.md §11)"}
     for d in NEW_DATASETS:
         if d not in b.get("training_datasets", []):
             b.setdefault("training_datasets", []).append(d)
     digest = hashlib.sha256((model / "heads.npz").read_bytes()).hexdigest()
     b["files"]["heads.npz"] = {"sha256": digest}
-    b["model_id"] = f"siglip2_v0.14@{digest[:12]}"
+    b["model_id"] = f"siglip2_v0.15@{digest[:12]}"
     (model / "bundle.json").write_text(json.dumps(b, ensure_ascii=False, indent=1), encoding="utf-8")
     shutil.copy(model / "bundle.json", Path("app/assets/model/bundle.json"))
     print(b["model_id"], "graded:", graded)
 
 
 if __name__ == "__main__":
-    main(Path(sys.argv[1]), Path(sys.argv[2]))
+    tr = sys.argv[sys.argv.index("--transfer") + 1:] if "--transfer" in sys.argv else []
+    main(Path(sys.argv[1]), Path(sys.argv[2]), tr)

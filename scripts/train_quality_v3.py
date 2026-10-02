@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 """Quality heads v3: graded condition (good / early problems / rotten) + ripeness, on everyday photos too.
 
-Data: data/processed_commercial_v7 (+ runs/siglip/emb_v9.npz) and data/processed_quality_v8 (AgriFreshNET everyday
-phone photos with Fresh / Semi-fresh / Rotten, BananaID + BananaImageBD ripeness; runs/siglip/emb_q8.npz).
+Data: data/processed_commercial_v7 (+ runs/siglip/emb_v9.npz), data/processed_quality_v8 (AgriFreshNET everyday
+phone photos with Fresh / Semi-fresh / Rotten, BananaID + BananaImageBD ripeness; runs/siglip/emb_q8.npz) and
+data/processed_quality_v9 (VegNet bell pepper + tomato: Ripe / Old / Dried+Damaged; runs/siglip/emb_q9.npz).
 
 Heads (logistic / softmax on SigLIP2 embeddings + a per-type bias; L2 and temperature chosen on val only):
   G  P(good)                 good = fresh|none, bad = declining|spoiled|mild|severe (all sources, as v2)
@@ -32,7 +33,8 @@ from eval_quality_scores import auroc, ece  # noqa: E402
 
 RIP = ["unripe", "partially_ripe", "ripe", "overripe"]
 SOURCES = [("data/processed_commercial_v7/manifest.jsonl", "runs/siglip/emb_v9.npz"),
-           ("data/processed_quality_v8/manifest.jsonl", "runs/siglip/emb_q8.npz")]
+           ("data/processed_quality_v8/manifest.jsonl", "runs/siglip/emb_q8.npz"),
+           ("data/processed_quality_v9/manifest.jsonl", "runs/siglip/emb_q9.npz")]
 
 
 def as_set(v):

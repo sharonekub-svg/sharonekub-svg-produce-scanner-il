@@ -1505,6 +1505,48 @@
           }
         }
       ]
+    },
+    "vegnet_quality": {
+      "adapter": "path_rules",
+      "verified_against_download": true,
+      "verified_note": "Mendeley 6nxnjbn9w6 v1 (CC BY 4.0). 'New VegNet/<n. Veg>/<Stage>/'. Visual audit 2026-10-02: Ripe = fresh; Old = early wrinkling/softening; Dried = heavily shrivelled; Damaged = cracks/rot. Bell pepper -> pepper, tomato -> tomato; chili peppers and Unripe not extracted.",
+      "split_by_metadata_group": true,
+      "group_pattern": "(?P<group>[^/]+/[^/]+/[^/]+/\\D*\\d*?)\\d\\D*\\.(jpe?g|png)$",
+      "rules": [
+        {
+          "pattern": "/1\\. Bell Pepper/",
+          "labels": {
+            "produce": "pepper"
+          }
+        },
+        {
+          "pattern": "/4\\. Tomato/",
+          "labels": {
+            "produce": "tomato"
+          }
+        },
+        {
+          "pattern": "/Ripe/",
+          "labels": {
+            "freshness": "fresh",
+            "visual_spoilage": "none"
+          }
+        },
+        {
+          "pattern": "/Old/",
+          "labels": {
+            "freshness": "declining",
+            "visual_spoilage": "mild"
+          }
+        },
+        {
+          "pattern": "/(Dried|Damaged)/",
+          "labels": {
+            "freshness": "spoiled",
+            "visual_spoilage": "severe"
+          }
+        }
+      ]
     }
   }
 }

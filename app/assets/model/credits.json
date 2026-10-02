@@ -1,5 +1,5 @@
 {
-  "model_id": "siglip2_v0.14@d4ee08b5fc54",
+  "model_id": "siglip2_v0.15@cd481aa6b742",
   "datasets": [
     {
       "dataset_id": "apple_good_bad",
@@ -135,6 +135,14 @@
       "license": "CC BY 4.0",
       "url": "https://data.mendeley.com/datasets/ptfscwtnyz/2",
       "attribution": "Mendeley Data ptfscwtnyz v2",
+      "credits_url": null
+    },
+    {
+      "dataset_id": "vegnet_quality",
+      "name": "VegNet: Vegetable Dataset with quality (Unripe, Ripe, Old, Dried and Damaged)",
+      "license": "CC BY 4.0",
+      "url": "https://data.mendeley.com/datasets/6nxnjbn9w6/1",
+      "attribution": "Mendeley Data 6nxnjbn9w6 v1 (VegNet, Data in Brief 2022)",
       "credits_url": null
     }
   ]

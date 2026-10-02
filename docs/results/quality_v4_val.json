@@ -1,0 +1,429 @@
+{
+ "apple": {
+  "n": {
+   "good": 153,
+   "bad": 240,
+   "rotten": 27
+  },
+  "old": {
+   "mean_by_grade": {
+    "good": 81.6,
+    "bad": 13.9,
+    "rotten": 6.0
+   },
+   "spearman": 0.791,
+   "rotten_ge75": 0.0,
+   "badany_ge75": 0.086,
+   "good_lt50": 0.02,
+   "early_mid": null
+  },
+  "new": {
+   "mean_by_grade": {
+    "good": 90.0,
+    "bad": 17.2,
+    "rotten": 6.1
+   },
+   "spearman": 0.778,
+   "rotten_ge75": 0.0,
+   "badany_ge75": 0.067,
+   "good_lt50": 0.059,
+   "early_mid": null
+  }
+ },
+ "banana": {
+  "n": {
+   "good": 138,
+   "early": 45,
+   "bad": 36,
+   "rotten": 81
+  },
+  "old": {
+   "mean_by_grade": {
+    "good": 77.6,
+    "early": 19.2,
+    "bad": 2.7,
+    "rotten": 6.4
+   },
+   "spearman": 0.84,
+   "rotten_ge75": 0.0,
+   "badany_ge75": 0.006,
+   "good_lt50": 0.109,
+   "early_mid": 0.222
+  },
+  "new": {
+   "mean_by_grade": {
+    "good": 97.5,
+    "early": 65.9,
+    "bad": 30.6,
+    "rotten": 29.5
+   },
+   "spearman": 0.773,
+   "rotten_ge75": 0.049,
+   "badany_ge75": 0.074,
+   "good_lt50": 0.007,
+   "early_mid": 0.844
+  }
+ },
+ "cucumber": {
+  "n": {
+   "good": 55,
+   "early": 86,
+   "rotten": 11
+  },
+  "new": {
+   "mean_by_grade": {
+    "good": 94.1,
+    "early": 58.2,
+    "rotten": 19.1
+   },
+   "spearman": 0.713,
+   "rotten_ge75": 0.0,
+   "badany_ge75": 0.134,
+   "good_lt50": 0.0,
+   "early_mid": 0.709
+  }
+ },
+ "grape": {
+  "n": {
+   "good": 213,
+   "rotten": 167
+  },
+  "old": {
+   "mean_by_grade": {
+    "good": 80.4,
+    "rotten": 2.9
+   },
+   "spearman": 0.782,
+   "rotten_ge75": 0.0,
+   "badany_ge75": 0.0,
+   "good_lt50": 0.07,
+   "early_mid": null
+  },
+  "new": {
+   "mean_by_grade": {
+    "good": 91.0,
+    "rotten": 4.2
+   },
+   "spearman": 0.627,
+   "rotten_ge75": 0.006,
+   "badany_ge75": 0.006,
+   "good_lt50": 0.061,
+   "early_mid": null
+  }
+ },
+ "guava": {
+  "n": {
+   "good": 77,
+   "bad": 9,
+   "rotten": 31
+  },
+  "old": {
+   "mean_by_grade": {
+    "good": 83.9,
+    "bad": 0.6,
+    "rotten": 6.8
+   },
+   "spearman": 0.896,
+   "rotten_ge75": 0.032,
+   "badany_ge75": 0.025,
+   "good_lt50": 0.039,
+   "early_mid": null
+  },
+  "new": {
+   "mean_by_grade": {
+    "good": 91.9,
+    "bad": 1.7,
+    "rotten": 9.9
+   },
+   "spearman": 0.758,
+   "rotten_ge75": 0.065,
+   "badany_ge75": 0.05,
+   "good_lt50": 0.065,
+   "early_mid": null
+  }
+ },
+ "lemon": {
+  "n": {
+   "good": 525,
+   "rotten": 104
+  },
+  "old": {
+   "mean_by_grade": {
+    "good": 77.4,
+    "rotten": 39.5
+   },
+   "spearman": 0.688,
+   "rotten_ge75": 0.183,
+   "badany_ge75": 0.183,
+   "good_lt50": 0.093,
+   "early_mid": null
+  },
+  "new": {
+   "mean_by_grade": {
+    "good": 85.4,
+    "rotten": 35.5
+   },
+   "spearman": 0.525,
+   "rotten_ge75": 0.154,
+   "badany_ge75": 0.154,
+   "good_lt50": 0.078,
+   "early_mid": null
+  }
+ },
+ "lime": {
+  "n": {
+   "good": 20,
+   "bad": 64
+  },
+  "old": {
+   "mean_by_grade": {
+    "good": 82.7,
+    "bad": 2.1
+   },
+   "spearman": 0.684,
+   "rotten_ge75": null,
+   "badany_ge75": 0.0,
+   "good_lt50": 0.05,
+   "early_mid": null
+  },
+  "new": {
+   "mean_by_grade": {
+    "good": 86.0,
+    "bad": 3.6
+   },
+   "spearman": 0.806,
+   "rotten_ge75": null,
+   "badany_ge75": 0.0,
+   "good_lt50": 0.1,
+   "early_mid": null
+  }
+ },
+ "mango": {
+  "n": {
+   "good": 48,
+   "bad": 14
+  },
+  "new": {
+   "mean_by_grade": {
+    "good": 94.6,
+    "bad": 5.7
+   },
+   "spearman": 0.513,
+   "rotten_ge75": null,
+   "badany_ge75": 0.0,
+   "good_lt50": 0.0,
+   "early_mid": null
+  }
+ },
+ "orange": {
+  "n": {
+   "good": 163,
+   "early": 80,
+   "bad": 44,
+   "rotten": 46
+  },
+  "old": {
+   "mean_by_grade": {
+    "good": 79.4,
+    "early": 71.0,
+    "bad": 13.8,
+    "rotten": 9.6
+   },
+   "spearman": 0.689,
+   "rotten_ge75": 0.043,
+   "badany_ge75": 0.382,
+   "good_lt50": 0.092,
+   "early_mid": 0.125
+  },
+  "new": {
+   "mean_by_grade": {
+    "good": 93.6,
+    "early": 65.1,
+    "bad": 34.8,
+    "rotten": 28.5
+   },
+   "spearman": 0.766,
+   "rotten_ge75": 0.043,
+   "badany_ge75": 0.159,
+   "good_lt50": 0.0,
+   "early_mid": 0.75
+  }
+ },
+ "pepper": {
+  "n": {
+   "good": 38,
+   "early": 35,
+   "rotten": 39
+  },
+  "new": {
+   "mean_by_grade": {
+    "good": 94.1,
+    "early": 75.5,
+    "rotten": 14.6
+   },
+   "spearman": 0.724,
+   "rotten_ge75": 0.0,
+   "badany_ge75": 0.23,
+   "good_lt50": 0.0,
+   "early_mid": 0.514
+  }
+ },
+ "pineapple": {
+  "n": {
+   "good": 82,
+   "early": 26,
+   "rotten": 69
+  },
+  "new": {
+   "mean_by_grade": {
+    "good": 93.6,
+    "early": 62.9,
+    "rotten": 21.2
+   },
+   "spearman": 0.817,
+   "rotten_ge75": 0.0,
+   "badany_ge75": 0.042,
+   "good_lt50": 0.0,
+   "early_mid": 0.808
+  }
+ },
+ "pomegranate": {
+  "n": {
+   "good": 162,
+   "bad": 21,
+   "rotten": 33
+  },
+  "old": {
+   "mean_by_grade": {
+    "good": 83.9,
+    "bad": 10.4,
+    "rotten": 12.3
+   },
+   "spearman": 0.807,
+   "rotten_ge75": 0.03,
+   "badany_ge75": 0.037,
+   "good_lt50": 0.019,
+   "early_mid": null
+  },
+  "new": {
+   "mean_by_grade": {
+    "good": 93.8,
+    "bad": 16.7,
+    "rotten": 14.1
+   },
+   "spearman": 0.398,
+   "rotten_ge75": 0.061,
+   "badany_ge75": 0.056,
+   "good_lt50": 0.025,
+   "early_mid": null
+  }
+ },
+ "strawberry": {
+  "n": {
+   "good": 77,
+   "bad": 13,
+   "rotten": 25
+  },
+  "old": {
+   "mean_by_grade": {
+    "good": 81.0,
+    "bad": 0.2,
+    "rotten": 9.1
+   },
+   "spearman": 0.828,
+   "rotten_ge75": 0.04,
+   "badany_ge75": 0.026,
+   "good_lt50": 0.052,
+   "early_mid": null
+  },
+  "new": {
+   "mean_by_grade": {
+    "good": 93.0,
+    "bad": 0.0,
+    "rotten": 8.4
+   },
+   "spearman": 0.619,
+   "rotten_ge75": 0.04,
+   "badany_ge75": 0.026,
+   "good_lt50": 0.026,
+   "early_mid": null
+  }
+ },
+ "tomato": {
+  "n": {
+   "good": 254,
+   "early": 201,
+   "bad": 23,
+   "rotten": 67
+  },
+  "new": {
+   "mean_by_grade": {
+    "good": 89.7,
+    "early": 59.1,
+    "bad": 17.3,
+    "rotten": 19.4
+   },
+   "spearman": 0.76,
+   "rotten_ge75": 0.03,
+   "badany_ge75": 0.076,
+   "good_lt50": 0.031,
+   "early_mid": 0.896
+  }
+ },
+ "_banana_ripeness": {
+  "old_acc": 0.829,
+  "new_acc": 0.829,
+  "old": {
+   "unripe": {
+    "unripe": 139,
+    "partially_ripe": 17,
+    "ripe": 0,
+    "overripe": 0
+   },
+   "partially_ripe": {
+    "unripe": 7,
+    "partially_ripe": 66,
+    "ripe": 34,
+    "overripe": 2
+   },
+   "ripe": {
+    "unripe": 3,
+    "partially_ripe": 2,
+    "ripe": 152,
+    "overripe": 2
+   },
+   "overripe": {
+    "unripe": 0,
+    "partially_ripe": 2,
+    "ripe": 13,
+    "overripe": 40
+   }
+  },
+  "new": {
+   "unripe": {
+    "unripe": 138,
+    "partially_ripe": 18,
+    "ripe": 0,
+    "overripe": 0
+   },
+   "partially_ripe": {
+    "unripe": 8,
+    "partially_ripe": 68,
+    "ripe": 30,
+    "overripe": 3
+   },
+   "ripe": {
+    "unripe": 6,
+    "partially_ripe": 0,
+    "ripe": 151,
+    "overripe": 2
+   },
+   "overripe": {
+    "unripe": 0,
+    "partially_ripe": 2,
+    "ripe": 13,
+    "overripe": 40
+   }
+  }
+ }
+}

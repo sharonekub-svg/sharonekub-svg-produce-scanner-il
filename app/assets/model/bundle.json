@@ -1,7 +1,7 @@
 {
  "bundle_version": 2,
  "backbone": "siglip2",
- "model_id": "siglip2_v0.14@d4ee08b5fc54",
+ "model_id": "siglip2_v0.15@cd481aa6b742",
  "created_at": "2026-09-30T20:34:49.229518+00:00",
  "input": {
   "size": 224,
@@ -92,7 +92,7 @@
   "spoiled_alert_prob": 0.4,
   "condition_abstain": {
    "apple": 0.91,
-   "banana": 0.66,
+   "banana": 0.68,
    "grape": 0.63,
    "guava": 0.56,
    "lemon": 0.95,
@@ -100,12 +100,18 @@
    "orange": 0.97,
    "pomegranate": 0.67,
    "strawberry": 0.72,
-   "cucumber": 0.84,
-   "pineapple": 0.85,
-   "tomato": 0.94
+   "cucumber": 0.8,
+   "pineapple": 0.77,
+   "tomato": 0.91,
+   "pepper": 0.99
   },
   "condition_max_p": 0.858,
-  "condition_max_p_graded": 0.744
+  "condition_max_p_graded": 0.748,
+  "condition_max_p_type": {
+   "apple": 0.858,
+   "grape": 0.858,
+   "strawberry": 0.858
+  }
  },
  "quality": {
   "min_mean_luma": 20.0,
@@ -118,7 +124,7 @@
   "apple": [
    "freshness",
    "visual_spoilage~coarse",
-   "condition"
+   "condition~graded"
   ],
   "banana": [
    "freshness",
@@ -143,12 +149,12 @@
   ],
   "grape": [
    "freshness",
-   "condition"
+   "condition~graded"
   ],
   "strawberry": [
    "freshness",
    "visual_spoilage~coarse",
-   "condition"
+   "condition~graded"
   ],
   "avocado": [
    "ripeness",
@@ -203,7 +209,8 @@
    "freshness~general"
   ],
   "pepper": [
-   "freshness~general"
+   "freshness~general",
+   "condition~graded"
   ],
   "grapefruit": [
    "freshness~general"
@@ -599,7 +606,8 @@
   "strawberry_avocado_ripening",
   "agrifreshnet",
   "banana_id",
-  "banana_image_bd"
+  "banana_image_bd",
+  "vegnet_quality"
  ],
  "files": {
   "vision.onnx.00": {
@@ -609,7 +617,7 @@
    "sha256": "843945c3ddaaad33f363201558f537eadbdab7cbc4060f2532f9cf1536114718"
   },
   "heads.npz": {
-   "sha256": "d4ee08b5fc54feb17d3ff1e05456078f2b3c82851050b24044b049a816dacdd8"
+   "sha256": "cd481aa6b7429b52a3133a08e296974b5d04bc5bb32553104db26f495c67f830"
   }
  },
  "condition": {
@@ -630,9 +638,15 @@
    "banana",
    "cucumber",
    "orange",
+   "pepper",
    "pineapple",
    "tomato"
   ],
-  "graded_source": "scripts/train_quality_v3.py (docs/quality-scoring.md §11)"
+  "graded_source": "scripts/train_quality_v3.py (docs/quality-scoring.md §11)",
+  "transfer_types": [
+   "apple",
+   "grape",
+   "strawberry"
+  ]
  }
 }

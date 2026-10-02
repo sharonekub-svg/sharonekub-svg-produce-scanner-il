@@ -304,7 +304,8 @@ def _decide_condition(tax: Taxonomy, probs: dict, sup: set, name: str, top: int,
     # source): even a "certain" condition is right only that often on a new kind of photo, so the score never
     # claims more. The verdict (good/bad) still uses the raw probability.
     if graded:
-        pc = min(pg, float(t.get("condition_max_p_graded", 1.0)))
+        cap = (t.get("condition_max_p_type") or {}).get(name, t.get("condition_max_p_graded", 1.0))
+        pc = min(pg, float(cap))  # transfer types keep the ceiling of the head their P(good) comes from
         res.condition_score = _half_up(GRADE_POINTS["good"] * pc + GRADE_POINTS["early"] * (1 - pc) * (1 - pr)
                                        + GRADE_POINTS["rotten"] * (1 - pc) * pr)
     else:

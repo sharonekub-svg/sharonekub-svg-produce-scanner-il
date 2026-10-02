@@ -25,6 +25,8 @@ export interface Thresholds {
   condition_max_p?: number;
   /** Same ceiling for the graded (good / early / rotten) condition types. */
   condition_max_p_graded?: number;
+  /** Per-type override (types whose P(good) comes from the binary head but whose "how bad" is transferred). */
+  condition_max_p_type?: Record<string, number>;
 }
 
 export interface Bundle {
