@@ -65,6 +65,8 @@ def main() -> int:
     ap.add_argument("--purpose", choices=registry.PURPOSES, default="research_training")
     ap.add_argument("--classes", nargs="*", default=None, help="only these Open Images class names (default: all mapped)")
     ap.add_argument("--append", action="store_true", help="merge into the existing crops.csv / attribution.csv")
+    ap.add_argument("--depictions-only", action="store_true",
+                    help="keep ONLY boxes Open Images marks IsDepiction (toys, plastic/fake fruit, drawings); class -> '<name> (depiction)'")
     args = ap.parse_args()
 
     ok, why = registry.is_allowed(registry.load_registry()["open_images_v7"], args.purpose)
@@ -72,7 +74,8 @@ def main() -> int:
     if not ok:
         return 1
     mapping = json.loads((Path(__file__).resolve().parents[1] / "data" / "label_mapping.json").read_text())
-    class_map = mapping["datasets"]["open_images_v7"]["class_name_map"]
+    class_map = {k: v for k, v in mapping["datasets"]["open_images_v7"]["class_name_map"].items()
+                 if not k.endswith(" (depiction)")}  # depiction labels are produced by --depictions-only
     mids = {r["LabelName"]: r["DisplayName"] for r in
             csv.DictReader(io.StringIO(urllib.request.urlopen(f"{BASE}/v7/oidv7-class-descriptions-boxable.csv").read().decode()),
                            fieldnames=["LabelName", "DisplayName"])}
@@ -92,14 +95,15 @@ def main() -> int:
             if r["LabelName"] not in wanted:
                 continue
             report["boxes_seen"] += 1
-            if r["IsGroupOf"] == "1" or r["IsDepiction"] == "1":
+            if r["IsGroupOf"] == "1" or (r["IsDepiction"] == "1") != args.depictions_only:
                 report["boxes_dropped_group_or_depiction"] += 1
                 continue
             x0, x1, y0, y1 = (float(r[k]) for k in ("XMin", "XMax", "YMin", "YMax"))
             if (x1 - x0) * (y1 - y0) < args.min_area:
                 report["boxes_dropped_small"] += 1
                 continue
-            boxes[(split, r["ImageID"])].append({"cls": wanted[r["LabelName"]], "box": (x0, y0, x1, y1)})
+            cls = wanted[r["LabelName"]] + (" (depiction)" if args.depictions_only else "")
+            boxes[(split, r["ImageID"])].append({"cls": cls, "box": (x0, y0, x1, y1)})
         print(f"{split}: {len(boxes)} candidate images so far", flush=True)
 
     # Deterministic per-class image cap (an image counts toward each class it contains).

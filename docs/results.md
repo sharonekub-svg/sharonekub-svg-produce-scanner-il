@@ -387,6 +387,22 @@ they are identified, get a general score, and have care tips.
 **Advice**: a stage card with what to do at each ripeness stage (banana, avocado, mango), and a nectarine/peach
 hand check (smell, background color, the yellow stripe at the stem end).
 
+## Round 12: fake / toy / drawn produce (2 Oct 2026; not shipped - owner kept v0.12)
+
+Open Images boxes marked IsDepiction for our types (plastic and toy fruit, drawings, packaging, sculptures, carved
+pumpkins; `scripts/fetch_open_images.py --depictions-only`, ~1,800 crops) labelled "other". 448 went into the
+real-photo eval (`oi_real3.npz`, 30 per type max), the rest into training (no image id overlap).
+
+| test half | v0.12 (live) | v13: fakes in training | v13 + real-vs-fake probe as an extra "other" row |
+|---|---|---|---|
+| fake called a fruit (shown) | 76% | 23% | 21% |
+| real produce answered (not "unsure") | 86% | 56% | 69% |
+| correct when answered | 93% | 97% | 95% |
+
+Recognising fakes makes the whole model more cautious (the 10% unsupported-shown rule now includes fakes), so real
+produce gets "unsure" more often. Owner decision: keep v0.12; most users scan real produce, and "unsure" still lets
+them pick the type. Runs kept: runs/siglip/v13 (+ fake_row.npy).
+
 ## Round 11: 11 new types incl. vegetables → `runs/siglip/v12` (30 Sep 2026; release waits for the Open Images sign-off)
 
 New types: carrot, broccoli, cabbage, radish, pumpkin, pineapple, fig, mushroom, coconut, asparagus, artichoke
