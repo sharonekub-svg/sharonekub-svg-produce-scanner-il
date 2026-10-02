@@ -11,7 +11,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { getSession, loadSession, onAuthChange } from '../auth';
 import { addToHistory } from '../history';
-import { inferenceMode, scan } from '../model/engine';
+import { inferenceMode, scan, scanMany } from '../model/engine';
 import { getPref } from '../prefs';
 import { peekPendingPrevious, setLastScan, takePendingPrevious } from '../ui/state';
 import { he } from '../ui/strings';
@@ -22,6 +22,8 @@ const SAMPLES = [
   { key: 'pomegranate', src: require('../../assets/samples/pomegranate.jpg') },
 ];
 
+const SPIN_SHOTS = 3;
+const SPIN_GAP_MS = 700;
 let firstLaunchChecked = false;
 
 export default function CameraScreen() {
@@ -31,6 +33,8 @@ export default function CameraScreen() {
   const [error, setError] = useState<string | null>(null);
   const [secondAngle, setSecondAngle] = useState(false);
   const [samplesOpen, setSamplesOpen] = useState(false);
+  const [spin, setSpin] = useState(false); // "several sides": SPIN_SHOTS photos while the user turns the fruit
+  const [spinStep, setSpinStep] = useState(0);
   const [avatar, setAvatar] = useState<string | null>(getSession()?.avatar ?? null);
   useEffect(() => {
     loadSession().then((s) => setAvatar(s?.avatar ?? null));
@@ -53,12 +57,12 @@ export default function CameraScreen() {
   }, []);
 
   const busy = frozen !== null;
-  const run = async (uri: string, sample = false) => {
+  const run = async (uri: string, sample = false, more: string[] = []) => {
     if (!inferenceMode()) { setError(he.noEngine); return; }
     setError(null);
     setFrozen(uri); // freeze the frame: "בודק…" happens over what the user just shot
     try {
-      const output = await scan(uri, takePendingPrevious() ?? undefined);
+      const output = more.length ? await scanMany([uri, ...more]) : await scan(uri, takePendingPrevious() ?? undefined);
       setLastScan({ output, photoUri: uri, sample });
       addToHistory(uri, output); // background; never blocks the result
       router.push('/result');
@@ -68,11 +72,22 @@ export default function CameraScreen() {
     }
   };
   const onScan = async () => {
-    if (busy || !camera.current) return;
+    if (busy || spinStep || !camera.current) return;
     try {
+      if (spin && !secondAngle) {
+        const uris: string[] = [];
+        for (let i = 1; i <= SPIN_SHOTS; i++) {
+          setSpinStep(i);
+          if (i > 1) await new Promise((r) => setTimeout(r, SPIN_GAP_MS));
+          uris.push((await camera.current.takePictureAsync({ quality: 0.9, shutterSound: false })).uri);
+        }
+        setSpinStep(0);
+        await run(uris[0], false, uris.slice(1));
+        return;
+      }
       const photo = await camera.current.takePictureAsync({ quality: 0.9, shutterSound: false });
       await run(photo.uri);
-    } catch { setError(he.error); }
+    } catch { setSpinStep(0); setError(he.error); }
   };
   const onGallery = async () => {
     if (busy) return;
@@ -154,12 +169,18 @@ export default function CameraScreen() {
       <SafeAreaView style={styles.overlay} pointerEvents="box-none">
         {top}
         <View style={styles.hintBox}>
-          <Text style={styles.hint}>{secondAngle ? he.anotherAngleHint : he.cameraHint}</Text>
+          <Text style={styles.hint}>{spinStep ? he.spinShot(spinStep, SPIN_SHOTS) : secondAngle ? he.anotherAngleHint : spin ? he.spinHint : he.cameraHint}</Text>
         </View>
         <View style={[styles.frame, busy && styles.frameBusy]} pointerEvents="none">
           {busy ? <View style={styles.checking}><ActivityIndicator color="#fff" /><Text style={styles.checkingText}>{he.analyzing}</Text></View> : null}
         </View>
         {error ? <Text style={styles.error}>{error}</Text> : null}
+        {!secondAngle ? (
+          <Pressable onPress={() => setSpin(!spin)} disabled={busy || spinStep > 0} accessibilityRole="switch" accessibilityState={{ checked: spin }}
+                     style={[styles.spinChip, spin && styles.spinChipOn]}>
+            <Text style={[styles.spinText, spin && styles.spinTextOn]}>{he.spinToggle}</Text>
+          </Pressable>
+        ) : null}
         <View style={styles.controls}>
           <View style={styles.side}>
             <Pressable onPress={onGallery} disabled={busy} accessibilityRole="button" accessibilityLabel={he.gallery} style={styles.glassBig}><Text style={styles.sideIcon}>🖼</Text></Pressable>
@@ -205,6 +226,10 @@ const styles = StyleSheet.create({
   glass: { width: 44, height: 44, borderRadius: 22, backgroundColor: 'rgba(0,0,0,0.45)', alignItems: 'center', justifyContent: 'center' },
   glassWide: { height: 44, borderRadius: 22, paddingHorizontal: 14, backgroundColor: 'rgba(0,0,0,0.45)', alignItems: 'center', justifyContent: 'center' },
   glassText: { color: '#fff', fontSize: 15, fontWeight: '800' },
+  spinChip: { minHeight: 40, paddingHorizontal: 16, borderRadius: 20, justifyContent: 'center', backgroundColor: 'rgba(0,0,0,0.45)', borderWidth: 1.5, borderColor: 'rgba(255,255,255,0.5)' },
+  spinChipOn: { backgroundColor: '#FFD34D', borderColor: '#FFD34D' },
+  spinText: { color: '#fff', fontSize: 15, fontWeight: '800' },
+  spinTextOn: { color: '#5a0610' },
   hintBox: { backgroundColor: 'rgba(0,0,0,0.55)', paddingHorizontal: 16, paddingVertical: 8, borderRadius: 20 },
   hint: { color: '#fff', fontSize: 16 },
   frame: { width: '74%', aspectRatio: 1, borderRadius: 28, borderWidth: 2, borderColor: 'rgba(255,255,255,0.85)', alignItems: 'center', justifyContent: 'center' },

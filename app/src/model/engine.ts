@@ -90,3 +90,15 @@ export async function scan(uri: string, previous?: ScanOutput): Promise<ScanOutp
     .slice(0, 3);
   return { result, top3, mode, probs, energy: e, angles: previous ? previous.angles + 1 : 1 };
 }
+
+/** "Several sides" scan: photos taken while the user turns the fruit, combined like "another angle".
+ *  A blurry/dark frame never replaces a usable result and is left out of the combination. */
+export async function scanMany(uris: string[]): Promise<ScanOutput> {
+  let out: ScanOutput | undefined;
+  for (const uri of uris) {
+    const o = await scan(uri, out && out.result.status !== 'retake' ? out : undefined);
+    if (!out || o.result.status !== 'retake' || out.result.status === 'retake') out = o;
+  }
+  if (!out) throw new Error('no photos');
+  return out;
+}
