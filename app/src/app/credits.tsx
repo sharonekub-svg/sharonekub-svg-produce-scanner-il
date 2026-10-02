@@ -26,5 +26,5 @@ const styles = StyleSheet.create({
   pad: { padding: 16, gap: 12 },
   body: { fontSize: 16 },
   item: { fontSize: 14, color: '#333' },
-  link: { color: '#2f7d4f', textDecorationLine: 'underline' },
+  link: { color: '#8A0C1B', textDecorationLine: 'underline' },
 });

@@ -83,6 +83,10 @@ def main() -> None:
     shutil.copy(args.run / "heads.npz", args.to / "heads.npz")
     bundle["files"] = {f: {"sha256": hashlib.sha256((args.to / f).read_bytes()).hexdigest()} for f in (*names, "heads.npz")}
     (args.to / "bundle.json").write_text(json.dumps(bundle, ensure_ascii=False, indent=1), encoding="utf-8")
+    if args.to.resolve() == (Path(__file__).resolve().parents[1] / "server" / "model"):
+        # the app ships a copy (class lists, thresholds, "rated for" list before the first scan refreshes it)
+        app_copy = Path(__file__).resolve().parents[1] / "app" / "assets" / "model" / "bundle.json"
+        app_copy.write_text((args.to / "bundle.json").read_text(encoding="utf-8"), encoding="utf-8")
     print("released", bundle["model_id"], "->", args.to)
 
 

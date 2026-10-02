@@ -46,12 +46,12 @@ export function SurveyCard() {
 }
 
 const styles = StyleSheet.create({
-  card: { backgroundColor: '#F3F7F2', borderRadius: 12, padding: 12, gap: 10 },
+  card: { backgroundColor: '#FBF1EE', borderRadius: 12, padding: 12, gap: 10 },
   kicker: { fontSize: 12, color: '#6b6b66', textAlign: 'right' },
   question: { fontSize: 16, fontWeight: '600', color: '#1d1d1b', textAlign: 'right', lineHeight: 22 },
   answers: { flexDirection: 'row-reverse', flexWrap: 'wrap', gap: 8 },
-  answer: { borderWidth: 1.5, borderColor: '#2f7d4f', borderRadius: 999, minHeight: 40, paddingHorizontal: 14, justifyContent: 'center' },
-  answerText: { color: '#1f5c38', fontSize: 14, fontWeight: '600' },
+  answer: { borderWidth: 1.5, borderColor: '#8A0C1B', borderRadius: 999, minHeight: 40, paddingHorizontal: 14, justifyContent: 'center' },
+  answerText: { color: '#8A0C1B', fontSize: 14, fontWeight: '600' },
   footer: { flexDirection: 'row-reverse', gap: 18 },
   link: { color: '#6b6b66', fontSize: 13, textDecorationLine: 'underline' },
   muted: { color: '#6b6b66', fontSize: 14, textAlign: 'right' },

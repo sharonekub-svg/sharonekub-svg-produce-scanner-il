@@ -9,7 +9,6 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { ActivityIndicator, Image, Modal, Pressable, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { googleEnabled, loadSession } from '../auth';
 import { addToHistory } from '../history';
 import { inferenceMode, scan } from '../model/engine';
 import { getPref } from '../prefs';
@@ -42,9 +41,8 @@ export default function CameraScreen() {
     if (firstLaunchChecked) return;
     firstLaunchChecked = true;
     (async () => {
-      const [session, googleOn] = await Promise.all([loadSession(), googleEnabled()]);
-      if (googleOn && !session && !getPref('guest')) router.replace('/signin');
-      else if (!getPref('onboarded')) router.replace('/welcome');
+      // First visit: the one-screen landing (sign-in is an optional link there, the intro slides stay in "how it works").
+      if (!getPref('onboarded')) router.replace('/landing');
     })();
   }, []);
 
@@ -184,9 +182,9 @@ const styles = StyleSheet.create({
   emoji: { fontSize: 44 },
   title: { fontSize: 24, fontWeight: '700', textAlign: 'center' },
   body: { fontSize: 17, textAlign: 'center', color: '#444', lineHeight: 24 },
-  primary: { backgroundColor: '#2f7d4f', paddingHorizontal: 32, paddingVertical: 15, borderRadius: 14, minHeight: 48 },
+  primary: { backgroundColor: '#8A0C1B', paddingHorizontal: 32, paddingVertical: 15, borderRadius: 14, minHeight: 48 },
   primaryText: { color: '#fff', fontSize: 18, fontWeight: '700' },
-  link: { color: '#2f7d4f', fontSize: 16, fontWeight: '700', padding: 8 },
+  link: { color: '#8A0C1B', fontSize: 16, fontWeight: '700', padding: 8 },
   trust: { color: '#6b6b66', fontSize: 13 },
   overlay: { flex: 1, alignItems: 'center', justifyContent: 'space-between', paddingVertical: 12, paddingHorizontal: 16 },
   topBar: { alignSelf: 'stretch', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 4, paddingTop: 4 },
@@ -200,7 +198,7 @@ const styles = StyleSheet.create({
   hintBox: { backgroundColor: 'rgba(0,0,0,0.55)', paddingHorizontal: 16, paddingVertical: 8, borderRadius: 20 },
   hint: { color: '#fff', fontSize: 16 },
   frame: { width: '74%', aspectRatio: 1, borderRadius: 28, borderWidth: 2, borderColor: 'rgba(255,255,255,0.85)', alignItems: 'center', justifyContent: 'center' },
-  frameBusy: { borderColor: '#6cc592' },
+  frameBusy: { borderColor: '#FFD34D' },
   checking: { backgroundColor: 'rgba(0,0,0,0.55)', borderRadius: 16, paddingHorizontal: 18, paddingVertical: 12, alignItems: 'center', gap: 6 },
   checkingText: { color: '#fff', fontSize: 16, fontWeight: '600' },
   error: { color: '#fff', backgroundColor: 'rgba(180,30,30,0.85)', padding: 10, borderRadius: 10 },
@@ -214,12 +212,12 @@ const styles = StyleSheet.create({
   shutterLabel: { color: '#fff', fontSize: 15, fontWeight: '800', textShadowColor: 'rgba(0,0,0,0.6)', textShadowRadius: 3 },
   scrim: { flex: 1, backgroundColor: 'rgba(0,0,0,0.4)' },
   sheet: { backgroundColor: '#F6F1E6', borderTopLeftRadius: 26, borderTopRightRadius: 26, padding: 20, gap: 10 },
-  sheetTitle: { fontSize: 24, fontWeight: '900', color: '#1E2721' },
-  sheetBody: { fontSize: 15, color: '#3C463F' },
+  sheetTitle: { fontSize: 24, fontWeight: '900', color: '#2A1C1E' },
+  sheetBody: { fontSize: 15, color: '#4A3C3E' },
   samples: { flexDirection: 'row', gap: 10, marginVertical: 6 },
   sample: { flex: 1, alignItems: 'center', gap: 6 },
   sampleImg: { width: '100%', height: 104, borderRadius: 16 },
-  sampleText: { fontSize: 14, fontWeight: '700', color: '#1E2721' },
-  secondary: { borderWidth: 1.5, borderColor: '#2f7d4f', minHeight: 50, borderRadius: 14, alignItems: 'center', justifyContent: 'center' },
-  secondaryText: { color: '#2f7d4f', fontSize: 16, fontWeight: '700' },
+  sampleText: { fontSize: 14, fontWeight: '700', color: '#2A1C1E' },
+  secondary: { borderWidth: 1.5, borderColor: '#8A0C1B', minHeight: 50, borderRadius: 14, alignItems: 'center', justifyContent: 'center' },
+  secondaryText: { color: '#8A0C1B', fontSize: 16, fontWeight: '700' },
 });

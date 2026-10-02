@@ -20,9 +20,9 @@ p = sys.argv[1]; s = open(p, encoding="utf-8").read()
 # Hebrew RTL (react-native-web follows the document direction) and a phone-sized frame on wide screens.
 s = s.replace('<html lang="en">', '<html lang="he" dir="rtl">')
 s = s.replace("</style>", """  @media (min-width: 600px) {
-        body { background: #1f2a22; display: flex; align-items: center; justify-content: center; }
+        body { background: #2a1214; display: flex; align-items: center; justify-content: center; }
         #root { flex: none; width: 390px; height: min(844px, 96vh); border-radius: 36px; overflow: hidden;
-                box-shadow: 0 0 0 10px #0d130f, 0 30px 80px rgba(0,0,0,.5); }
+                box-shadow: 0 0 0 10px #140809, 0 30px 80px rgba(0,0,0,.5); }
       }
     </style>""", 1)
 # Vercel Web Analytics (cookieless page views; counts only once enabled in the Vercel project's Analytics tab).
