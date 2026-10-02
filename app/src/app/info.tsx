@@ -2,7 +2,7 @@
 // can't know, privacy, account, replay intro, data credits.
 import { Link, router, useFocusEffect } from 'expo-router';
 import { useCallback, useState } from 'react';
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Linking, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { type Session, getSession, googleEnabled, loadSession, onAuthChange } from '../auth';
@@ -50,6 +50,8 @@ export default function InfoScreen() {
         <View style={styles.card}>
           <Text style={styles.b}>{he.privacyTitle}</Text>
           <Text style={styles.body}>{session ? he.privacySignedIn : he.privacyDevice}</Text>
+          <Text style={styles.link} accessibilityRole="link"
+                onPress={() => Linking.openURL('https://sharonekub-svg-produce-scanner-il.vercel.app/privacy')}>{he.privacyPolicy}</Text>
         </View>
         <Text style={styles.small}>{he.modelVersion}: {b.model_id}</Text>
         <Link href="/credits" style={styles.link}>{he.credits}</Link>

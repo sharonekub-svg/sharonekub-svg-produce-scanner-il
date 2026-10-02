@@ -168,6 +168,12 @@ for _r in APP_ROUTES:  # client-side routes of the app (expo-router, single-page
     app.add_api_route(f"/{_r}", lambda: _preview_page(), methods=["GET"], include_in_schema=False)
 
 
+@app.get("/privacy", include_in_schema=False)
+def privacy():
+    # Privacy policy (Google Play listing links here): server/web/privacy.html
+    return HTMLResponse((WEB / "privacy.html").read_text(encoding="utf-8"))
+
+
 @app.get("/favicon.ico", include_in_schema=False)
 def favicon():
     return Response((PREVIEW / "favicon.ico").read_bytes(), media_type="image/x-icon")
