@@ -77,5 +77,8 @@ Scan Fruit AI בודקת פירות וירקות מתוך תמונה:
 7. אחרי 14 יום: Dashboard → **Apply for production** → שאלון קצר על הבדיקה → אחרי אישור – Production release עם אותו AAB.
 
 ## 5. דברים שכדאי לדעת
+- **1.5.0 נשלחה לבדיקה ב-2.10.2026** (Closed testing – Alpha, ישראל, רשימת "בודקים").
+- Advertising ID: **No** (אין הרשאת AD_ID ב-manifest – נבדק ב-AAB).
+- ה-AAB נשלח בלי `BUNDLE-METADATA` (debug symbols + proguard map, ~19MB) ונחתם מחדש באותו מפתח, כדי לעבור את מגבלת הגודל לשליחה. לכן שתי אזהרות צהובות (deobfuscation / debug symbols) – לא חוסמות.
 - ההתחברות עם Google עוברת דרך הדפדפן (Supabase), ולכן לא צריך לרשום את טביעת האצבע של מפתח החתימה ב-Google Cloud.
 - כל עדכון: להעלות `versionCode` ב-1, לבנות AAB חדש עם אותו keystore, Create new release באותו track.
