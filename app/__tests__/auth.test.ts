@@ -45,3 +45,10 @@ it('signs in with PKCE, stores only tokens + name in the keychain, and signs out
   expect(auth.getSession()).toBeNull();
   expect(mockStore.has('sb_session_v1')).toBe(false);
 });
+
+it('shows the Google name, or the email before "@" when there is none', () => {
+  expect(require('../src/auth').displayName({ email: 'dana.levi@gmail.com', user_metadata: { full_name: 'דנה לוי' } })).toBe('דנה לוי');
+  expect(require('../src/auth').displayName({ email: 'dana.levi@gmail.com', user_metadata: { name: 'Dana' } })).toBe('Dana');
+  expect(require('../src/auth').displayName({ email: 'dana.levi@gmail.com', user_metadata: { full_name: '  ' } })).toBe('dana.levi');
+  expect(require('../src/auth').displayName({ user_metadata: { email: 'x@y.com' } })).toBe('x');
+});

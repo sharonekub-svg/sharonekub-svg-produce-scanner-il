@@ -6,6 +6,7 @@ import Constants from 'expo-constants';
 import * as Linking from 'expo-linking';
 import * as SecureStore from 'expo-secure-store';
 import * as WebBrowser from 'expo-web-browser';
+import { Platform } from 'react-native';
 
 const cfg = (Constants.expoConfig?.extra ?? {}) as { feedback?: { url?: string; anonKey?: string } };
 export const SB_URL = cfg.feedback?.url?.replace(/\/$/, '') ?? '';
@@ -33,25 +34,42 @@ function bytesToB64(bytes: Uint8Array): string {
   return btoa(s);
 }
 
+/** Google full name, else the part of the email before "@" (never empty when signed in). */
+export function displayName(user: any): string {
+  const m = user?.user_metadata ?? {};
+  const full = (m.full_name ?? m.name ?? '').trim();
+  if (full) return full;
+  return String(user?.email ?? m.email ?? '').split('@')[0];
+}
+
+// Web: expo-secure-store has no web implementation, so the session lives in localStorage there
+// (as supabase-js does); without this a page reload signed the user out and the profile said "guest".
+const WEB = Platform.OS === 'web';
+const store = {
+  get: async () => (WEB ? globalThis.localStorage?.getItem(KEY) ?? null : SecureStore.getItemAsync(KEY)),
+  set: async (v: string) => (WEB ? globalThis.localStorage?.setItem(KEY, v) : SecureStore.setItemAsync(KEY, v)),
+  del: async () => (WEB ? globalThis.localStorage?.removeItem(KEY) : SecureStore.deleteItemAsync(KEY)),
+};
+
 async function setSession(j: any | null) {
   session = j ? {
     access_token: j.access_token,
     refresh_token: j.refresh_token,
     expires_at: Date.now() / 1000 + (j.expires_in ?? 3600),
-    name: j.user?.user_metadata?.full_name ?? j.user?.email ?? '',
+    name: displayName(j.user),
     avatar: j.user?.user_metadata?.avatar_url ?? null,
   } : null;
   try {
-    if (session) await SecureStore.setItemAsync(KEY, JSON.stringify(session));
-    else await SecureStore.deleteItemAsync(KEY);
-  } catch { /* keychain unavailable (e.g. web preview): session stays in memory */ }
+    if (session) await store.set(JSON.stringify(session));
+    else await store.del();
+  } catch { /* storage unavailable: session stays in memory */ }
   listeners.forEach((f) => f());
 }
 
 export async function loadSession(): Promise<Session | null> {
   if (loaded) return session;
   loaded = true;
-  try { const s = await SecureStore.getItemAsync(KEY); session = s ? JSON.parse(s) : null; } catch { session = null; }
+  try { const s = await store.get(); session = s ? JSON.parse(s) : null; } catch { session = null; }
   listeners.forEach((f) => f());
   return session;
 }
