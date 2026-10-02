@@ -55,11 +55,12 @@ Scan Fruit AI בודקת פירות וירקות מתוך תמונה:
 ### Data safety
 - Does your app collect or share any of the required user data types? **Yes**
 - Is all user data encrypted in transit? **Yes**
+- Account creation: **OAuth** (Google) · Delete account URL: `https://sharonekub-svg-produce-scanner-il.vercel.app/privacy`
 - Do you provide a way for users to request deletion? **Yes** (מחיקת חשבון באפליקציה + מייל)
 
 | סוג נתון | נאסף? | משותף? | ephemeral | חובה/רשות | מטרה |
 |---|---|---|---|---|---|
-| Photos and videos → **Photos** | Yes | No | **Yes** (הניתוח), התמונה ששיתפו לאימון – לא | Required (הסריקה) / Optional (שיתוף לאימון) | App functionality |
+| Photos and videos → **Photos** | Yes | No | **No** (הניתוח עצמו לא נשמר, אבל תמונה מוקטנת נשמרת בחשבון/בשיתוף לאימון) | Required | App functionality |
 | Personal info → **Name**, **Email address** | Yes | No | No | **Optional** (רק בהתחברות עם Google) | App functionality, Account management |
 | App activity → **Other user-generated content** (תוצאות סריקה + תמונה מוקטנת בחשבון) | Yes | No | No | Optional | App functionality |
 | App activity → **Other actions** (👍/👎, סקר) | Yes | No | No | Optional | Analytics |
