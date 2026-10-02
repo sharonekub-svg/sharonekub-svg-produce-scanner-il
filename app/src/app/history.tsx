@@ -12,7 +12,7 @@ import { Account } from '../ui/Account';
 import { setLastScan } from '../ui/state';
 import { he } from '../ui/strings';
 
-const TONE = { good: '#2E8B57', mid: '#C98A12', bad: '#C0392B', none: '#8A8F87' };
+export const TONE = { good: '#2E8B57', mid: '#C98A12', bad: '#C0392B', none: '#8A8F87' };
 const toneOf = (r: ScanResult) => (r.score == null ? TONE.none : r.score >= 7 ? TONE.good : r.score >= 4 ? TONE.mid : TONE.bad);
 
 function stageText(r: ScanResult): string {
@@ -23,7 +23,7 @@ function stageText(r: ScanResult): string {
 
 const when = (t: number) => new Date(t).toLocaleString('he-IL', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
 
-function Item({ e }: { e: HistoryEntry }) {
+export function Item({ e }: { e: HistoryEntry }) {
   const r = e.output.result;
   const tone = toneOf(r);
   const open = () => {

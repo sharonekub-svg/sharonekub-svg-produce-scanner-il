@@ -9,6 +9,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { ActivityIndicator, Image, Modal, Pressable, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { getSession, loadSession, onAuthChange } from '../auth';
 import { addToHistory } from '../history';
 import { inferenceMode, scan } from '../model/engine';
 import { getPref } from '../prefs';
@@ -30,6 +31,11 @@ export default function CameraScreen() {
   const [error, setError] = useState<string | null>(null);
   const [secondAngle, setSecondAngle] = useState(false);
   const [samplesOpen, setSamplesOpen] = useState(false);
+  const [avatar, setAvatar] = useState<string | null>(getSession()?.avatar ?? null);
+  useEffect(() => {
+    loadSession().then((s) => setAvatar(s?.avatar ?? null));
+    return onAuthChange(() => setAvatar(getSession()?.avatar ?? null));
+  }, []);
 
   useFocusEffect(useCallback(() => {
     setFrozen(null);
@@ -92,6 +98,9 @@ export default function CameraScreen() {
         </Pressable>
         <Pressable onPress={() => router.push('/info')} disabled={busy} accessibilityRole="button" accessibilityLabel={he.howItWorks} style={styles.glass}>
           <Text style={styles.glassText}>i</Text>
+        </Pressable>
+        <Pressable onPress={() => router.push('/profile')} disabled={busy} accessibilityRole="button" accessibilityLabel={he.profile} style={styles.glass}>
+          {avatar ? <Image source={{ uri: avatar }} style={styles.glassAvatar} /> : <Text style={styles.glassText}>👤</Text>}
         </Pressable>
       </View>
     </View>
@@ -192,6 +201,7 @@ const styles = StyleSheet.create({
   brandIcon: { width: 32, height: 32, borderRadius: 9 },
   brandText: { color: '#fff', fontSize: 16, fontWeight: '800', textShadowColor: 'rgba(0,0,0,0.5)', textShadowRadius: 4 },
   topBtns: { flexDirection: 'row', gap: 8 },
+  glassAvatar: { width: 40, height: 40, borderRadius: 20 },
   glass: { width: 44, height: 44, borderRadius: 22, backgroundColor: 'rgba(0,0,0,0.45)', alignItems: 'center', justifyContent: 'center' },
   glassWide: { height: 44, borderRadius: 22, paddingHorizontal: 14, backgroundColor: 'rgba(0,0,0,0.45)', alignItems: 'center', justifyContent: 'center' },
   glassText: { color: '#fff', fontSize: 15, fontWeight: '800' },

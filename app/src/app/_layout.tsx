@@ -23,6 +23,7 @@ export default function RootLayout() {
         <Stack.Screen name="index" />
         <Stack.Screen name="result" options={{ contentStyle: { backgroundColor: '#FAFAF7' } }} />
         <Stack.Screen name="history" options={{ contentStyle: { backgroundColor: '#F6F1E6' } }} />
+        <Stack.Screen name="profile" options={{ contentStyle: { backgroundColor: '#F6F1E6' } }} />
         <Stack.Screen name="info" options={{ contentStyle: { backgroundColor: '#F6F1E6' } }} />
         <Stack.Screen name="welcome" options={{ animation: 'fade' }} />
         <Stack.Screen name="landing" options={{ animation: 'fade', contentStyle: { backgroundColor: '#8A0C1B' } }} />
