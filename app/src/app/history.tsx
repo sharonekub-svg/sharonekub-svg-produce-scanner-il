@@ -9,7 +9,7 @@ import { type Session, getSession, googleEnabled, loadSession, onAuthChange } fr
 import { type HistoryEntry, clearHistory, loadHistory, onHistoryChange, removeFromHistory, summarize, syncHistory } from '../history';
 import type { ScanResult } from '../model/types';
 import { Account } from '../ui/Account';
-import { step5 } from '../ui/chips';
+import { score100 } from '../ui/chips';
 import { setLastScan } from '../ui/state';
 import { he } from '../ui/strings';
 
@@ -25,7 +25,7 @@ function stageText(r: ScanResult): string {
 }
 
 // 0-100 for every entry: older scans stored only the 1-10 score.
-const shown = (r: ScanResult) => (r.overall != null ? step5(r.overall) : r.score != null ? r.score * 10 : null);
+const shown = (r: ScanResult) => score100(r);
 
 const when = (t: number) => new Date(t).toLocaleString('he-IL', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
 

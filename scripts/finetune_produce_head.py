@@ -4,7 +4,7 @@
 Why: on the quality test sets, fruit in bad condition is identified (answered) far less often than good fruit
 (51% vs 80%), so a rotten grape or cucumber gets no score at all. The shipped head was trained mostly on good fruit.
 
-Train: train splits of data/processed_commercial_v7, processed_quality_v8/v9 and the Open Images train crops
+Train: train splits of data/processed_commercial_v7, processed_quality_v8/v9/v10 and the Open Images train crops
 (runs/siglip/oi_train3.npz, grapefruit skipped as before). Loss: class-balanced softmax over the 39 outputs ("other"
 = logsumexp of the fixed negative-prompt logits + bias, as shipped) + lam * ||W - W_shipped||^2. lam and the
 temperature are chosen on validation (OI "cal" half + quality val), test is only reported.
@@ -23,7 +23,10 @@ import numpy as np
 from scipy.optimize import minimize
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from train_quality_v3 import SOURCES  # noqa: E402
+from train_quality_v3 import SOURCES as Q_SOURCES  # noqa: E402
+
+# + MangoDHDS / EFIQD (v0.17): mango, avocado, kiwi and green apples, many of them spoiled
+SOURCES = Q_SOURCES + [("data/processed_quality_v10/manifest.jsonl", "runs/siglip/emb_q10.npz")]
 
 
 def load_rows(P):

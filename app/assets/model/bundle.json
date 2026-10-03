@@ -1,7 +1,7 @@
 {
  "bundle_version": 2,
  "backbone": "siglip2",
- "model_id": "siglip2_v0.17@3aeebd89d9ff",
+ "model_id": "siglip2_v0.18@e977e661df4a",
  "created_at": "2026-09-30T20:34:49.229518+00:00",
  "input": {
   "size": 224,
@@ -78,7 +78,7 @@
   ]
  },
  "temperatures": {
-  "produce": 1.2063,
+  "produce": 1.2435,
   "ripeness": 1.1204,
   "freshness": 1.1151244319798383,
   "visual_spoilage": 0.3625004048130315,
@@ -619,7 +619,7 @@
    "sha256": "843945c3ddaaad33f363201558f537eadbdab7cbc4060f2532f9cf1536114718"
   },
   "heads.npz": {
-   "sha256": "3aeebd89d9fff954c9baf567000f1090c878de005a769e029fb6db463d013d92"
+   "sha256": "e977e661df4a552b3f418a0a1eb630cb410e82f66636e6b62ca7ee5c3660a7b5"
   }
  },
  "condition": {

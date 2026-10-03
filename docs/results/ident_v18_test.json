@@ -1,0 +1,122 @@
+{
+ "_cond_bad": {
+  "n": 3536,
+  "top1": 0.976,
+  "answered": 0.941,
+  "acc_when_answered": 0.992
+ },
+ "_cond_good": {
+  "n": 7383,
+  "top1": 0.977,
+  "answered": 0.949,
+  "acc_when_answered": 0.995
+ },
+ "agrifreshnet": {
+  "n": 895,
+  "top1": 0.997,
+  "answered": 0.983,
+  "acc_when_answered": 0.999
+ },
+ "apple_good_bad": {
+  "n": 200,
+  "top1": 1.0,
+  "answered": 0.98,
+  "acc_when_answered": 1.0
+ },
+ "banana_id": {
+  "n": 195,
+  "top1": 1.0,
+  "answered": 1.0,
+  "acc_when_answered": 1.0
+ },
+ "banana_image_bd": {
+  "n": 72,
+  "top1": 1.0,
+  "answered": 1.0,
+  "acc_when_answered": 1.0
+ },
+ "bananas_psolymos": {
+  "n": 20,
+  "top1": 1.0,
+  "answered": 1.0,
+  "acc_when_answered": 1.0
+ },
+ "efiqd": {
+  "n": 1002,
+  "top1": 0.999,
+  "answered": 0.985,
+  "acc_when_answered": 1.0
+ },
+ "fresh_rotten_mendeley_bd": {
+  "n": 272,
+  "top1": 0.993,
+  "answered": 0.971,
+  "acc_when_answered": 1.0
+ },
+ "fruit_inspection_6ps": {
+  "n": 1200,
+  "top1": 0.965,
+  "answered": 0.912,
+  "acc_when_answered": 0.984
+ },
+ "fruitnet_indian": {
+  "n": 1500,
+  "top1": 0.957,
+  "answered": 0.911,
+  "acc_when_answered": 0.988
+ },
+ "grapenet": {
+  "n": 1243,
+  "top1": 0.974,
+  "answered": 0.942,
+  "acc_when_answered": 0.998
+ },
+ "grocery_store_klasson": {
+  "n": 1407,
+  "top1": 0.932,
+  "answered": 0.874,
+  "acc_when_answered": 0.981
+ },
+ "hass_avocado_ripening": {
+  "n": 1470,
+  "top1": 1.0,
+  "answered": 0.999,
+  "acc_when_answered": 1.0
+ },
+ "lemon_softwaremill": {
+  "n": 267,
+  "top1": 0.996,
+  "answered": 0.985,
+  "acc_when_answered": 1.0
+ },
+ "lemon_varieties": {
+  "n": 192,
+  "top1": 1.0,
+  "answered": 0.979,
+  "acc_when_answered": 1.0
+ },
+ "mango_banana_ripe": {
+  "n": 500,
+  "top1": 0.984,
+  "answered": 0.96,
+  "acc_when_answered": 1.0
+ },
+ "mango_dhds": {
+  "n": 150,
+  "top1": 0.973,
+  "answered": 0.893,
+  "acc_when_answered": 1.0
+ },
+ "vegnet_quality": {
+  "n": 334,
+  "top1": 0.991,
+  "answered": 0.988,
+  "acc_when_answered": 0.994
+ },
+ "_open_images_real": {
+  "n": 1769,
+  "top1": 0.777,
+  "answered": 0.82,
+  "acc_when_answered": 0.835
+ }
+}

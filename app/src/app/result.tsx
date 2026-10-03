@@ -13,7 +13,7 @@ import { addToHistory } from '../history';
 import type { HeadResult } from '../model/types';
 import { donatePhoto, donationEnabled } from '../donation';
 import { type Rating, sendRating } from '../feedback';
-import { CHIP, pct, step5 } from '../ui/chips';
+import { CHIP, pct, score100, step5 } from '../ui/chips';
 import { getLastScan, setLastScan, setPendingPrevious } from '../ui/state';
 import { he } from '../ui/strings';
 import { SurveyCard } from '../ui/Survey';
@@ -94,7 +94,7 @@ export default function ResultScreen() {
   };
   const canDonate = !fromHistory && !last.sample && donationEnabled();
   const onShare = () => {
-    const sc = r.score != null ? ` – ${r.overall != null ? `${step5(r.overall)}/100` : `${r.score}/10`} (${verdictHe(r.score)})` : '';
+    const sc = r.score != null ? ` – ${score100(r)}/100 (${verdictHe(r.score)})` : '';
     Share.share({ message: he.shareText(r.produce_he ?? '', sc) }).catch(() => {});
   };
   const again = () => (fromHistory ? router.dismissTo('/') : router.back());
@@ -146,11 +146,11 @@ export default function ResultScreen() {
 
             {r.score != null ? (
               <View style={styles.scoreBlock} accessible
-                    accessibilityLabel={`${he.qualityScore}: ${r.overall != null ? step5(r.overall) : r.score} ${r.overall != null ? he.outOf100 : he.outOf10}. ${r.score_reason_he ?? ''}`}>
+                    accessibilityLabel={`${he.qualityScore}: ${score100(r)} ${he.outOf100}. ${r.score_reason_he ?? ''}`}>
                 <View style={styles.scoreRow}>
                   <View style={styles.scoreBadge}>
-                    <Text style={[styles.scoreNum, { color: scoreTone(r.score).fg }]}>{r.overall != null ? step5(r.overall) : r.score}</Text>
-                    <Text style={styles.scoreOf}>{r.overall != null ? '/100' : '/10'}</Text>
+                    <Text style={[styles.scoreNum, { color: scoreTone(r.score).fg }]}>{score100(r)}</Text>
+                    <Text style={styles.scoreOf}>/100</Text>
                   </View>
                   <View style={[styles.stagePill, { backgroundColor: scoreTone(r.score).bg }]}>
                     <Text style={[styles.stageText, { color: scoreTone(r.score).fg }]}>{verdictHe(r.score)}</Text>

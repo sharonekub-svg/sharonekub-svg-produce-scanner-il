@@ -1,5 +1,5 @@
 {
-  "model_id": "siglip2_v0.17@3aeebd89d9ff",
+  "model_id": "siglip2_v0.18@e977e661df4a",
   "datasets": [
     {
       "dataset_id": "apple_good_bad",

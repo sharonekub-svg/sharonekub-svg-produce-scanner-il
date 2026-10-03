@@ -24,3 +24,7 @@ export const pct = (p: number | null | undefined) => (p == null ? '' : `${Math.r
 
 /** 0-100 score shown in steps of 5 (same rule: the model is not that precise). */
 export const step5 = (x: number) => Math.round(x / 5) * 5;
+
+/** The score every screen shows, 0-100: the condition-based overall, else the 1-10 score x 10 (general model). */
+export const score100 = (r: { overall?: number | null; score?: number | null }) =>
+  (r.overall != null ? step5(r.overall) : r.score != null ? r.score * 10 : null);
