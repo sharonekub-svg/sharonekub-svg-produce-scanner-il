@@ -91,6 +91,9 @@ class Engine:
             out["freshness_general"] = (a * (hd["general_bad_W"] @ e - hd["general_fresh_W"] @ e) + b).astype(np.float32)
         if "condition_W" in hd:  # condition head: logit of P(good condition), one per produce output
             out["condition"] = (float(e @ hd["condition_W"]) + hd["condition_b"]).astype(np.float32)
+            if "condition_v4_W" in hd:  # v0.17: retrained binary head, only for the types it beat the v0.13 head on (val)
+                v4 = (float(e @ hd["condition_v4_W"]) + hd["condition_v4_b"]).astype(np.float32)
+                out["condition"] = np.where(hd["condition_v4_mask"] > 0, v4, out["condition"]).astype(np.float32)
             if "condition_g_W" in hd:  # v0.14 graded types: own P(good) head + P(rotten | not good)
                 g = (float(e @ hd["condition_g_W"]) + hd["condition_g_b"]).astype(np.float32)
                 out["condition"] = np.where(hd["condition_graded"] > 0, g, out["condition"]).astype(np.float32)

@@ -1,0 +1,1924 @@
+{
+ "apple": {
+  "n": {
+   "good": 785,
+   "early": 0,
+   "bad": 641,
+   "rotten": 65
+  },
+  "val": {
+   "dark_frac": {
+    "bad_vs_good": 0.39,
+    "rotten_vs_early": null
+   },
+   "very_dark_frac": {
+    "bad_vs_good": 0.347,
+    "rotten_vs_early": null
+   },
+   "largest_dark": {
+    "bad_vs_good": 0.407,
+    "rotten_vs_early": null
+   },
+   "spots_per_100": {
+    "bad_vs_good": 0.451,
+    "rotten_vs_early": null
+   },
+   "brown_frac": {
+    "bad_vs_good": 0.476,
+    "rotten_vs_early": null
+   },
+   "pale_frac": {
+    "bad_vs_good": 0.568,
+    "rotten_vs_early": null
+   },
+   "texture": {
+    "bad_vs_good": 0.544,
+    "rotten_vs_early": null
+   },
+   "L": {
+    "bad_vs_good": 0.294,
+    "rotten_vs_early": null
+   },
+   "chroma": {
+    "bad_vs_good": 0.479,
+    "rotten_vs_early": null
+   },
+   "a": {
+    "bad_vs_good": 0.674,
+    "rotten_vs_early": null
+   },
+   "b": {
+    "bad_vs_good": 0.476,
+    "rotten_vs_early": null
+   }
+  },
+  "test": {
+   "dark_frac": {
+    "bad_vs_good": 0.29,
+    "rotten_vs_early": null
+   },
+   "very_dark_frac": {
+    "bad_vs_good": 0.304,
+    "rotten_vs_early": null
+   },
+   "largest_dark": {
+    "bad_vs_good": 0.3,
+    "rotten_vs_early": null
+   },
+   "spots_per_100": {
+    "bad_vs_good": 0.323,
+    "rotten_vs_early": null
+   },
+   "brown_frac": {
+    "bad_vs_good": 0.365,
+    "rotten_vs_early": null
+   },
+   "pale_frac": {
+    "bad_vs_good": 0.545,
+    "rotten_vs_early": null
+   },
+   "texture": {
+    "bad_vs_good": 0.662,
+    "rotten_vs_early": null
+   },
+   "L": {
+    "bad_vs_good": 0.183,
+    "rotten_vs_early": null
+   },
+   "chroma": {
+    "bad_vs_good": 0.349,
+    "rotten_vs_early": null
+   },
+   "a": {
+    "bad_vs_good": 0.68,
+    "rotten_vs_early": null
+   },
+   "b": {
+    "bad_vs_good": 0.338,
+    "rotten_vs_early": null
+   }
+  }
+ },
+ "banana": {
+  "n": {
+   "good": 731,
+   "early": 98,
+   "bad": 300,
+   "rotten": 185
+  },
+  "val": {
+   "dark_frac": {
+    "bad_vs_good": 0.389,
+    "rotten_vs_early": 0.257
+   },
+   "very_dark_frac": {
+    "bad_vs_good": 0.274,
+    "rotten_vs_early": 0.343
+   },
+   "largest_dark": {
+    "bad_vs_good": 0.422,
+    "rotten_vs_early": 0.24
+   },
+   "spots_per_100": {
+    "bad_vs_good": 0.331,
+    "rotten_vs_early": 0.181
+   },
+   "brown_frac": {
+    "bad_vs_good": 0.447,
+    "rotten_vs_early": 0.14
+   },
+   "pale_frac": {
+    "bad_vs_good": 0.506,
+    "rotten_vs_early": 0.231
+   },
+   "texture": {
+    "bad_vs_good": 0.872,
+    "rotten_vs_early": 0.703
+   },
+   "L": {
+    "bad_vs_good": 0.199,
+    "rotten_vs_early": 0.182
+   },
+   "chroma": {
+    "bad_vs_good": 0.39,
+    "rotten_vs_early": 0.1
+   },
+   "a": {
+    "bad_vs_good": 0.886,
+    "rotten_vs_early": 0.303
+   },
+   "b": {
+    "bad_vs_good": 0.42,
+    "rotten_vs_early": 0.066
+   }
+  },
+  "test": {
+   "dark_frac": {
+    "bad_vs_good": 0.264,
+    "rotten_vs_early": 0.272
+   },
+   "very_dark_frac": {
+    "bad_vs_good": 0.209,
+    "rotten_vs_early": 0.363
+   },
+   "largest_dark": {
+    "bad_vs_good": 0.281,
+    "rotten_vs_early": 0.291
+   },
+   "spots_per_100": {
+    "bad_vs_good": 0.284,
+    "rotten_vs_early": 0.248
+   },
+   "brown_frac": {
+    "bad_vs_good": 0.232,
+    "rotten_vs_early": 0.245
+   },
+   "pale_frac": {
+    "bad_vs_good": 0.412,
+    "rotten_vs_early": 0.335
+   },
+   "texture": {
+    "bad_vs_good": 0.737,
+    "rotten_vs_early": 0.624
+   },
+   "L": {
+    "bad_vs_good": 0.087,
+    "rotten_vs_early": 0.212
+   },
+   "chroma": {
+    "bad_vs_good": 0.155,
+    "rotten_vs_early": 0.168
+   },
+   "a": {
+    "bad_vs_good": 0.479,
+    "rotten_vs_early": 0.321
+   },
+   "b": {
+    "bad_vs_good": 0.202,
+    "rotten_vs_early": 0.136
+   }
+  }
+ },
+ "cucumber": {
+  "n": {
+   "good": 111,
+   "early": 168,
+   "bad": 0,
+   "rotten": 25
+  },
+  "val": {
+   "dark_frac": {
+    "bad_vs_good": 0.211,
+    "rotten_vs_early": null
+   },
+   "very_dark_frac": {
+    "bad_vs_good": 0.413,
+    "rotten_vs_early": null
+   },
+   "largest_dark": {
+    "bad_vs_good": 0.198,
+    "rotten_vs_early": null
+   },
+   "spots_per_100": {
+    "bad_vs_good": 0.301,
+    "rotten_vs_early": null
+   },
+   "brown_frac": {
+    "bad_vs_good": 0.449,
+    "rotten_vs_early": null
+   },
+   "pale_frac": {
+    "bad_vs_good": 0.554,
+    "rotten_vs_early": null
+   },
+   "texture": {
+    "bad_vs_good": 0.619,
+    "rotten_vs_early": null
+   },
+   "L": {
+    "bad_vs_good": 0.433,
+    "rotten_vs_early": null
+   },
+   "chroma": {
+    "bad_vs_good": 0.308,
+    "rotten_vs_early": null
+   },
+   "a": {
+    "bad_vs_good": 0.795,
+    "rotten_vs_early": null
+   },
+   "b": {
+    "bad_vs_good": 0.338,
+    "rotten_vs_early": null
+   }
+  },
+  "test": {
+   "dark_frac": {
+    "bad_vs_good": 0.256,
+    "rotten_vs_early": null
+   },
+   "very_dark_frac": {
+    "bad_vs_good": 0.383,
+    "rotten_vs_early": null
+   },
+   "largest_dark": {
+    "bad_vs_good": 0.248,
+    "rotten_vs_early": null
+   },
+   "spots_per_100": {
+    "bad_vs_good": 0.392,
+    "rotten_vs_early": null
+   },
+   "brown_frac": {
+    "bad_vs_good": 0.518,
+    "rotten_vs_early": null
+   },
+   "pale_frac": {
+    "bad_vs_good": 0.467,
+    "rotten_vs_early": null
+   },
+   "texture": {
+    "bad_vs_good": 0.609,
+    "rotten_vs_early": null
+   },
+   "L": {
+    "bad_vs_good": 0.451,
+    "rotten_vs_early": null
+   },
+   "chroma": {
+    "bad_vs_good": 0.306,
+    "rotten_vs_early": null
+   },
+   "a": {
+    "bad_vs_good": 0.894,
+    "rotten_vs_early": null
+   },
+   "b": {
+    "bad_vs_good": 0.353,
+    "rotten_vs_early": null
+   }
+  }
+ },
+ "grape": {
+  "n": {
+   "good": 4907,
+   "early": 0,
+   "bad": 0,
+   "rotten": 3365
+  },
+  "val": {
+   "dark_frac": {
+    "bad_vs_good": 0.344,
+    "rotten_vs_early": null
+   },
+   "very_dark_frac": {
+    "bad_vs_good": 0.344,
+    "rotten_vs_early": null
+   },
+   "largest_dark": {
+    "bad_vs_good": 0.331,
+    "rotten_vs_early": null
+   },
+   "spots_per_100": {
+    "bad_vs_good": 0.435,
+    "rotten_vs_early": null
+   },
+   "brown_frac": {
+    "bad_vs_good": 0.445,
+    "rotten_vs_early": null
+   },
+   "pale_frac": {
+    "bad_vs_good": 0.471,
+    "rotten_vs_early": null
+   },
+   "texture": {
+    "bad_vs_good": 0.777,
+    "rotten_vs_early": null
+   },
+   "L": {
+    "bad_vs_good": 0.264,
+    "rotten_vs_early": null
+   },
+   "chroma": {
+    "bad_vs_good": 0.602,
+    "rotten_vs_early": null
+   },
+   "a": {
+    "bad_vs_good": 0.734,
+    "rotten_vs_early": null
+   },
+   "b": {
+    "bad_vs_good": 0.513,
+    "rotten_vs_early": null
+   }
+  },
+  "test": {
+   "dark_frac": {
+    "bad_vs_good": 0.367,
+    "rotten_vs_early": null
+   },
+   "very_dark_frac": {
+    "bad_vs_good": 0.452,
+    "rotten_vs_early": null
+   },
+   "largest_dark": {
+    "bad_vs_good": 0.308,
+    "rotten_vs_early": null
+   },
+   "spots_per_100": {
+    "bad_vs_good": 0.391,
+    "rotten_vs_early": null
+   },
+   "brown_frac": {
+    "bad_vs_good": 0.461,
+    "rotten_vs_early": null
+   },
+   "pale_frac": {
+    "bad_vs_good": 0.426,
+    "rotten_vs_early": null
+   },
+   "texture": {
+    "bad_vs_good": 0.832,
+    "rotten_vs_early": null
+   },
+   "L": {
+    "bad_vs_good": 0.302,
+    "rotten_vs_early": null
+   },
+   "chroma": {
+    "bad_vs_good": 0.561,
+    "rotten_vs_early": null
+   },
+   "a": {
+    "bad_vs_good": 0.662,
+    "rotten_vs_early": null
+   },
+   "b": {
+    "bad_vs_good": 0.551,
+    "rotten_vs_early": null
+   }
+  }
+ },
+ "guava": {
+  "n": {
+   "good": 664,
+   "early": 0,
+   "bad": 124,
+   "rotten": 66
+  },
+  "val": {
+   "dark_frac": {
+    "bad_vs_good": 0.372,
+    "rotten_vs_early": null
+   },
+   "very_dark_frac": {
+    "bad_vs_good": 0.34,
+    "rotten_vs_early": null
+   },
+   "largest_dark": {
+    "bad_vs_good": 0.441,
+    "rotten_vs_early": null
+   },
+   "spots_per_100": {
+    "bad_vs_good": 0.492,
+    "rotten_vs_early": null
+   },
+   "brown_frac": {
+    "bad_vs_good": 0.679,
+    "rotten_vs_early": null
+   },
+   "pale_frac": {
+    "bad_vs_good": 0.652,
+    "rotten_vs_early": null
+   },
+   "texture": {
+    "bad_vs_good": 0.422,
+    "rotten_vs_early": null
+   },
+   "L": {
+    "bad_vs_good": 0.321,
+    "rotten_vs_early": null
+   },
+   "chroma": {
+    "bad_vs_good": 0.52,
+    "rotten_vs_early": null
+   },
+   "a": {
+    "bad_vs_good": 0.797,
+    "rotten_vs_early": null
+   },
+   "b": {
+    "bad_vs_good": 0.586,
+    "rotten_vs_early": null
+   }
+  },
+  "test": {
+   "dark_frac": {
+    "bad_vs_good": 0.33,
+    "rotten_vs_early": null
+   },
+   "very_dark_frac": {
+    "bad_vs_good": 0.294,
+    "rotten_vs_early": null
+   },
+   "largest_dark": {
+    "bad_vs_good": 0.384,
+    "rotten_vs_early": null
+   },
+   "spots_per_100": {
+    "bad_vs_good": 0.54,
+    "rotten_vs_early": null
+   },
+   "brown_frac": {
+    "bad_vs_good": 0.657,
+    "rotten_vs_early": null
+   },
+   "pale_frac": {
+    "bad_vs_good": 0.608,
+    "rotten_vs_early": null
+   },
+   "texture": {
+    "bad_vs_good": 0.449,
+    "rotten_vs_early": null
+   },
+   "L": {
+    "bad_vs_good": 0.265,
+    "rotten_vs_early": null
+   },
+   "chroma": {
+    "bad_vs_good": 0.503,
+    "rotten_vs_early": null
+   },
+   "a": {
+    "bad_vs_good": 0.856,
+    "rotten_vs_early": null
+   },
+   "b": {
+    "bad_vs_good": 0.569,
+    "rotten_vs_early": null
+   }
+  }
+ },
+ "lemon": {
+  "n": {
+   "good": 825,
+   "early": 0,
+   "bad": 0,
+   "rotten": 294
+  },
+  "val": {
+   "dark_frac": {
+    "bad_vs_good": 0.756,
+    "rotten_vs_early": null
+   },
+   "very_dark_frac": {
+    "bad_vs_good": 0.89,
+    "rotten_vs_early": null
+   },
+   "largest_dark": {
+    "bad_vs_good": 0.737,
+    "rotten_vs_early": null
+   },
+   "spots_per_100": {
+    "bad_vs_good": 0.729,
+    "rotten_vs_early": null
+   },
+   "brown_frac": {
+    "bad_vs_good": 0.899,
+    "rotten_vs_early": null
+   },
+   "pale_frac": {
+    "bad_vs_good": 0.681,
+    "rotten_vs_early": null
+   },
+   "texture": {
+    "bad_vs_good": 0.35,
+    "rotten_vs_early": null
+   },
+   "L": {
+    "bad_vs_good": 0.783,
+    "rotten_vs_early": null
+   },
+   "chroma": {
+    "bad_vs_good": 0.655,
+    "rotten_vs_early": null
+   },
+   "a": {
+    "bad_vs_good": 0.937,
+    "rotten_vs_early": null
+   },
+   "b": {
+    "bad_vs_good": 0.663,
+    "rotten_vs_early": null
+   }
+  },
+  "test": {
+   "dark_frac": {
+    "bad_vs_good": 0.655,
+    "rotten_vs_early": null
+   },
+   "very_dark_frac": {
+    "bad_vs_good": 0.664,
+    "rotten_vs_early": null
+   },
+   "largest_dark": {
+    "bad_vs_good": 0.559,
+    "rotten_vs_early": null
+   },
+   "spots_per_100": {
+    "bad_vs_good": 0.71,
+    "rotten_vs_early": null
+   },
+   "brown_frac": {
+    "bad_vs_good": 0.745,
+    "rotten_vs_early": null
+   },
+   "pale_frac": {
+    "bad_vs_good": 0.533,
+    "rotten_vs_early": null
+   },
+   "texture": {
+    "bad_vs_good": 0.737,
+    "rotten_vs_early": null
+   },
+   "L": {
+    "bad_vs_good": 0.423,
+    "rotten_vs_early": null
+   },
+   "chroma": {
+    "bad_vs_good": 0.32,
+    "rotten_vs_early": null
+   },
+   "a": {
+    "bad_vs_good": 0.838,
+    "rotten_vs_early": null
+   },
+   "b": {
+    "bad_vs_good": 0.337,
+    "rotten_vs_early": null
+   }
+  }
+ },
+ "lime": {
+  "n": {
+   "good": 492,
+   "early": 0,
+   "bad": 844,
+   "rotten": 0
+  },
+  "val": {
+   "dark_frac": {
+    "bad_vs_good": 0.476,
+    "rotten_vs_early": null
+   },
+   "very_dark_frac": {
+    "bad_vs_good": 0.461,
+    "rotten_vs_early": null
+   },
+   "largest_dark": {
+    "bad_vs_good": 0.452,
+    "rotten_vs_early": null
+   },
+   "spots_per_100": {
+    "bad_vs_good": 0.5,
+    "rotten_vs_early": null
+   },
+   "brown_frac": {
+    "bad_vs_good": 0.657,
+    "rotten_vs_early": null
+   },
+   "pale_frac": {
+    "bad_vs_good": 0.52,
+    "rotten_vs_early": null
+   },
+   "texture": {
+    "bad_vs_good": 0.849,
+    "rotten_vs_early": null
+   },
+   "L": {
+    "bad_vs_good": 0.334,
+    "rotten_vs_early": null
+   },
+   "chroma": {
+    "bad_vs_good": 0.432,
+    "rotten_vs_early": null
+   },
+   "a": {
+    "bad_vs_good": 0.833,
+    "rotten_vs_early": null
+   },
+   "b": {
+    "bad_vs_good": 0.501,
+    "rotten_vs_early": null
+   }
+  },
+  "test": {
+   "dark_frac": {
+    "bad_vs_good": 0.608,
+    "rotten_vs_early": null
+   },
+   "very_dark_frac": {
+    "bad_vs_good": 0.468,
+    "rotten_vs_early": null
+   },
+   "largest_dark": {
+    "bad_vs_good": 0.618,
+    "rotten_vs_early": null
+   },
+   "spots_per_100": {
+    "bad_vs_good": 0.541,
+    "rotten_vs_early": null
+   },
+   "brown_frac": {
+    "bad_vs_good": 0.667,
+    "rotten_vs_early": null
+   },
+   "pale_frac": {
+    "bad_vs_good": 0.418,
+    "rotten_vs_early": null
+   },
+   "texture": {
+    "bad_vs_good": 0.921,
+    "rotten_vs_early": null
+   },
+   "L": {
+    "bad_vs_good": 0.272,
+    "rotten_vs_early": null
+   },
+   "chroma": {
+    "bad_vs_good": 0.251,
+    "rotten_vs_early": null
+   },
+   "a": {
+    "bad_vs_good": 0.683,
+    "rotten_vs_early": null
+   },
+   "b": {
+    "bad_vs_good": 0.496,
+    "rotten_vs_early": null
+   }
+  }
+ },
+ "mango": {
+  "n": {
+   "good": 300,
+   "early": 0,
+   "bad": 300,
+   "rotten": 0
+  },
+  "val": {
+   "dark_frac": {
+    "bad_vs_good": 0.522,
+    "rotten_vs_early": null
+   },
+   "very_dark_frac": {
+    "bad_vs_good": 0.482,
+    "rotten_vs_early": null
+   },
+   "largest_dark": {
+    "bad_vs_good": 0.514,
+    "rotten_vs_early": null
+   },
+   "spots_per_100": {
+    "bad_vs_good": 0.553,
+    "rotten_vs_early": null
+   },
+   "brown_frac": {
+    "bad_vs_good": 0.49,
+    "rotten_vs_early": null
+   },
+   "pale_frac": {
+    "bad_vs_good": 0.79,
+    "rotten_vs_early": null
+   },
+   "texture": {
+    "bad_vs_good": 0.989,
+    "rotten_vs_early": null
+   },
+   "L": {
+    "bad_vs_good": 0.095,
+    "rotten_vs_early": null
+   },
+   "chroma": {
+    "bad_vs_good": 0.408,
+    "rotten_vs_early": null
+   },
+   "a": {
+    "bad_vs_good": 0.525,
+    "rotten_vs_early": null
+   },
+   "b": {
+    "bad_vs_good": 0.405,
+    "rotten_vs_early": null
+   }
+  },
+  "test": {
+   "dark_frac": {
+    "bad_vs_good": null,
+    "rotten_vs_early": null
+   },
+   "very_dark_frac": {
+    "bad_vs_good": null,
+    "rotten_vs_early": null
+   },
+   "largest_dark": {
+    "bad_vs_good": null,
+    "rotten_vs_early": null
+   },
+   "spots_per_100": {
+    "bad_vs_good": null,
+    "rotten_vs_early": null
+   },
+   "brown_frac": {
+    "bad_vs_good": null,
+    "rotten_vs_early": null
+   },
+   "pale_frac": {
+    "bad_vs_good": null,
+    "rotten_vs_early": null
+   },
+   "texture": {
+    "bad_vs_good": null,
+    "rotten_vs_early": null
+   },
+   "L": {
+    "bad_vs_good": null,
+    "rotten_vs_early": null
+   },
+   "chroma": {
+    "bad_vs_good": null,
+    "rotten_vs_early": null
+   },
+   "a": {
+    "bad_vs_good": null,
+    "rotten_vs_early": null
+   },
+   "b": {
+    "bad_vs_good": null,
+    "rotten_vs_early": null
+   }
+  }
+ },
+ "orange": {
+  "n": {
+   "good": 939,
+   "early": 157,
+   "bad": 582,
+   "rotten": 108
+  },
+  "val": {
+   "dark_frac": {
+    "bad_vs_good": 0.458,
+    "rotten_vs_early": 0.677
+   },
+   "very_dark_frac": {
+    "bad_vs_good": 0.499,
+    "rotten_vs_early": 0.488
+   },
+   "largest_dark": {
+    "bad_vs_good": 0.461,
+    "rotten_vs_early": 0.661
+   },
+   "spots_per_100": {
+    "bad_vs_good": 0.518,
+    "rotten_vs_early": 0.67
+   },
+   "brown_frac": {
+    "bad_vs_good": 0.556,
+    "rotten_vs_early": 0.848
+   },
+   "pale_frac": {
+    "bad_vs_good": 0.6,
+    "rotten_vs_early": 0.573
+   },
+   "texture": {
+    "bad_vs_good": 0.716,
+    "rotten_vs_early": 0.365
+   },
+   "L": {
+    "bad_vs_good": 0.483,
+    "rotten_vs_early": 0.454
+   },
+   "chroma": {
+    "bad_vs_good": 0.453,
+    "rotten_vs_early": 0.672
+   },
+   "a": {
+    "bad_vs_good": 0.682,
+    "rotten_vs_early": 0.969
+   },
+   "b": {
+    "bad_vs_good": 0.435,
+    "rotten_vs_early": 0.452
+   }
+  },
+  "test": {
+   "dark_frac": {
+    "bad_vs_good": 0.417,
+    "rotten_vs_early": 0.538
+   },
+   "very_dark_frac": {
+    "bad_vs_good": 0.45,
+    "rotten_vs_early": 0.409
+   },
+   "largest_dark": {
+    "bad_vs_good": 0.422,
+    "rotten_vs_early": 0.523
+   },
+   "spots_per_100": {
+    "bad_vs_good": 0.462,
+    "rotten_vs_early": 0.533
+   },
+   "brown_frac": {
+    "bad_vs_good": 0.516,
+    "rotten_vs_early": 0.674
+   },
+   "pale_frac": {
+    "bad_vs_good": 0.495,
+    "rotten_vs_early": 0.514
+   },
+   "texture": {
+    "bad_vs_good": 0.682,
+    "rotten_vs_early": 0.536
+   },
+   "L": {
+    "bad_vs_good": 0.403,
+    "rotten_vs_early": 0.285
+   },
+   "chroma": {
+    "bad_vs_good": 0.382,
+    "rotten_vs_early": 0.45
+   },
+   "a": {
+    "bad_vs_good": 0.625,
+    "rotten_vs_early": 0.911
+   },
+   "b": {
+    "bad_vs_good": 0.401,
+    "rotten_vs_early": 0.266
+   }
+  }
+ },
+ "pepper": {
+  "n": {
+   "good": 78,
+   "early": 69,
+   "bad": 0,
+   "rotten": 77
+  },
+  "val": {
+   "dark_frac": {
+    "bad_vs_good": 0.5,
+    "rotten_vs_early": 0.207
+   },
+   "very_dark_frac": {
+    "bad_vs_good": 0.514,
+    "rotten_vs_early": 0.471
+   },
+   "largest_dark": {
+    "bad_vs_good": 0.476,
+    "rotten_vs_early": 0.193
+   },
+   "spots_per_100": {
+    "bad_vs_good": 0.412,
+    "rotten_vs_early": 0.297
+   },
+   "brown_frac": {
+    "bad_vs_good": 0.78,
+    "rotten_vs_early": 0.721
+   },
+   "pale_frac": {
+    "bad_vs_good": 0.519,
+    "rotten_vs_early": 0.597
+   },
+   "texture": {
+    "bad_vs_good": 0.565,
+    "rotten_vs_early": 0.551
+   },
+   "L": {
+    "bad_vs_good": 0.605,
+    "rotten_vs_early": 0.464
+   },
+   "chroma": {
+    "bad_vs_good": 0.746,
+    "rotten_vs_early": 0.848
+   },
+   "a": {
+    "bad_vs_good": 0.842,
+    "rotten_vs_early": 0.999
+   },
+   "b": {
+    "bad_vs_good": 0.508,
+    "rotten_vs_early": 0.3
+   }
+  },
+  "test": {
+   "dark_frac": {
+    "bad_vs_good": 0.515,
+    "rotten_vs_early": 0.23
+   },
+   "very_dark_frac": {
+    "bad_vs_good": 0.542,
+    "rotten_vs_early": 0.438
+   },
+   "largest_dark": {
+    "bad_vs_good": 0.479,
+    "rotten_vs_early": 0.246
+   },
+   "spots_per_100": {
+    "bad_vs_good": 0.467,
+    "rotten_vs_early": 0.35
+   },
+   "brown_frac": {
+    "bad_vs_good": 0.78,
+    "rotten_vs_early": 0.75
+   },
+   "pale_frac": {
+    "bad_vs_good": 0.614,
+    "rotten_vs_early": 0.673
+   },
+   "texture": {
+    "bad_vs_good": 0.504,
+    "rotten_vs_early": 0.368
+   },
+   "L": {
+    "bad_vs_good": 0.555,
+    "rotten_vs_early": 0.608
+   },
+   "chroma": {
+    "bad_vs_good": 0.751,
+    "rotten_vs_early": 0.867
+   },
+   "a": {
+    "bad_vs_good": 0.88,
+    "rotten_vs_early": 0.998
+   },
+   "b": {
+    "bad_vs_good": 0.569,
+    "rotten_vs_early": 0.389
+   }
+  }
+ },
+ "pineapple": {
+  "n": {
+   "good": 166,
+   "early": 47,
+   "bad": 0,
+   "rotten": 141
+  },
+  "val": {
+   "dark_frac": {
+    "bad_vs_good": 0.464,
+    "rotten_vs_early": 0.476
+   },
+   "very_dark_frac": {
+    "bad_vs_good": 0.456,
+    "rotten_vs_early": 0.355
+   },
+   "largest_dark": {
+    "bad_vs_good": 0.41,
+    "rotten_vs_early": 0.489
+   },
+   "spots_per_100": {
+    "bad_vs_good": 0.56,
+    "rotten_vs_early": 0.513
+   },
+   "brown_frac": {
+    "bad_vs_good": 0.575,
+    "rotten_vs_early": 0.513
+   },
+   "pale_frac": {
+    "bad_vs_good": 0.359,
+    "rotten_vs_early": 0.444
+   },
+   "texture": {
+    "bad_vs_good": 0.623,
+    "rotten_vs_early": 0.586
+   },
+   "L": {
+    "bad_vs_good": 0.467,
+    "rotten_vs_early": 0.39
+   },
+   "chroma": {
+    "bad_vs_good": 0.304,
+    "rotten_vs_early": 0.312
+   },
+   "a": {
+    "bad_vs_good": 0.673,
+    "rotten_vs_early": 0.315
+   },
+   "b": {
+    "bad_vs_good": 0.321,
+    "rotten_vs_early": 0.409
+   }
+  },
+  "test": {
+   "dark_frac": {
+    "bad_vs_good": 0.498,
+    "rotten_vs_early": 0.586
+   },
+   "very_dark_frac": {
+    "bad_vs_good": 0.46,
+    "rotten_vs_early": 0.478
+   },
+   "largest_dark": {
+    "bad_vs_good": 0.427,
+    "rotten_vs_early": 0.551
+   },
+   "spots_per_100": {
+    "bad_vs_good": 0.588,
+    "rotten_vs_early": 0.486
+   },
+   "brown_frac": {
+    "bad_vs_good": 0.495,
+    "rotten_vs_early": 0.563
+   },
+   "pale_frac": {
+    "bad_vs_good": 0.321,
+    "rotten_vs_early": 0.279
+   },
+   "texture": {
+    "bad_vs_good": 0.614,
+    "rotten_vs_early": 0.576
+   },
+   "L": {
+    "bad_vs_good": 0.491,
+    "rotten_vs_early": 0.409
+   },
+   "chroma": {
+    "bad_vs_good": 0.333,
+    "rotten_vs_early": 0.22
+   },
+   "a": {
+    "bad_vs_good": 0.57,
+    "rotten_vs_early": 0.432
+   },
+   "b": {
+    "bad_vs_good": 0.337,
+    "rotten_vs_early": 0.261
+   }
+  }
+ },
+ "pomegranate": {
+  "n": {
+   "good": 2013,
+   "early": 0,
+   "bad": 315,
+   "rotten": 66
+  },
+  "val": {
+   "dark_frac": {
+    "bad_vs_good": 0.634,
+    "rotten_vs_early": null
+   },
+   "very_dark_frac": {
+    "bad_vs_good": 0.446,
+    "rotten_vs_early": null
+   },
+   "largest_dark": {
+    "bad_vs_good": 0.65,
+    "rotten_vs_early": null
+   },
+   "spots_per_100": {
+    "bad_vs_good": 0.75,
+    "rotten_vs_early": null
+   },
+   "brown_frac": {
+    "bad_vs_good": 0.779,
+    "rotten_vs_early": null
+   },
+   "pale_frac": {
+    "bad_vs_good": 0.698,
+    "rotten_vs_early": null
+   },
+   "texture": {
+    "bad_vs_good": 0.634,
+    "rotten_vs_early": null
+   },
+   "L": {
+    "bad_vs_good": 0.28,
+    "rotten_vs_early": null
+   },
+   "chroma": {
+    "bad_vs_good": 0.551,
+    "rotten_vs_early": null
+   },
+   "a": {
+    "bad_vs_good": 0.576,
+    "rotten_vs_early": null
+   },
+   "b": {
+    "bad_vs_good": 0.622,
+    "rotten_vs_early": null
+   }
+  },
+  "test": {
+   "dark_frac": {
+    "bad_vs_good": 0.682,
+    "rotten_vs_early": null
+   },
+   "very_dark_frac": {
+    "bad_vs_good": 0.513,
+    "rotten_vs_early": null
+   },
+   "largest_dark": {
+    "bad_vs_good": 0.709,
+    "rotten_vs_early": null
+   },
+   "spots_per_100": {
+    "bad_vs_good": 0.778,
+    "rotten_vs_early": null
+   },
+   "brown_frac": {
+    "bad_vs_good": 0.834,
+    "rotten_vs_early": null
+   },
+   "pale_frac": {
+    "bad_vs_good": 0.733,
+    "rotten_vs_early": null
+   },
+   "texture": {
+    "bad_vs_good": 0.547,
+    "rotten_vs_early": null
+   },
+   "L": {
+    "bad_vs_good": 0.424,
+    "rotten_vs_early": null
+   },
+   "chroma": {
+    "bad_vs_good": 0.722,
+    "rotten_vs_early": null
+   },
+   "a": {
+    "bad_vs_good": 0.67,
+    "rotten_vs_early": null
+   },
+   "b": {
+    "bad_vs_good": 0.768,
+    "rotten_vs_early": null
+   }
+  }
+ },
+ "strawberry": {
+  "n": {
+   "good": 461,
+   "early": 0,
+   "bad": 200,
+   "rotten": 57
+  },
+  "val": {
+   "dark_frac": {
+    "bad_vs_good": 0.552,
+    "rotten_vs_early": null
+   },
+   "very_dark_frac": {
+    "bad_vs_good": 0.568,
+    "rotten_vs_early": null
+   },
+   "largest_dark": {
+    "bad_vs_good": 0.525,
+    "rotten_vs_early": null
+   },
+   "spots_per_100": {
+    "bad_vs_good": 0.661,
+    "rotten_vs_early": null
+   },
+   "brown_frac": {
+    "bad_vs_good": 0.598,
+    "rotten_vs_early": null
+   },
+   "pale_frac": {
+    "bad_vs_good": 0.519,
+    "rotten_vs_early": null
+   },
+   "texture": {
+    "bad_vs_good": 0.706,
+    "rotten_vs_early": null
+   },
+   "L": {
+    "bad_vs_good": 0.503,
+    "rotten_vs_early": null
+   },
+   "chroma": {
+    "bad_vs_good": 0.507,
+    "rotten_vs_early": null
+   },
+   "a": {
+    "bad_vs_good": 0.529,
+    "rotten_vs_early": null
+   },
+   "b": {
+    "bad_vs_good": 0.446,
+    "rotten_vs_early": null
+   }
+  },
+  "test": {
+   "dark_frac": {
+    "bad_vs_good": 0.625,
+    "rotten_vs_early": null
+   },
+   "very_dark_frac": {
+    "bad_vs_good": 0.583,
+    "rotten_vs_early": null
+   },
+   "largest_dark": {
+    "bad_vs_good": 0.577,
+    "rotten_vs_early": null
+   },
+   "spots_per_100": {
+    "bad_vs_good": 0.873,
+    "rotten_vs_early": null
+   },
+   "brown_frac": {
+    "bad_vs_good": 0.741,
+    "rotten_vs_early": null
+   },
+   "pale_frac": {
+    "bad_vs_good": 0.46,
+    "rotten_vs_early": null
+   },
+   "texture": {
+    "bad_vs_good": 0.679,
+    "rotten_vs_early": null
+   },
+   "L": {
+    "bad_vs_good": 0.707,
+    "rotten_vs_early": null
+   },
+   "chroma": {
+    "bad_vs_good": 0.718,
+    "rotten_vs_early": null
+   },
+   "a": {
+    "bad_vs_good": 0.618,
+    "rotten_vs_early": null
+   },
+   "b": {
+    "bad_vs_good": 0.889,
+    "rotten_vs_early": null
+   }
+  }
+ },
+ "tomato": {
+  "n": {
+   "good": 706,
+   "early": 386,
+   "bad": 300,
+   "rotten": 144
+  },
+  "val": {
+   "dark_frac": {
+    "bad_vs_good": 0.663,
+    "rotten_vs_early": 0.484
+   },
+   "very_dark_frac": {
+    "bad_vs_good": 0.559,
+    "rotten_vs_early": 0.467
+   },
+   "largest_dark": {
+    "bad_vs_good": 0.659,
+    "rotten_vs_early": 0.457
+   },
+   "spots_per_100": {
+    "bad_vs_good": 0.63,
+    "rotten_vs_early": 0.491
+   },
+   "brown_frac": {
+    "bad_vs_good": 0.696,
+    "rotten_vs_early": 0.46
+   },
+   "pale_frac": {
+    "bad_vs_good": 0.495,
+    "rotten_vs_early": 0.566
+   },
+   "texture": {
+    "bad_vs_good": 0.82,
+    "rotten_vs_early": 0.847
+   },
+   "L": {
+    "bad_vs_good": 0.613,
+    "rotten_vs_early": 0.22
+   },
+   "chroma": {
+    "bad_vs_good": 0.608,
+    "rotten_vs_early": 0.218
+   },
+   "a": {
+    "bad_vs_good": 0.618,
+    "rotten_vs_early": 0.378
+   },
+   "b": {
+    "bad_vs_good": 0.617,
+    "rotten_vs_early": 0.153
+   }
+  },
+  "test": {
+   "dark_frac": {
+    "bad_vs_good": 0.561,
+    "rotten_vs_early": 0.439
+   },
+   "very_dark_frac": {
+    "bad_vs_good": 0.481,
+    "rotten_vs_early": 0.449
+   },
+   "largest_dark": {
+    "bad_vs_good": 0.551,
+    "rotten_vs_early": 0.421
+   },
+   "spots_per_100": {
+    "bad_vs_good": 0.548,
+    "rotten_vs_early": 0.472
+   },
+   "brown_frac": {
+    "bad_vs_good": 0.564,
+    "rotten_vs_early": 0.422
+   },
+   "pale_frac": {
+    "bad_vs_good": 0.464,
+    "rotten_vs_early": 0.688
+   },
+   "texture": {
+    "bad_vs_good": 0.847,
+    "rotten_vs_early": 0.772
+   },
+   "L": {
+    "bad_vs_good": 0.603,
+    "rotten_vs_early": 0.311
+   },
+   "chroma": {
+    "bad_vs_good": 0.379,
+    "rotten_vs_early": 0.247
+   },
+   "a": {
+    "bad_vs_good": 0.384,
+    "rotten_vs_early": 0.364
+   },
+   "b": {
+    "bad_vs_good": 0.373,
+    "rotten_vs_early": 0.195
+   }
+  }
+ },
+ "_within_dataset": {
+  "apple|apple_good_bad|test": {
+   "n_good": 41,
+   "n_bad": 159,
+   "dark_frac": 0.325,
+   "very_dark_frac": 0.46,
+   "largest_dark": 0.346,
+   "spots_per_100": 0.302,
+   "brown_frac": 0.323,
+   "pale_frac": 0.306
+  },
+  "apple|apple_good_bad|val": {
+   "n_good": 133,
+   "n_bad": 307,
+   "dark_frac": 0.491,
+   "very_dark_frac": 0.43,
+   "largest_dark": 0.494,
+   "spots_per_100": 0.557,
+   "brown_frac": 0.484,
+   "pale_frac": 0.449
+  },
+  "apple|fresh_rotten_mendeley_bd|test": {
+   "n_good": 17,
+   "n_bad": 23,
+   "dark_frac": 0.55,
+   "very_dark_frac": 0.386,
+   "largest_dark": 0.558,
+   "spots_per_100": 0.486,
+   "brown_frac": 0.564,
+   "pale_frac": 0.834
+  },
+  "apple|fresh_rotten_mendeley_bd|val": {
+   "n_good": 46,
+   "n_bad": 42,
+   "dark_frac": 0.729,
+   "very_dark_frac": 0.469,
+   "largest_dark": 0.73,
+   "spots_per_100": 0.696,
+   "brown_frac": 0.756,
+   "pale_frac": 0.833
+  },
+  "apple|fruitnet_indian|test": {
+   "n_good": 172,
+   "n_bad": 54,
+   "dark_frac": 0.408,
+   "very_dark_frac": 0.357,
+   "largest_dark": 0.413,
+   "spots_per_100": 0.579,
+   "brown_frac": 0.521,
+   "pale_frac": 0.505
+  },
+  "apple|fruitnet_indian|val": {
+   "n_good": 376,
+   "n_bad": 121,
+   "dark_frac": 0.42,
+   "very_dark_frac": 0.378,
+   "largest_dark": 0.443,
+   "spots_per_100": 0.536,
+   "brown_frac": 0.529,
+   "pale_frac": 0.475
+  },
+  "banana|agrifreshnet|test": {
+   "n_good": 40,
+   "n_bad": 116,
+   "dark_frac": 0.397,
+   "very_dark_frac": 0.223,
+   "largest_dark": 0.353,
+   "spots_per_100": 0.444,
+   "brown_frac": 0.289,
+   "pale_frac": 0.491
+  },
+  "banana|agrifreshnet|val": {
+   "n_good": 59,
+   "n_bad": 97,
+   "dark_frac": 0.556,
+   "very_dark_frac": 0.439,
+   "largest_dark": 0.53,
+   "spots_per_100": 0.476,
+   "brown_frac": 0.426,
+   "pale_frac": 0.501
+  },
+  "banana|fresh_rotten_mendeley_bd|val": {
+   "n_good": 40,
+   "n_bad": 45,
+   "dark_frac": 0.198,
+   "very_dark_frac": 0.101,
+   "largest_dark": 0.168,
+   "spots_per_100": 0.193,
+   "brown_frac": 0.059,
+   "pale_frac": 0.673
+  },
+  "banana|fruit_inspection_6ps|test": {
+   "n_good": 101,
+   "n_bad": 99,
+   "dark_frac": 0.238,
+   "very_dark_frac": 0.309,
+   "largest_dark": 0.243,
+   "spots_per_100": 0.169,
+   "brown_frac": 0.086,
+   "pale_frac": 0.356
+  },
+  "banana|fruit_inspection_6ps|val": {
+   "n_good": 199,
+   "n_bad": 201,
+   "dark_frac": 0.575,
+   "very_dark_frac": 0.431,
+   "largest_dark": 0.579,
+   "spots_per_100": 0.442,
+   "brown_frac": 0.601,
+   "pale_frac": 0.558
+  },
+  "cucumber|agrifreshnet|test": {
+   "n_good": 56,
+   "n_bad": 96,
+   "dark_frac": 0.256,
+   "very_dark_frac": 0.383,
+   "largest_dark": 0.248,
+   "spots_per_100": 0.392,
+   "brown_frac": 0.518,
+   "pale_frac": 0.467
+  },
+  "cucumber|agrifreshnet|val": {
+   "n_good": 55,
+   "n_bad": 97,
+   "dark_frac": 0.211,
+   "very_dark_frac": 0.413,
+   "largest_dark": 0.198,
+   "spots_per_100": 0.301,
+   "brown_frac": 0.449,
+   "pale_frac": 0.554
+  },
+  "grape|fresh_rotten_mendeley_bd|val": {
+   "n_good": 44,
+   "n_bad": 40,
+   "dark_frac": 0.458,
+   "very_dark_frac": 0.534,
+   "largest_dark": 0.533,
+   "spots_per_100": 0.516,
+   "brown_frac": 0.472,
+   "pale_frac": 0.422
+  },
+  "grape|grapenet|test": {
+   "n_good": 1400,
+   "n_bad": 1150,
+   "dark_frac": 0.368,
+   "very_dark_frac": 0.455,
+   "largest_dark": 0.309,
+   "spots_per_100": 0.387,
+   "brown_frac": 0.46,
+   "pale_frac": 0.422
+  },
+  "grape|grapenet|val": {
+   "n_good": 3450,
+   "n_bad": 2150,
+   "dark_frac": 0.343,
+   "very_dark_frac": 0.342,
+   "largest_dark": 0.33,
+   "spots_per_100": 0.43,
+   "brown_frac": 0.443,
+   "pale_frac": 0.47
+  },
+  "guava|fresh_rotten_mendeley_bd|test": {
+   "n_good": 22,
+   "n_bad": 18,
+   "dark_frac": 0.323,
+   "very_dark_frac": 0.317,
+   "largest_dark": 0.301,
+   "spots_per_100": 0.404,
+   "brown_frac": 0.639,
+   "pale_frac": 0.521
+  },
+  "guava|fresh_rotten_mendeley_bd|val": {
+   "n_good": 40,
+   "n_bad": 48,
+   "dark_frac": 0.355,
+   "very_dark_frac": 0.467,
+   "largest_dark": 0.357,
+   "spots_per_100": 0.34,
+   "brown_frac": 0.589,
+   "pale_frac": 0.524
+  },
+  "guava|fruitnet_indian|test": {
+   "n_good": 189,
+   "n_bad": 38,
+   "dark_frac": 0.38,
+   "very_dark_frac": 0.34,
+   "largest_dark": 0.445,
+   "spots_per_100": 0.659,
+   "brown_frac": 0.68,
+   "pale_frac": 0.587
+  },
+  "guava|fruitnet_indian|val": {
+   "n_good": 413,
+   "n_bad": 86,
+   "dark_frac": 0.419,
+   "very_dark_frac": 0.383,
+   "largest_dark": 0.498,
+   "spots_per_100": 0.625,
+   "brown_frac": 0.733,
+   "pale_frac": 0.62
+  },
+  "lemon|lemon_softwaremill|test": {
+   "n_good": 105,
+   "n_bad": 47,
+   "dark_frac": 0.719,
+   "very_dark_frac": 0.604,
+   "largest_dark": 0.655,
+   "spots_per_100": 0.706,
+   "brown_frac": 0.76,
+   "pale_frac": 0.454
+  },
+  "lemon|lemon_softwaremill|val": {
+   "n_good": 185,
+   "n_bad": 147,
+   "dark_frac": 0.692,
+   "very_dark_frac": 0.73,
+   "largest_dark": 0.649,
+   "spots_per_100": 0.619,
+   "brown_frac": 0.706,
+   "pale_frac": 0.576
+  },
+  "lemon|lemon_varieties|test": {
+   "n_good": 92,
+   "n_bad": 100,
+   "dark_frac": 0.562,
+   "very_dark_frac": 0.777,
+   "largest_dark": 0.464,
+   "spots_per_100": 0.753,
+   "brown_frac": 0.858,
+   "pale_frac": 0.707
+  },
+  "lime|fruit_inspection_6ps|test": {
+   "n_good": 99,
+   "n_bad": 101,
+   "dark_frac": 0.907,
+   "very_dark_frac": 0.678,
+   "largest_dark": 0.906,
+   "spots_per_100": 0.573,
+   "brown_frac": 0.745,
+   "pale_frac": 0.29
+  },
+  "lime|fruit_inspection_6ps|val": {
+   "n_good": 201,
+   "n_bad": 199,
+   "dark_frac": 0.496,
+   "very_dark_frac": 0.582,
+   "largest_dark": 0.469,
+   "spots_per_100": 0.434,
+   "brown_frac": 0.661,
+   "pale_frac": 0.6
+  },
+  "lime|fruitnet_indian|test": {
+   "n_good": 71,
+   "n_bad": 200,
+   "dark_frac": 0.267,
+   "very_dark_frac": 0.225,
+   "largest_dark": 0.309,
+   "spots_per_100": 0.469,
+   "brown_frac": 0.526,
+   "pale_frac": 0.48
+  },
+  "lime|fruitnet_indian|val": {
+   "n_good": 121,
+   "n_bad": 344,
+   "dark_frac": 0.235,
+   "very_dark_frac": 0.233,
+   "largest_dark": 0.268,
+   "spots_per_100": 0.459,
+   "brown_frac": 0.507,
+   "pale_frac": 0.364
+  },
+  "mango|fruit_inspection_6ps|val": {
+   "n_good": 300,
+   "n_bad": 100,
+   "dark_frac": 0.522,
+   "very_dark_frac": 0.482,
+   "largest_dark": 0.514,
+   "spots_per_100": 0.553,
+   "brown_frac": 0.49,
+   "pale_frac": 0.79
+  },
+  "orange|agrifreshnet|test": {
+   "n_good": 62,
+   "n_bad": 102,
+   "dark_frac": 0.376,
+   "very_dark_frac": 0.429,
+   "largest_dark": 0.398,
+   "spots_per_100": 0.372,
+   "brown_frac": 0.488,
+   "pale_frac": 0.472
+  },
+  "orange|agrifreshnet|val": {
+   "n_good": 71,
+   "n_bad": 93,
+   "dark_frac": 0.384,
+   "very_dark_frac": 0.371,
+   "largest_dark": 0.416,
+   "spots_per_100": 0.34,
+   "brown_frac": 0.458,
+   "pale_frac": 0.569
+  },
+  "orange|fresh_rotten_mendeley_bd|val": {
+   "n_good": 42,
+   "n_bad": 45,
+   "dark_frac": 0.595,
+   "very_dark_frac": 0.479,
+   "largest_dark": 0.612,
+   "spots_per_100": 0.476,
+   "brown_frac": 0.613,
+   "pale_frac": 0.786
+  },
+  "orange|fruit_inspection_6ps|test": {
+   "n_good": 100,
+   "n_bad": 100,
+   "dark_frac": 0.462,
+   "very_dark_frac": 0.49,
+   "largest_dark": 0.46,
+   "spots_per_100": 0.557,
+   "brown_frac": 0.542,
+   "pale_frac": 0.54
+  },
+  "orange|fruit_inspection_6ps|val": {
+   "n_good": 200,
+   "n_bad": 200,
+   "dark_frac": 0.543,
+   "very_dark_frac": 0.554,
+   "largest_dark": 0.53,
+   "spots_per_100": 0.621,
+   "brown_frac": 0.567,
+   "pale_frac": 0.768
+  },
+  "orange|fruitnet_indian|test": {
+   "n_good": 138,
+   "n_bad": 90,
+   "dark_frac": 0.478,
+   "very_dark_frac": 0.54,
+   "largest_dark": 0.482,
+   "spots_per_100": 0.576,
+   "brown_frac": 0.651,
+   "pale_frac": 0.4
+  },
+  "orange|fruitnet_indian|val": {
+   "n_good": 312,
+   "n_bad": 192,
+   "dark_frac": 0.468,
+   "very_dark_frac": 0.582,
+   "largest_dark": 0.472,
+   "spots_per_100": 0.58,
+   "brown_frac": 0.648,
+   "pale_frac": 0.452
+  },
+  "pepper|vegnet_quality|test": {
+   "n_good": 40,
+   "n_bad": 72,
+   "dark_frac": 0.515,
+   "very_dark_frac": 0.542,
+   "largest_dark": 0.479,
+   "spots_per_100": 0.467,
+   "brown_frac": 0.78,
+   "pale_frac": 0.614
+  },
+  "pepper|vegnet_quality|val": {
+   "n_good": 38,
+   "n_bad": 74,
+   "dark_frac": 0.5,
+   "very_dark_frac": 0.514,
+   "largest_dark": 0.476,
+   "spots_per_100": 0.412,
+   "brown_frac": 0.78,
+   "pale_frac": 0.519
+  },
+  "pineapple|agrifreshnet|test": {
+   "n_good": 84,
+   "n_bad": 93,
+   "dark_frac": 0.498,
+   "very_dark_frac": 0.46,
+   "largest_dark": 0.427,
+   "spots_per_100": 0.588,
+   "brown_frac": 0.495,
+   "pale_frac": 0.321
+  },
+  "pineapple|agrifreshnet|val": {
+   "n_good": 82,
+   "n_bad": 95,
+   "dark_frac": 0.464,
+   "very_dark_frac": 0.456,
+   "largest_dark": 0.41,
+   "spots_per_100": 0.56,
+   "brown_frac": 0.575,
+   "pale_frac": 0.359
+  },
+  "pomegranate|fresh_rotten_mendeley_bd|test": {
+   "n_good": 22,
+   "n_bad": 17,
+   "dark_frac": 0.147,
+   "very_dark_frac": 0.417,
+   "largest_dark": 0.182,
+   "spots_per_100": 0.309,
+   "brown_frac": 0.162,
+   "pale_frac": 0.564
+  },
+  "pomegranate|fresh_rotten_mendeley_bd|val": {
+   "n_good": 39,
+   "n_bad": 49,
+   "dark_frac": 0.235,
+   "very_dark_frac": 0.458,
+   "largest_dark": 0.24,
+   "spots_per_100": 0.481,
+   "brown_frac": 0.238,
+   "pale_frac": 0.668
+  },
+  "pomegranate|fruitnet_indian|test": {
+   "n_good": 605,
+   "n_bad": 103,
+   "dark_frac": 0.752,
+   "very_dark_frac": 0.545,
+   "largest_dark": 0.772,
+   "spots_per_100": 0.847,
+   "brown_frac": 0.882,
+   "pale_frac": 0.729
+  },
+  "pomegranate|fruitnet_indian|val": {
+   "n_good": 1347,
+   "n_bad": 212,
+   "dark_frac": 0.689,
+   "very_dark_frac": 0.463,
+   "largest_dark": 0.696,
+   "spots_per_100": 0.819,
+   "brown_frac": 0.826,
+   "pale_frac": 0.673
+  },
+  "strawberry|fresh_rotten_mendeley_bd|test": {
+   "n_good": 21,
+   "n_bad": 16,
+   "dark_frac": 0.574,
+   "very_dark_frac": 0.5,
+   "largest_dark": 0.576,
+   "spots_per_100": 0.601,
+   "brown_frac": 0.504,
+   "pale_frac": 0.548
+  },
+  "strawberry|fresh_rotten_mendeley_bd|val": {
+   "n_good": 40,
+   "n_bad": 41,
+   "dark_frac": 0.553,
+   "very_dark_frac": 0.512,
+   "largest_dark": 0.542,
+   "spots_per_100": 0.58,
+   "brown_frac": 0.522,
+   "pale_frac": 0.452
+  },
+  "strawberry|fruit_inspection_6ps|test": {
+   "n_good": 101,
+   "n_bad": 99,
+   "dark_frac": 0.611,
+   "very_dark_frac": 0.594,
+   "largest_dark": 0.549,
+   "spots_per_100": 0.928,
+   "brown_frac": 0.776,
+   "pale_frac": 0.489
+  },
+  "strawberry|fruit_inspection_6ps|val": {
+   "n_good": 299,
+   "n_bad": 101,
+   "dark_frac": 0.575,
+   "very_dark_frac": 0.6,
+   "largest_dark": 0.551,
+   "spots_per_100": 0.704,
+   "brown_frac": 0.656,
+   "pale_frac": 0.443
+  },
+  "tomato|agrifreshnet|test": {
+   "n_good": 104,
+   "n_bad": 142,
+   "dark_frac": 0.477,
+   "very_dark_frac": 0.489,
+   "largest_dark": 0.454,
+   "spots_per_100": 0.502,
+   "brown_frac": 0.486,
+   "pale_frac": 0.572
+  },
+  "tomato|agrifreshnet|val": {
+   "n_good": 101,
+   "n_bad": 145,
+   "dark_frac": 0.393,
+   "very_dark_frac": 0.448,
+   "largest_dark": 0.371,
+   "spots_per_100": 0.414,
+   "brown_frac": 0.41,
+   "pale_frac": 0.526
+  },
+  "tomato|fruit_inspection_6ps|val": {
+   "n_good": 299,
+   "n_bad": 101,
+   "dark_frac": 0.9,
+   "very_dark_frac": 0.643,
+   "largest_dark": 0.898,
+   "spots_per_100": 0.817,
+   "brown_frac": 0.932,
+   "pale_frac": 0.32
+  },
+  "tomato|vegnet_quality|test": {
+   "n_good": 102,
+   "n_bad": 120,
+   "dark_frac": 0.605,
+   "very_dark_frac": 0.5,
+   "largest_dark": 0.603,
+   "spots_per_100": 0.6,
+   "brown_frac": 0.604,
+   "pale_frac": 0.78
+  },
+  "tomato|vegnet_quality|val": {
+   "n_good": 99,
+   "n_bad": 123,
+   "dark_frac": 0.577,
+   "very_dark_frac": 0.5,
+   "largest_dark": 0.581,
+   "spots_per_100": 0.576,
+   "brown_frac": 0.573,
+   "pale_frac": 0.774
+  }
+ }
+}

@@ -1547,6 +1547,102 @@
           }
         }
       ]
+    },
+    "mango_dhds": {
+      "adapter": "path_rules",
+      "verified_against_download": true,
+      "verified_note": "Mendeley b4nrw5hyyc v1 (CC BY 4.0). '<Class>/<Prefix><n>.jpg', 256 px smartphone photos of single mangoes on white. Visual audit 2026-10-03: Healthy = clean skin (green to yellow); Scab = small dark freckles; Bacterial Canker = dark cracked lesions; Anthracnose = black sunken spots; Stem End Rot = black rot spreading from the stem. Same background in every class (no background shortcut).",
+      "split_by_metadata_group": true,
+      "group_pattern": "(?P<group>[^/]+/[A-Za-z]+\\d*?)\\d\\.jpg$",
+      "rules": [
+        {
+          "pattern": ".",
+          "labels": {
+            "produce": "mango"
+          }
+        },
+        {
+          "pattern": "^Healthy/",
+          "labels": {
+            "freshness": "fresh",
+            "visual_spoilage": "none"
+          }
+        },
+        {
+          "pattern": "^Scab/",
+          "labels": {
+            "freshness": "declining",
+            "visual_spoilage": "mild"
+          }
+        },
+        {
+          "pattern": "^Bacterial Canker/",
+          "labels": {
+            "freshness": [
+              "declining",
+              "spoiled"
+            ],
+            "visual_spoilage": [
+              "mild",
+              "severe"
+            ]
+          }
+        },
+        {
+          "pattern": "^(Anthracnose|Stem End Rot)/",
+          "labels": {
+            "freshness": "spoiled",
+            "visual_spoilage": "severe"
+          }
+        }
+      ]
+    },
+    "efiqd": {
+      "adapter": "path_rules",
+      "verified_against_download": true,
+      "verified_note": "Mendeley shs5b4z32n v1 (CC BY 4.0). '<Good|Bad>_Quality_Fruits/<Fruit>/EF_<n>.jpg', resized to 512 px at fetch. Visual audit 2026-10-03: Good = clean whole fruit; Bad = shrivelled, collapsed, mouldy or rotten fruit; single fruit on cloth/tables, mixed sun and indoor light; the same fruit appears on several cloths in consecutive numbers. Background cloths differ in part between Good and Bad, so only a per-type bias is fitted on this source (scripts/add_condition_types.py), never weights. Mangosteen, rambutan, dragon fruit not extracted (not in taxonomy). Green apple used only as an independent test source.",
+      "split_by_metadata_group": true,
+      "group_pattern": "(?P<group>[^/]+/[^/]+/EF_\\d*?)\\d\\.jpg$",
+      "rules": [
+        {
+          "pattern": "/Avocado/",
+          "labels": {
+            "produce": "avocado"
+          }
+        },
+        {
+          "pattern": "/Golden_kiwi/",
+          "labels": {
+            "produce": "kiwi"
+          }
+        },
+        {
+          "pattern": "/Green_apple/",
+          "labels": {
+            "produce": "apple"
+          }
+        },
+        {
+          "pattern": "^Good_Quality_Fruits/",
+          "labels": {
+            "freshness": "fresh",
+            "visual_spoilage": "none"
+          }
+        },
+        {
+          "pattern": "^Bad_Quality_Fruits/",
+          "labels": {
+            "freshness": [
+              "declining",
+              "spoiled"
+            ],
+            "visual_spoilage": [
+              "mild",
+              "severe"
+            ]
+          }
+        }
+      ]
     }
   }
 }

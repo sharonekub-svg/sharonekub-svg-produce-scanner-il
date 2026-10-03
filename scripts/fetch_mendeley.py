@@ -72,7 +72,7 @@ def download(url: str, dest: Path, sha256: str, tries: int = 4) -> bool:
     return False
 
 
-def extract_zip(zp: Path, out: Path, exts: list[str], max_side: int, depth: int = 0) -> int:
+def extract_zip(zp: Path, out: Path, exts: list[str], max_side: int, depth: int = 0, include: list[str] | None = None) -> int:
     """Extract wanted members; images are resized on the way out. Nested .zip members (common on
     Mendeley: one archive per class) are extracted to disk, recursed into, then deleted."""
     import zipfile
@@ -84,12 +84,14 @@ def extract_zip(zp: Path, out: Path, exts: list[str], max_side: int, depth: int 
             if not rel.parts:
                 continue
             suf = rel.suffix.lower()
+            if include and not any(k in m for k in include):
+                continue
             if suf == ".zip" and depth < 3:
                 inner = out / rel
                 inner.parent.mkdir(parents=True, exist_ok=True)
                 with z.open(m) as src, open(inner, "wb") as dst:
                     shutil.copyfileobj(src, dst, 1 << 20)
-                n += extract_zip(inner, inner.with_suffix(""), exts, max_side, depth + 1)
+                n += extract_zip(inner, inner.with_suffix(""), exts, max_side, depth + 1, include)
                 inner.unlink()
             elif suf in exts:
                 dest = out / rel
@@ -121,6 +123,9 @@ def main() -> int:
     ap.add_argument("--max-side", type=int, default=1024, help="with --zip: resize images on extraction (0 = keep)")
     ap.add_argument("--zip", action="store_true",
                     help="use Mendeley's 'Download All' archive (the file listing API caps at 1,000 files per folder)")
+    ap.add_argument("--file-zips", action="store_true",
+                    help="download each listed .zip file (SHA-256 checked against the API), extract, delete")
+    ap.add_argument("--include", nargs="*", help="only zip members whose path contains one of these strings")
     a = ap.parse_args()
 
     meta = get_json(f"{API}/{a.dataset}?version={a.version}")
@@ -145,6 +150,28 @@ def main() -> int:
         prov["files_extracted"] = members
         (a.out / ".provenance.json").write_text(json.dumps(prov, indent=2, ensure_ascii=False))
         print(f"{meta.get('name')} | {lic} | zip: {members} files extracted", flush=True)
+        return 0
+    if a.file_zips:
+        n, shas = 0, {}
+        for p, f in walk(a.dataset, a.version):
+            if p.suffix.lower() != ".zip":
+                continue
+            zp, c = a.out / p.name, f["content_details"]
+            h = hashlib.sha256()
+            with urllib.request.urlopen(urllib.request.Request(c["download_url"], headers=UA), timeout=600) as r, open(zp, "wb") as fh:
+                while chunk := r.read(1 << 22):
+                    h.update(chunk); fh.write(chunk)
+            if h.hexdigest() != c["sha256_hash"]:
+                zp.unlink()
+                print(f"sha256 mismatch: {p}", file=sys.stderr)
+                return 1
+            shas[str(p)] = c["sha256_hash"]
+            n += extract_zip(zp, a.out, a.ext, a.max_side, include=a.include)
+            zp.unlink()
+            print(f"  {p}: sha256 ok, {n} files so far", flush=True)
+        prov["zip_files_sha256"], prov["include"], prov["files_extracted"] = shas, a.include, n
+        (a.out / ".provenance.json").write_text(json.dumps(prov, indent=2, ensure_ascii=False))
+        print(f"{meta.get('name')} | {lic} | {n} files extracted", flush=True)
         return 0
     files = [(p, f) for p, f in walk(a.dataset, a.version) if p.suffix.lower() in a.ext]
     total = sum(f["size"] for _, f in files)

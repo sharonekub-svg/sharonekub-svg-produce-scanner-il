@@ -1,5 +1,5 @@
 {
-  "model_id": "siglip2_v0.15@cd481aa6b742",
+  "model_id": "siglip2_v0.17@3aeebd89d9ff",
   "datasets": [
     {
       "dataset_id": "apple_good_bad",
@@ -143,6 +143,22 @@
       "license": "CC BY 4.0",
       "url": "https://data.mendeley.com/datasets/6nxnjbn9w6/1",
       "attribution": "Mendeley Data 6nxnjbn9w6 v1 (VegNet, Data in Brief 2022)",
+      "credits_url": null
+    },
+    {
+      "dataset_id": "mango_dhds",
+      "name": "MangoDHDS: A Dataset of Diseased and Healthy Mangoes of 1.5 K Images",
+      "license": "CC BY 4.0",
+      "url": "https://data.mendeley.com/datasets/b4nrw5hyyc/1",
+      "attribution": "Barhate P., Barhate B., Joshi M. MangoDHDS, Mendeley Data, doi:10.17632/b4nrw5hyyc.1 (India)",
+      "credits_url": null
+    },
+    {
+      "dataset_id": "efiqd",
+      "name": "Exotic Fruits Image Quality Dataset (EFIQD)",
+      "license": "CC BY 4.0",
+      "url": "https://data.mendeley.com/datasets/shs5b4z32n/1",
+      "attribution": "Shah B., Suryawanshi Y., Patil K. EFIQD, Mendeley Data, doi:10.17632/shs5b4z32n.1",
       "credits_url": null
     }
   ]

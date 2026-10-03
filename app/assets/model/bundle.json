@@ -1,7 +1,7 @@
 {
  "bundle_version": 2,
  "backbone": "siglip2",
- "model_id": "siglip2_v0.16@65dbef74f5ce",
+ "model_id": "siglip2_v0.17@3aeebd89d9ff",
  "created_at": "2026-09-30T20:34:49.229518+00:00",
  "input": {
   "size": 224,
@@ -91,7 +91,7 @@
   "head_min_prob": 0.55,
   "spoiled_alert_prob": 0.4,
   "condition_abstain": {
-   "apple": 0.91,
+   "apple": 0.87,
    "banana": 0.68,
    "grape": 0.63,
    "guava": 0.56,
@@ -108,7 +108,7 @@
   "condition_max_p": 0.858,
   "condition_max_p_graded": 0.748,
   "condition_max_p_type": {
-   "apple": 0.858,
+   "apple": 0.763,
    "grape": 0.858,
    "strawberry": 0.858
   }
@@ -607,7 +607,9 @@
   "agrifreshnet",
   "banana_id",
   "banana_image_bd",
-  "vegnet_quality"
+  "vegnet_quality",
+  "mango_dhds",
+  "efiqd"
  ],
  "files": {
   "vision.onnx.00": {
@@ -617,7 +619,7 @@
    "sha256": "843945c3ddaaad33f363201558f537eadbdab7cbc4060f2532f9cf1536114718"
   },
   "heads.npz": {
-   "sha256": "65dbef74f5ced44e8b7c7f7d823809c8044c9d65d57d79158e980c3e17eead6c"
+   "sha256": "3aeebd89d9fff954c9baf567000f1090c878de005a769e029fb6db463d013d92"
   }
  },
  "condition": {
@@ -647,7 +649,11 @@
    "apple",
    "grape",
    "strawberry"
-  ]
+  ],
+  "v4_types": [
+   "apple"
+  ],
+  "v4_source": "scripts/train_condition_v4.py (docs/quality-scoring.md §14)"
  },
  "produce_head": {
   "source": "scripts/finetune_produce_head.py",
