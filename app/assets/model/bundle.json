@@ -1,7 +1,7 @@
 {
  "bundle_version": 2,
  "backbone": "siglip2",
- "model_id": "siglip2_v0.15@cd481aa6b742",
+ "model_id": "siglip2_v0.16@65dbef74f5ce",
  "created_at": "2026-09-30T20:34:49.229518+00:00",
  "input": {
   "size": 224,
@@ -78,7 +78,7 @@
   ]
  },
  "temperatures": {
-  "produce": 1.210110619172773,
+  "produce": 1.2063,
   "ripeness": 1.1204,
   "freshness": 1.1151244319798383,
   "visual_spoilage": 0.3625004048130315,
@@ -617,7 +617,7 @@
    "sha256": "843945c3ddaaad33f363201558f537eadbdab7cbc4060f2532f9cf1536114718"
   },
   "heads.npz": {
-   "sha256": "cd481aa6b7429b52a3133a08e296974b5d04bc5bb32553104db26f495c67f830"
+   "sha256": "65dbef74f5ced44e8b7c7f7d823809c8044c9d65d57d79158e980c3e17eead6c"
   }
  },
  "condition": {
@@ -648,5 +648,9 @@
    "grape",
    "strawberry"
   ]
+ },
+ "produce_head": {
+  "source": "scripts/finetune_produce_head.py",
+  "lambda": 1e-06
  }
 }

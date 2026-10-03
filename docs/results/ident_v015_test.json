@@ -1,0 +1,110 @@
+{
+ "_cond_bad": {
+  "n": 2936,
+  "top1": 0.727,
+  "answered": 0.514,
+  "acc_when_answered": 0.93
+ },
+ "_cond_good": {
+  "n": 6831,
+  "top1": 0.877,
+  "answered": 0.804,
+  "acc_when_answered": 0.978
+ },
+ "agrifreshnet": {
+  "n": 895,
+  "top1": 0.77,
+  "answered": 0.676,
+  "acc_when_answered": 0.917
+ },
+ "apple_good_bad": {
+  "n": 200,
+  "top1": 0.98,
+  "answered": 0.94,
+  "acc_when_answered": 1.0
+ },
+ "banana_id": {
+  "n": 195,
+  "top1": 1.0,
+  "answered": 0.985,
+  "acc_when_answered": 1.0
+ },
+ "banana_image_bd": {
+  "n": 72,
+  "top1": 1.0,
+  "answered": 1.0,
+  "acc_when_answered": 1.0
+ },
+ "bananas_psolymos": {
+  "n": 20,
+  "top1": 1.0,
+  "answered": 1.0,
+  "acc_when_answered": 1.0
+ },
+ "fresh_rotten_mendeley_bd": {
+  "n": 272,
+  "top1": 0.985,
+  "answered": 0.941,
+  "acc_when_answered": 1.0
+ },
+ "fruit_inspection_6ps": {
+  "n": 1200,
+  "top1": 0.941,
+  "answered": 0.767,
+  "acc_when_answered": 0.995
+ },
+ "fruitnet_indian": {
+  "n": 1500,
+  "top1": 0.705,
+  "answered": 0.566,
+  "acc_when_answered": 0.936
+ },
+ "grapenet": {
+  "n": 1243,
+  "top1": 0.613,
+  "answered": 0.352,
+  "acc_when_answered": 0.886
+ },
+ "grocery_store_klasson": {
+  "n": 1407,
+  "top1": 0.939,
+  "answered": 0.812,
+  "acc_when_answered": 0.994
+ },
+ "hass_avocado_ripening": {
+  "n": 1470,
+  "top1": 0.999,
+  "answered": 0.999,
+  "acc_when_answered": 1.0
+ },
+ "lemon_softwaremill": {
+  "n": 267,
+  "top1": 0.981,
+  "answered": 0.978,
+  "acc_when_answered": 1.0
+ },
+ "lemon_varieties": {
+  "n": 192,
+  "top1": 0.307,
+  "answered": 0.089,
+  "acc_when_answered": 0.294
+ },
+ "mango_banana_ripe": {
+  "n": 500,
+  "top1": 0.712,
+  "answered": 0.656,
+  "acc_when_answered": 0.921
+ },
+ "vegnet_quality": {
+  "n": 334,
+  "top1": 0.811,
+  "answered": 0.734,
+  "acc_when_answered": 0.914
+ },
+ "_open_images_real": {
+  "n": 1769,
+  "top1": 0.725,
+  "answered": 0.755,
+  "acc_when_answered": 0.783
+ }
+}
