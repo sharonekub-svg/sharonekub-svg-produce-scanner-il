@@ -14,6 +14,10 @@ export interface Donation {
   correct: boolean | null;
   score?: number | null;
   quality_verdict?: 'great' | 'okay' | 'poor' | null;
+  // Labelling mode (labels.ts): the true type and condition, sent with the labeler's own token so the server
+  // can stamp the row (server/supabase/migrations/007_owner_labels.sql).
+  label?: { produce: string; condition: 'good' | 'early' | 'rotten' };
+  headers?: Record<string, string>;
 }
 
 export function donationEnabled(): boolean {
@@ -32,7 +36,7 @@ function uuid4(): string {
 export async function donatePhoto(d: Donation): Promise<boolean> {
   const url = cfg.feedback?.url?.replace(/\/$/, ''), key = cfg.feedback?.anonKey;
   if (!url || !key) return false;
-  const auth = { apikey: key, ...(key.startsWith('eyJ') ? { Authorization: `Bearer ${key}` } : {}) };
+  const auth = d.headers ?? { apikey: key, ...(key.startsWith('eyJ') ? { Authorization: `Bearer ${key}` } : {}) };
   try {
     const ctx = ImageManipulator.manipulate(d.photoUri).resize({ width: 1024 });
     const img = await (await ctx.renderAsync()).saveAsync({ compress: 0.85, format: SaveFormat.JPEG });
@@ -42,6 +46,7 @@ export async function donatePhoto(d: Donation): Promise<boolean> {
       headers: { ...auth, 'Content-Type': 'application/json', Prefer: 'return=minimal' },
       body: JSON.stringify({ object_name: name, model_id: d.model_id, predicted: d.predicted, correct: d.correct,
                              score: d.score ?? null, quality_verdict: d.quality_verdict ?? null,
+                             ...(d.label ? { label_produce: d.label.produce, label_condition: d.label.condition } : {}),
                              consent_version: CONSENT_VERSION, app_version: Constants.expoConfig?.version ?? null }),
     });
     if (!reg.ok) return false;

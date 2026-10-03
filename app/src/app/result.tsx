@@ -16,6 +16,7 @@ import { type Rating, sendRating } from '../feedback';
 import { CHIP, pct, score100, step5 } from '../ui/chips';
 import { getLastScan, setLastScan, setPendingPrevious } from '../ui/state';
 import { he } from '../ui/strings';
+import { LabelCard } from '../ui/LabelCard';
 import { SurveyCard } from '../ui/Survey';
 
 // Headline colour follows what we tell the user to do — never green for "don't eat".
@@ -131,6 +132,10 @@ export default function ResultScreen() {
             </View>
           ) : null}
         </View>
+
+        {!fromHistory && !last.sample && last.photoUri ? (
+          <LabelCard photoUri={last.photoUri} guess={r.produce ?? top3[0]?.produce ?? null} onDone={again} />
+        ) : null}
 
         {ok ? (
           <View style={styles.card}>
